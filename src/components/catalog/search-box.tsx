@@ -64,7 +64,7 @@ export function SearchBox({
         Search products
       </label>
       <Search
-        className="pointer-events-none absolute top-1/2 left-4 size-5 -translate-y-1/2 text-fog"
+        className="pointer-events-none absolute top-1/2 left-4 size-5 -translate-y-1/2 text-fg-subtle"
         aria-hidden="true"
       />
       <input
@@ -107,7 +107,7 @@ export function SearchBox({
         role="listbox"
         aria-label="Suggestions"
         hidden={!showList}
-        className="absolute inset-x-0 top-full z-20 mt-2 overflow-hidden rounded-card border border-line-strong bg-graphite"
+        className="absolute inset-x-0 top-full z-20 mt-2 overflow-hidden rounded-card border border-line-strong bg-surface"
       >
         {suggestions.map((s, i) => (
           <li
@@ -122,11 +122,11 @@ export function SearchBox({
             onMouseEnter={() => setActive(i)}
             className={cn(
               "flex cursor-pointer justify-between gap-4 px-4 py-3 text-[15px]",
-              i === active && "bg-graphite-2 text-signal",
+              i === active && "bg-well text-accent",
             )}
           >
             <span>{s.name}</span>
-            <span className="label-mono text-fog">{s.category}</span>
+            <span className="label-mono text-fg-subtle">{s.category}</span>
           </li>
         ))}
       </ul>

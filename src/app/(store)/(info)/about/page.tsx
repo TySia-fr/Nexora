@@ -5,7 +5,7 @@ export const metadata: Metadata = { title: "About", alternates: { canonical: "/a
 export default function AboutPage() {
   return (
     <>
-      <h1 className="mb-8 text-5xl font-semibold tracking-[-0.03em]">About NEXORA</h1>
+      <h1 className="mb-8 text-display-l">About NEXORA</h1>
       <p>
         NEXORA is a fictional electronics brand. The store exists to demonstrate how a real e-commerce system
         is built: server-side pricing, stock that can&apos;t be oversold, payments confirmed only by the

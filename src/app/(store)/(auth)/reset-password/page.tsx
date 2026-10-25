@@ -9,9 +9,9 @@ async function Content({ searchParams }: { searchParams: PageProps<"/reset-passw
   const token = typeof sp.token === "string" ? sp.token : null;
   if (!token || sp.error) {
     return (
-      <p className="text-ash">
+      <p className="text-fg-muted">
         This reset link is invalid or has expired.{" "}
-        <Link href="/forgot-password" className="text-paper underline underline-offset-4">
+        <Link href="/forgot-password" className="text-fg underline underline-offset-4">
           Request a new one
         </Link>
         .
@@ -24,7 +24,7 @@ async function Content({ searchParams }: { searchParams: PageProps<"/reset-passw
 export default function ResetPasswordPage({ searchParams }: PageProps<"/reset-password">) {
   return (
     <>
-      <h1 className="text-4xl font-semibold tracking-[-0.03em]">Choose a new password</h1>
+      <h1 className="text-display-m">Choose a new password</h1>
       <Suspense fallback={null}>
         <Content searchParams={searchParams} />
       </Suspense>

@@ -92,21 +92,21 @@ async function ProductContent({ params, searchParams }: PageProps<"/products/[sl
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData(product)).replace(/</g, "\\u003c") }}
       />
       <div className="container-site pt-6">
-        <nav aria-label="Breadcrumb" className="label-mono text-fog">
+        <nav aria-label="Breadcrumb" className="label-mono text-fg-subtle">
           <ol className="flex flex-wrap gap-2" role="list">
             <li>
-              <Link href="/" className="hover:text-paper">
+              <Link href="/" className="hover:text-fg">
                 Home
               </Link>
             </li>
             <li aria-hidden="true">/</li>
             <li>
-              <Link href={`/categories/${product.category.slug}`} className="hover:text-paper">
+              <Link href={`/categories/${product.category.slug}`} className="hover:text-fg">
                 {product.category.name}
               </Link>
             </li>
             <li aria-hidden="true">/</li>
-            <li aria-current="page" className="text-paper">
+            <li aria-current="page" className="text-fg">
               {product.name}
             </li>
           </ol>
@@ -132,7 +132,7 @@ async function ProductContent({ params, searchParams }: PageProps<"/products/[sl
                   <tr key={s.label} className="border-b border-line">
                     <th
                       scope="row"
-                      className="label-mono w-2/5 py-3.5 pr-4 text-left align-top font-normal text-fog"
+                      className="label-mono w-2/5 py-3.5 pr-4 text-left align-top font-normal text-fg-subtle"
                     >
                       {s.label}
                     </th>
@@ -141,7 +141,7 @@ async function ProductContent({ params, searchParams }: PageProps<"/products/[sl
                 ))}
               </tbody>
             </table>
-            <p className="text-xs text-fog">
+            <p className="text-xs text-fg-subtle">
               NEXORA is a fictional brand; these specifications are illustrative.
             </p>
           </div>
@@ -150,10 +150,10 @@ async function ProductContent({ params, searchParams }: PageProps<"/products/[sl
             {product.features.map((f) => (
               <div
                 key={f.title}
-                className="flex flex-col gap-1.5 rounded-card border border-line bg-graphite p-5"
+                className="flex flex-col gap-1.5 rounded-card border border-line bg-surface p-5"
               >
                 <h3 className="font-medium">{f.title}</h3>
-                <p className="text-sm leading-relaxed text-ash">{f.body}</p>
+                <p className="text-sm leading-relaxed text-fg-muted">{f.body}</p>
               </div>
             ))}
           </div>
@@ -171,12 +171,12 @@ async function ProductContent({ params, searchParams }: PageProps<"/products/[sl
                 <span className="text-6xl font-semibold tracking-[-0.03em]">
                   {product.rating.average.toFixed(1)}
                 </span>
-                <span className="text-[13px] text-fog">
+                <span className="text-[13px] text-fg-subtle">
                   Average of {product.rating.count} {product.rating.count === 1 ? "review" : "reviews"}
                 </span>
               </>
             ) : (
-              <p className="text-sm text-ash">No reviews yet.</p>
+              <p className="text-sm text-fg-muted">No reviews yet.</p>
             )}
           </div>
           <div className="flex min-w-0 flex-[999_1_520px] flex-col">
@@ -184,12 +184,12 @@ async function ProductContent({ params, searchParams }: PageProps<"/products/[sl
               <article key={r.id} className="flex flex-col gap-2 border-b border-line py-6">
                 <div className="flex justify-between gap-3">
                   <h3 className="font-medium">{r.title}</h3>
-                  <span className="font-mono text-xs text-signal" aria-label={`Rated ${r.rating} out of 5`}>
+                  <span className="font-mono text-xs text-accent" aria-label={`Rated ${r.rating} out of 5`}>
                     {r.rating} / 5
                   </span>
                 </div>
-                <p className="text-sm leading-relaxed text-ash">{r.body}</p>
-                <span className="label-mono text-fog">
+                <p className="text-sm leading-relaxed text-fg-muted">{r.body}</p>
+                <span className="label-mono text-fg-subtle">
                   {r.author}
                   {r.verifiedPurchase && " · Verified purchase"}
                 </span>
@@ -227,8 +227,8 @@ export default function ProductPage(props: PageProps<"/products/[slug]">) {
     <Suspense
       fallback={
         <div className="container-site grid gap-12 py-14 md:grid-cols-2" aria-busy="true">
-          <div className="aspect-square animate-pulse rounded-card bg-graphite" />
-          <div className="h-96 animate-pulse rounded-card bg-graphite" />
+          <div className="aspect-square animate-pulse rounded-card bg-surface" />
+          <div className="h-96 animate-pulse rounded-card bg-surface" />
         </div>
       }
     >

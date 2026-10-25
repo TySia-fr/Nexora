@@ -13,14 +13,14 @@ async function Orders({ searchParams }: { searchParams: PageProps<"/account/orde
   const { orders, pageCount } = await listOrdersForUser(viewer.id, page, 10);
 
   if (orders.length === 0) {
-    return <p className="text-ash">You haven&apos;t placed any orders yet.</p>;
+    return <p className="text-fg-muted">You haven&apos;t placed any orders yet.</p>;
   }
   return (
     <>
       <div className="overflow-x-auto rounded-card border border-line">
         <table className="w-full min-w-[560px] border-collapse text-sm">
           <thead>
-            <tr className="label-mono text-left text-fog">
+            <tr className="label-mono text-left text-fg-subtle">
               <th className="p-4 font-normal">Order</th>
               <th className="p-4 font-normal">Date</th>
               <th className="p-4 font-normal">Items</th>
@@ -34,13 +34,13 @@ async function Orders({ searchParams }: { searchParams: PageProps<"/account/orde
                 <td className="p-4">
                   <Link
                     href={`/account/orders/${o.id}`}
-                    className="font-mono underline-offset-4 hover:text-signal hover:underline"
+                    className="font-mono underline-offset-4 hover:text-accent hover:underline"
                   >
                     {formatOrderNumber(o.number)}
                   </Link>
                 </td>
-                <td className="p-4 text-ash">{o.createdAt.toLocaleDateString("en-GB")}</td>
-                <td className="p-4 text-ash">{o.items.reduce((n, i) => n + i.quantity, 0)}</td>
+                <td className="p-4 text-fg-muted">{o.createdAt.toLocaleDateString("en-GB")}</td>
+                <td className="p-4 text-fg-muted">{o.items.reduce((n, i) => n + i.quantity, 0)}</td>
                 <td className="p-4">
                   <StatusBadge status={o.status} />
                 </td>
@@ -75,8 +75,8 @@ async function Orders({ searchParams }: { searchParams: PageProps<"/account/orde
 export default function OrdersPage({ searchParams }: PageProps<"/account/orders">) {
   return (
     <div className="flex flex-col gap-8">
-      <h1 className="text-4xl font-semibold tracking-[-0.03em]">Orders</h1>
-      <Suspense fallback={<div className="h-60 animate-pulse rounded-card bg-graphite" aria-busy="true" />}>
+      <h1 className="text-display-m">Orders</h1>
+      <Suspense fallback={<div className="h-60 animate-pulse rounded-card bg-well" aria-busy="true" />}>
         <Orders searchParams={searchParams} />
       </Suspense>
     </div>

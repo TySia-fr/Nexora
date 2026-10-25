@@ -21,8 +21,10 @@ async function Status({ searchParams }: { searchParams: PageProps<"/checkout/suc
   if (!order) {
     return (
       <>
-        <h1 className="text-4xl font-semibold tracking-[-0.03em]">We couldn&apos;t find that order.</h1>
-        <p className="text-ash">If you completed a payment, the confirmation is on its way to your email.</p>
+        <h1 className="text-display-m">We couldn&apos;t find that order.</h1>
+        <p className="text-fg-muted">
+          If you completed a payment, the confirmation is on its way to your email.
+        </p>
         <ButtonLink href="/" variant="secondary">
           Back to the store
         </ButtonLink>
@@ -35,11 +37,9 @@ async function Status({ searchParams }: { searchParams: PageProps<"/checkout/suc
     return (
       <>
         <RefreshWhilePending />
-        <span className="label-mono text-amber">Confirming payment</span>
-        <h1 className="text-4xl font-semibold tracking-[-0.03em]">
-          Waiting for Stripe to confirm order {number}.
-        </h1>
-        <p className="text-ash" role="status">
+        <span className="label-mono text-warn">Confirming payment</span>
+        <h1 className="text-display-m">Waiting for Stripe to confirm order {number}.</h1>
+        <p className="text-fg-muted" role="status">
           This usually takes a few seconds. This page updates on its own; you can also close it — we&apos;ll
           keep your items reserved while the payment is confirmed.
         </p>
@@ -49,18 +49,18 @@ async function Status({ searchParams }: { searchParams: PageProps<"/checkout/suc
   if (order.status === "CANCELLED") {
     return (
       <>
-        <span className="label-mono text-amber">Payment not completed</span>
-        <h1 className="text-4xl font-semibold tracking-[-0.03em]">Order {number} was not paid.</h1>
-        <p className="text-ash">Nothing was charged. Your items have been released.</p>
+        <span className="label-mono text-warn">Payment not completed</span>
+        <h1 className="text-display-m">Order {number} was not paid.</h1>
+        <p className="text-fg-muted">Nothing was charged. Your items have been released.</p>
         <ButtonLink href="/cart">Return to cart</ButtonLink>
       </>
     );
   }
   return (
     <>
-      <span className="label-mono text-signal">Payment confirmed</span>
-      <h1 className="text-4xl font-semibold tracking-[-0.03em]">Thank you. Order {number} is confirmed.</h1>
-      <p className="text-ash">
+      <span className="label-mono text-accent">Payment confirmed</span>
+      <h1 className="text-display-m">Thank you. Order {number} is confirmed.</h1>
+      <p className="text-fg-muted">
         We received {formatMoney(order.totalCents)}. NEXORA is a demo store, so nothing will actually ship.
       </p>
       <div className="flex flex-wrap gap-3">

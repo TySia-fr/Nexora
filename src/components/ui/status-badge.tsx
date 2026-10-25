@@ -2,12 +2,12 @@ import type { OrderStatus } from "@/generated/prisma/enums";
 import { cn } from "@/lib/cn";
 
 const STYLES: Record<OrderStatus, string> = {
-  PENDING_PAYMENT: "border-amber text-amber",
-  PAID: "border-signal text-signal",
-  SHIPPED: "border-sky text-sky",
-  DELIVERED: "border-fog text-ash",
-  CANCELLED: "border-fog text-fog",
-  REFUNDED: "border-fog text-fog",
+  PENDING_PAYMENT: "border-warn text-warn",
+  PAID: "border-accent text-accent",
+  SHIPPED: "border-info text-info",
+  DELIVERED: "border-fg-subtle text-fg-muted",
+  CANCELLED: "border-fg-subtle text-fg-subtle",
+  REFUNDED: "border-fg-subtle text-fg-subtle",
 };
 
 export const STATUS_LABEL: Record<OrderStatus, string> = {

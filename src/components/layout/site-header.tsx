@@ -13,10 +13,10 @@ async function CategoryNav() {
   const categories = await getCategories();
   return (
     <>
-      <ul className="hidden flex-1 flex-wrap gap-7 text-sm text-ash lg:flex" role="list">
+      <ul className="hidden flex-1 flex-wrap gap-7 text-sm text-fg-muted lg:flex" role="list">
         {categories.map((c) => (
           <li key={c.slug}>
-            <Link href={`/categories/${c.slug}`} className="py-2 hover:text-paper">
+            <Link href={`/categories/${c.slug}`} className="py-2 hover:text-fg">
               {c.name}
             </Link>
           </li>
@@ -35,7 +35,7 @@ async function CartCount() {
 
 export function SiteHeader() {
   return (
-    <header className="sticky top-0 z-30 border-b border-line bg-ink/95 backdrop-blur-sm">
+    <header className="sticky top-0 z-30 border-b border-line bg-canvas/95 backdrop-blur-sm">
       <nav aria-label="Main" className="container-site flex h-16 items-center gap-6 lg:gap-10">
         <Link href="/" className="text-lg font-bold tracking-[0.18em] md:text-xl" aria-label="NEXORA home">
           NEXORA
@@ -47,14 +47,14 @@ export function SiteHeader() {
           <Link
             href="/search"
             aria-label="Search"
-            className="flex size-11 items-center justify-center hover:text-signal"
+            className="flex size-11 items-center justify-center hover:text-accent"
           >
             <Search className="size-5" strokeWidth={1.6} aria-hidden="true" />
           </Link>
           <Link
             href="/account"
             aria-label="Account"
-            className="hidden size-11 items-center justify-center hover:text-signal sm:flex"
+            className="hidden size-11 items-center justify-center hover:text-accent sm:flex"
           >
             <User className="size-5" strokeWidth={1.6} aria-hidden="true" />
           </Link>

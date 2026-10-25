@@ -35,23 +35,23 @@ export function CartLine({ line }: { line: CartLineView }) {
     >
       <Link
         href={`/products/${line.productSlug}`}
-        className="relative aspect-square overflow-hidden rounded-input border border-line bg-graphite"
+        className="relative aspect-square overflow-hidden rounded-input bg-well"
       >
         {line.image && (
           <Image src={line.image.url} alt={line.image.alt} fill sizes="112px" className="object-cover" />
         )}
       </Link>
       <div className="flex min-w-0 flex-col gap-1.5">
-        <Link href={`/products/${line.productSlug}`} className="font-medium hover:text-signal">
+        <Link href={`/products/${line.productSlug}`} className="font-medium hover:text-accent">
           {line.productName}
         </Link>
-        <span className="text-[13px] text-fog">
+        <span className="text-[13px] text-fg-subtle">
           {line.variantName} · <span className="font-mono">{line.sku}</span>
         </span>
-        <Price cents={line.unitPriceCents} className="text-sm text-ash" />
-        {issue && <p className="text-[13px] text-amber">{issue}</p>}
+        <Price cents={line.unitPriceCents} className="text-sm text-fg-muted" />
+        {issue && <p className="text-[13px] text-warn">{issue}</p>}
         {error && (
-          <p role="alert" className="text-[13px] text-amber">
+          <p role="alert" className="text-[13px] text-warn">
             {error}
           </p>
         )}
@@ -92,7 +92,7 @@ export function CartLine({ line }: { line: CartLineView }) {
                 if (!r.ok) setError(r.message);
               })
             }
-            className="h-11 px-1 text-[13px] text-ash underline-offset-4 hover:text-paper hover:underline"
+            className="h-11 px-1 text-[13px] text-fg-muted underline-offset-4 hover:text-fg hover:underline"
           >
             Remove<span className="sr-only"> {line.productName}</span>
           </button>

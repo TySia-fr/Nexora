@@ -55,7 +55,7 @@ function StockAdjuster({
   return (
     <div className="flex items-center gap-1.5">
       <span
-        className={cn("w-10 font-mono", stock === 0 && "text-amber")}
+        className={cn("w-10 font-mono", stock === 0 && "text-warn")}
         aria-label={`${label} current stock`}
       >
         {stock}
@@ -80,12 +80,12 @@ function StockAdjuster({
             } else setError(r.message);
           });
         }}
-        className="h-10 rounded-input border border-line-strong px-2.5 text-xs hover:border-paper disabled:text-fog"
+        className="h-10 rounded-input border border-line-strong px-2.5 text-xs hover:border-fg disabled:text-fg-subtle"
       >
         Apply
       </button>
       {error && (
-        <span role="alert" className="text-xs text-amber">
+        <span role="alert" className="text-xs text-warn">
           {error}
         </span>
       )}
@@ -124,7 +124,7 @@ export function ProductForm({
     <form action={action} noValidate className="flex flex-col gap-10">
       {initial.id && <input type="hidden" name="productId" value={initial.id} />}
       {state && !state.ok && (
-        <p role="alert" className="rounded-card border border-amber/60 p-4 text-sm text-amber">
+        <p role="alert" className="rounded-card border border-warn/60 p-4 text-sm text-warn">
           {state.message}
           {state.fieldErrors && Object.keys(fe).some((k) => k.startsWith("variants")) && (
             <>
@@ -142,7 +142,7 @@ export function ProductForm({
         {field("name", "Name")}
         <div>
           {field("slug", "URL slug")}
-          <p className="mt-1 text-xs text-fog">
+          <p className="mt-1 text-xs text-fg-subtle">
             Lowercase letters, numbers and dashes. Changing it breaks old links.
           </p>
         </div>
@@ -203,7 +203,7 @@ export function ProductForm({
             type="checkbox"
             name="featured"
             defaultChecked={initial.featured}
-            className="size-4 accent-signal"
+            className="size-4 accent-accent"
           />{" "}
           Featured on the homepage
         </label>
@@ -214,7 +214,7 @@ export function ProductForm({
         <div className="overflow-x-auto">
           <table className="w-full min-w-[860px] border-collapse text-sm">
             <thead>
-              <tr className="label-mono text-left text-fog">
+              <tr className="label-mono text-left text-fg-subtle">
                 <th className="p-2 font-normal">SKU</th>
                 <th className="p-2 font-normal">Name</th>
                 <th className="p-2 font-normal">Colour</th>
@@ -303,7 +303,7 @@ export function ProductForm({
                       value={String(i)}
                       checked={r.isActive}
                       onChange={(e) => update(r.key, { isActive: e.target.checked })}
-                      className="size-4 accent-signal"
+                      className="size-4 accent-accent"
                     />
                   </td>
                   <td className="p-1.5">
@@ -312,7 +312,7 @@ export function ProductForm({
                       aria-label={`Remove variant ${i + 1}`}
                       disabled={rows.length === 1}
                       onClick={() => setRows((rs) => rs.filter((x) => x.key !== r.key))}
-                      className="flex size-10 items-center justify-center text-ash hover:text-amber disabled:opacity-30"
+                      className="flex size-10 items-center justify-center text-fg-muted hover:text-warn disabled:opacity-30"
                     >
                       <Trash2 className="size-4" aria-hidden="true" />
                     </button>
@@ -334,7 +334,7 @@ export function ProductForm({
         >
           <Plus className="size-4" aria-hidden="true" /> Add variant
         </button>
-        <p className="text-xs text-fog">
+        <p className="text-xs text-fg-subtle">
           Removing a variant that appears in past orders deactivates it instead of deleting it.
         </p>
       </fieldset>
@@ -360,13 +360,13 @@ export function ProductForm({
                 if (r && !r.ok) setDeleteError(r.message);
               });
             }}
-            className="text-sm text-ash hover:text-amber"
+            className="text-sm text-fg-muted hover:text-warn"
           >
             Delete product
           </button>
         )}
         {deleteError && (
-          <p role="alert" className="text-sm text-amber">
+          <p role="alert" className="text-sm text-warn">
             {deleteError}
           </p>
         )}

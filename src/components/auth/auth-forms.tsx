@@ -20,7 +20,7 @@ function useErrors(state: AuthState) {
 
 function Banner({ text }: { text: string | null }) {
   return text ? (
-    <p role="alert" className="rounded-card border border-amber/60 p-3.5 text-sm text-amber">
+    <p role="alert" className="rounded-card border border-warn/60 p-3.5 text-sm text-warn">
       {text}
     </p>
   ) : null;
@@ -74,7 +74,7 @@ export function SignInForm({ next }: { next: string }) {
       </button>
       <Link
         href="/forgot-password"
-        className="text-sm text-ash underline-offset-4 hover:text-paper hover:underline"
+        className="text-sm text-fg-muted underline-offset-4 hover:text-fg hover:underline"
       >
         Forgot your password?
       </Link>
@@ -134,7 +134,7 @@ export function ForgotPasswordForm({ emailEnabled }: { emailEnabled: boolean }) 
   const [state, action, pending] = useActionState<AuthState, FormData>(requestResetAction, null);
   if (state?.ok) {
     return (
-      <p role="status" className="rounded-card border border-line-strong p-4 text-sm text-mist">
+      <p role="status" className="rounded-card border border-line-strong p-4 text-sm text-fg-muted">
         If an account exists for that address, a reset link is on its way. It expires in 30 minutes.
       </p>
     );
@@ -142,7 +142,7 @@ export function ForgotPasswordForm({ emailEnabled }: { emailEnabled: boolean }) 
   return (
     <form action={action} noValidate className="flex flex-col gap-5">
       {!emailEnabled && (
-        <p role="note" className="rounded-card border border-amber/60 p-3.5 text-sm text-amber">
+        <p role="note" className="rounded-card border border-warn/60 p-3.5 text-sm text-warn">
           Email delivery isn&apos;t configured on this deployment, so reset links can&apos;t be sent yet.
         </p>
       )}

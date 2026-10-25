@@ -25,8 +25,8 @@ function AddressCard({ a }: { a: Address }) {
   const [pending, start] = useTransition();
   return (
     <li className="flex flex-col gap-3 rounded-card border border-line p-5" aria-busy={pending}>
-      <address className="text-sm leading-relaxed not-italic text-mist">
-        <span className="text-paper">{a.fullName}</span>
+      <address className="text-sm leading-relaxed not-italic text-fg-muted">
+        <span className="text-fg">{a.fullName}</span>
         <br />
         {a.line1}
         {a.line2 && (
@@ -40,13 +40,13 @@ function AddressCard({ a }: { a: Address }) {
       </address>
       <div className="flex flex-wrap items-center gap-4 text-[13px]">
         {a.isDefault ? (
-          <span className="label-mono text-signal">Default</span>
+          <span className="label-mono text-accent">Default</span>
         ) : (
           <button
             type="button"
             disabled={pending}
             onClick={() => start(async () => void (await setDefaultAddressAction(a.id)))}
-            className="h-9 text-ash hover:text-paper"
+            className="h-9 text-fg-muted hover:text-fg"
           >
             Make default
           </button>
@@ -55,7 +55,7 @@ function AddressCard({ a }: { a: Address }) {
           type="button"
           disabled={pending}
           onClick={() => start(async () => void (await deleteAddressAction(a.id)))}
-          className="h-9 text-ash hover:text-amber"
+          className="h-9 text-fg-muted hover:text-warn"
         >
           Delete<span className="sr-only"> address for {a.fullName}</span>
         </button>
@@ -78,18 +78,18 @@ export function AddressBook({ addresses }: { addresses: Address[] }) {
           ))}
         </ul>
       ) : (
-        <p className="text-sm text-ash">No saved addresses yet. Saved addresses pre-fill checkout.</p>
+        <p className="text-sm text-fg-muted">No saved addresses yet. Saved addresses pre-fill checkout.</p>
       )}
 
       <form action={action} noValidate className="grid gap-4 sm:grid-cols-2">
         <h2 className="text-xl font-semibold sm:col-span-2">Add an address</h2>
         {state && !state.ok && !state.fieldErrors && (
-          <p role="alert" className="text-sm text-amber sm:col-span-2">
+          <p role="alert" className="text-sm text-warn sm:col-span-2">
             {state.message}
           </p>
         )}
         {state?.ok && (
-          <p role="status" className="text-sm text-signal sm:col-span-2">
+          <p role="status" className="text-sm text-accent sm:col-span-2">
             Address saved.
           </p>
         )}
@@ -116,7 +116,7 @@ export function AddressBook({ addresses }: { addresses: Address[] }) {
           </div>
         ))}
         <label className="flex items-center gap-2.5 text-sm sm:col-span-2">
-          <input type="checkbox" name="isDefault" className="size-4 accent-signal" /> Use as default
+          <input type="checkbox" name="isDefault" className="size-4 accent-accent" /> Use as default
         </label>
         <button
           type="submit"

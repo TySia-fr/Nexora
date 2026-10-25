@@ -24,25 +24,25 @@ async function AdminReviewsContent({ searchParams }: PageProps<"/admin/reviews">
             aria-current={t === status ? "page" : undefined}
             className={cn(
               "rounded-full border px-4 py-2 text-sm",
-              t === status ? "border-paper" : "border-line-strong text-ash",
+              t === status ? "border-fg" : "border-line-strong text-fg-muted",
             )}
           >
             {t.toLowerCase()}
           </Link>
         ))}
       </nav>
-      {reviews.length === 0 && <p className="text-sm text-ash">Nothing here.</p>}
+      {reviews.length === 0 && <p className="text-sm text-fg-muted">Nothing here.</p>}
       <ul className="flex flex-col" role="list">
         {reviews.map((r) => (
           <li key={r.id} className="flex flex-col gap-2 border-t border-line py-5">
             <div className="flex flex-wrap justify-between gap-3">
               <span className="font-medium">
-                {r.title} <span className="font-mono text-xs text-signal">{r.rating}/5</span>
+                {r.title} <span className="font-mono text-xs text-accent">{r.rating}/5</span>
               </span>
               <ReviewActions id={r.id} status={r.status} />
             </div>
-            <p className="text-sm text-ash">{r.body}</p>
-            <span className="label-mono text-fog">
+            <p className="text-sm text-fg-muted">{r.body}</p>
+            <span className="label-mono text-fg-subtle">
               {r.product.name} · {r.user.name} ({r.user.email}) ·{" "}
               {r.verifiedPurchase ? "verified purchase" : "not verified"} ·{" "}
               {r.createdAt.toLocaleDateString("en-GB")}

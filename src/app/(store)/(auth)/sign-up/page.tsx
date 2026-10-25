@@ -10,16 +10,16 @@ async function Content({ searchParams }: { searchParams: PageProps<"/sign-up">["
   return (
     <>
       <SignUpForm next={next} />
-      <p className="text-sm text-ash">
+      <p className="text-sm text-fg-muted">
         Already have an account?{" "}
         <Link
           href={`/sign-in?next=${encodeURIComponent(next)}`}
-          className="text-paper underline underline-offset-4"
+          className="text-fg underline underline-offset-4"
         >
           Sign in
         </Link>
       </p>
-      <p className="text-xs leading-relaxed text-fog">
+      <p className="text-xs leading-relaxed text-fg-subtle">
         We store your name, email and a salted hash of your password. See the{" "}
         <Link href="/privacy" className="underline underline-offset-4">
           privacy policy
@@ -33,7 +33,7 @@ async function Content({ searchParams }: { searchParams: PageProps<"/sign-up">["
 export default function SignUpPage({ searchParams }: PageProps<"/sign-up">) {
   return (
     <>
-      <h1 className="text-4xl font-semibold tracking-[-0.03em]">Create account</h1>
+      <h1 className="text-display-m">Create account</h1>
       <Suspense fallback={null}>
         <Content searchParams={searchParams} />
       </Suspense>

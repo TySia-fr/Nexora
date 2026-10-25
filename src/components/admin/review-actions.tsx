@@ -18,7 +18,7 @@ export function ReviewActions({ id, status }: { id: string; status: string }) {
           type="button"
           disabled={pending}
           onClick={() => act("APPROVED")}
-          className="h-9 text-signal hover:underline"
+          className="h-9 text-accent hover:underline"
         >
           Approve
         </button>
@@ -28,13 +28,13 @@ export function ReviewActions({ id, status }: { id: string; status: string }) {
           type="button"
           disabled={pending}
           onClick={() => act("REJECTED")}
-          className="h-9 text-ash hover:text-amber"
+          className="h-9 text-fg-muted hover:text-warn"
         >
           Reject
         </button>
       )}
       {error && (
-        <span role="alert" className="text-amber">
+        <span role="alert" className="text-warn">
           {error}
         </span>
       )}

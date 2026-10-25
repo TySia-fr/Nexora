@@ -43,7 +43,7 @@ async function AdminCouponsContent() {
                 <tr key={c.id}>
                   <td className={`${td} font-mono`}>{c.code}</td>
                   <td className={td}>{c.type === "PERCENT" ? `${c.value}%` : formatMoney(c.value)}</td>
-                  <td className={`${td} text-xs text-ash`}>
+                  <td className={`${td} text-xs text-fg-muted`}>
                     {c.minSubtotalCents > 0 && <>Min {formatMoney(c.minSubtotalCents)} · </>}
                     {c.category ? `${c.category.name} only` : "All products"}
                     {c.endsAt && <> · ends {c.endsAt.toLocaleDateString("en-GB")}</>}
@@ -52,7 +52,7 @@ async function AdminCouponsContent() {
                     {c.redemptionCount}
                     {c.maxRedemptions !== null && ` / ${c.maxRedemptions}`}
                   </td>
-                  <td className={`${td} label-mono ${state === "live" ? "text-signal" : "text-fog"}`}>
+                  <td className={`${td} label-mono ${state === "live" ? "text-accent" : "text-fg-subtle"}`}>
                     {state}
                   </td>
                   <td className={td}>

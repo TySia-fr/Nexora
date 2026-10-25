@@ -10,9 +10,9 @@ async function Content() {
   const products = await getProductsByIds(await listWishlistProductIds(viewer.id));
   if (products.length === 0) {
     return (
-      <p className="text-ash">
+      <p className="text-fg-muted">
         Nothing saved yet. Tap the heart on any product to keep it here.{" "}
-        <Link href="/products" className="text-paper underline underline-offset-4">
+        <Link href="/products" className="text-fg underline underline-offset-4">
           Browse products
         </Link>
       </p>
@@ -24,8 +24,8 @@ async function Content() {
 export default function WishlistPage() {
   return (
     <div className="flex flex-col gap-8">
-      <h1 className="text-4xl font-semibold tracking-[-0.03em]">Wishlist</h1>
-      <Suspense fallback={<div className="h-60 animate-pulse rounded-card bg-graphite" aria-busy="true" />}>
+      <h1 className="text-display-m">Wishlist</h1>
+      <Suspense fallback={<div className="h-60 animate-pulse rounded-card bg-well" aria-busy="true" />}>
         <Content />
       </Suspense>
     </div>

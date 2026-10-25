@@ -29,7 +29,7 @@ export function CategoryRow({ category }: { category: Category }) {
       {category.id && <input type="hidden" name="categoryId" value={category.id} />}
       {(["name", "slug", "description"] as const).map((f) => (
         <div key={f} className="flex flex-col gap-1">
-          <label htmlFor={`${prefix}-${f}`} className="label-mono text-fog">
+          <label htmlFor={`${prefix}-${f}`} className="label-mono text-fg-subtle">
             {f}
           </label>
           <input
@@ -39,11 +39,11 @@ export function CategoryRow({ category }: { category: Category }) {
             aria-invalid={Boolean(fe[f])}
             className={cn(inputBase, "h-10 w-full")}
           />
-          {fe[f] && <span className="text-xs text-amber">{fe[f]}</span>}
+          {fe[f] && <span className="text-xs text-warn">{fe[f]}</span>}
         </div>
       ))}
       <div className="flex flex-col gap-1">
-        <label htmlFor={`${prefix}-position`} className="label-mono text-fog">
+        <label htmlFor={`${prefix}-position`} className="label-mono text-fg-subtle">
           order
         </label>
         <input
@@ -74,18 +74,18 @@ export function CategoryRow({ category }: { category: Category }) {
                 if (!r.ok) setDeleteError(r.message);
               });
             }}
-            className="h-10 text-xs text-ash hover:text-amber"
+            className="h-10 text-xs text-fg-muted hover:text-warn"
           >
             Delete
           </button>
         )}
       </div>
       <p role="status" className="text-xs md:col-span-5">
-        {state?.ok && <span className="text-signal">Saved.</span>}
-        {state && !state.ok && !state.fieldErrors && <span className="text-amber">{state.message}</span>}
-        {deleteError && <span className="text-amber">{deleteError}</span>}
+        {state?.ok && <span className="text-accent">Saved.</span>}
+        {state && !state.ok && !state.fieldErrors && <span className="text-warn">{state.message}</span>}
+        {deleteError && <span className="text-warn">{deleteError}</span>}
         {category.productCount !== undefined && (
-          <span className="text-fog"> {category.productCount} products</span>
+          <span className="text-fg-subtle"> {category.productCount} products</span>
         )}
       </p>
     </form>

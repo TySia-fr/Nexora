@@ -38,20 +38,20 @@ export function SiteFooter() {
       <div className="container-site grid grid-cols-2 gap-10 py-16 md:grid-cols-4">
         <div className="col-span-2 flex flex-col gap-3 md:col-span-1">
           <span className="font-bold tracking-[0.18em]">NEXORA</span>
-          <p className="max-w-xs text-[13px] leading-relaxed text-fog">{site.footerNote}</p>
+          <p className="max-w-xs text-[13px] leading-relaxed text-fg-subtle">{site.footerNote}</p>
         </div>
         {columns.map((col) => (
           <nav key={col.title} aria-label={col.title} className="flex flex-col gap-3">
-            <span className="label-mono text-fog">{col.title}</span>
+            <span className="label-mono text-fg-subtle">{col.title}</span>
             {col.links.map(([label, href]) => (
-              <Link key={href} href={href} className="text-sm text-mist hover:text-signal">
+              <Link key={href} href={href} className="text-sm text-fg-muted hover:text-accent">
                 {label}
               </Link>
             ))}
           </nav>
         ))}
       </div>
-      <div className="container-site label-mono flex flex-wrap justify-between gap-4 border-t border-line py-6 text-fog">
+      <div className="container-site label-mono flex flex-wrap justify-between gap-4 border-t border-line py-6 text-fg-subtle">
         <span>© 2026 NEXORA — portfolio project</span>
         <span>EUR · English</span>
       </div>

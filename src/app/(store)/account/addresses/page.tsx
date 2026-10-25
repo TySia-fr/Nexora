@@ -12,8 +12,8 @@ async function Content() {
 export default function AddressesPage() {
   return (
     <div className="flex flex-col gap-8">
-      <h1 className="text-4xl font-semibold tracking-[-0.03em]">Addresses</h1>
-      <Suspense fallback={<div className="h-60 animate-pulse rounded-card bg-graphite" aria-busy="true" />}>
+      <h1 className="text-display-m">Addresses</h1>
+      <Suspense fallback={<div className="h-60 animate-pulse rounded-card bg-well" aria-busy="true" />}>
         <Content />
       </Suspense>
     </div>

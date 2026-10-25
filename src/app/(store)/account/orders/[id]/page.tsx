@@ -16,10 +16,10 @@ async function Order({ params }: PageProps<"/account/orders/[id]">) {
   return (
     <div className="flex flex-col gap-10">
       <header className="flex flex-wrap items-center gap-4">
-        <h1 className="text-4xl font-semibold tracking-[-0.03em]">Order {formatOrderNumber(order.number)}</h1>
+        <h1 className="text-display-m">Order {formatOrderNumber(order.number)}</h1>
         <StatusBadge status={order.status} />
       </header>
-      <p className="-mt-6 text-sm text-ash">
+      <p className="-mt-6 text-sm text-fg-muted">
         Placed {order.createdAt.toLocaleString("en-GB", { dateStyle: "long", timeStyle: "short" })}
         {order.paidAt && ` · paid ${order.paidAt.toLocaleDateString("en-GB")}`}
       </p>
@@ -28,10 +28,10 @@ async function Order({ params }: PageProps<"/account/orders/[id]">) {
         {order.items.map((i) => (
           <li key={i.id} className="flex flex-wrap justify-between gap-3 p-4 text-sm">
             <span>
-              <Link href={`/products/${i.productSlug}`} className="hover:text-signal">
+              <Link href={`/products/${i.productSlug}`} className="hover:text-accent">
                 {i.productName}
               </Link>{" "}
-              <span className="text-fog">
+              <span className="text-fg-subtle">
                 · {i.variantName} · <span className="font-mono">{i.sku}</span> · ×{i.quantity}
               </span>
             </span>
@@ -42,10 +42,10 @@ async function Order({ params }: PageProps<"/account/orders/[id]">) {
 
       <div className="grid gap-10 md:grid-cols-2">
         <section aria-labelledby="ship-to" className="flex flex-col gap-2 text-sm">
-          <h2 id="ship-to" className="label-mono text-fog">
+          <h2 id="ship-to" className="label-mono text-fg-subtle">
             Ship to · {order.shippingMethod === "EXPRESS" ? "Express" : "Standard"}
           </h2>
-          <address className="leading-relaxed not-italic text-mist">
+          <address className="leading-relaxed not-italic text-fg-muted">
             {order.shipFullName}
             <br />
             {order.shipLine1}
@@ -60,15 +60,15 @@ async function Order({ params }: PageProps<"/account/orders/[id]">) {
           </address>
         </section>
         <dl className="grid grid-cols-[1fr_auto] gap-2 text-sm">
-          <dt className="text-ash">Subtotal</dt>
+          <dt className="text-fg-muted">Subtotal</dt>
           <dd className="font-mono">{formatMoney(order.subtotalCents)}</dd>
           {order.discountCents > 0 && (
             <>
-              <dt className="text-ash">Discount {order.couponCode && `(${order.couponCode})`}</dt>
-              <dd className="font-mono text-signal">−{formatMoney(order.discountCents)}</dd>
+              <dt className="text-fg-muted">Discount {order.couponCode && `(${order.couponCode})`}</dt>
+              <dd className="font-mono text-accent">−{formatMoney(order.discountCents)}</dd>
             </>
           )}
-          <dt className="text-ash">Shipping</dt>
+          <dt className="text-fg-muted">Shipping</dt>
           <dd className="font-mono">
             {order.shippingCents === 0 ? "Free" : formatMoney(order.shippingCents)}
           </dd>
@@ -76,7 +76,7 @@ async function Order({ params }: PageProps<"/account/orders/[id]">) {
           <dd className="border-t border-line pt-2 font-mono">{formatMoney(order.totalCents)}</dd>
         </dl>
       </div>
-      <Link href="/account/orders" className="text-sm text-ash hover:text-signal">
+      <Link href="/account/orders" className="text-sm text-fg-muted hover:text-accent">
         ← All orders
       </Link>
     </div>
@@ -85,7 +85,7 @@ async function Order({ params }: PageProps<"/account/orders/[id]">) {
 
 export default function OrderPage(props: PageProps<"/account/orders/[id]">) {
   return (
-    <Suspense fallback={<div className="h-80 animate-pulse rounded-card bg-graphite" aria-busy="true" />}>
+    <Suspense fallback={<div className="h-80 animate-pulse rounded-card bg-well" aria-busy="true" />}>
       <Order {...props} />
     </Suspense>
   );

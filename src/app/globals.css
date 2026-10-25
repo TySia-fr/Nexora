@@ -1,72 +1,272 @@
 @import "tailwindcss";
 
 /*
- * NEXORA design tokens. Every colour, radius and motion value used in the UI
- * comes from here; components never hard-code hex values.
- * Contrast (on --color-ink): paper 17.4:1, ash 7.9:1, fog 6.1:1, signal 15.6:1.
+ * NEXORA design tokens.
+ *
+ * Colours are semantic (canvas, surface, fg…), not literal, so a section can switch
+ * theme by adding `.theme-dark`: every component inside re-reads the same variables.
+ * Components never hard-code hex values.
+ *
+ * Contrast, light theme (WCAG): fg on canvas 17.4:1 · fg-muted 6.2:1 · fg-subtle 4.9:1
+ * (4.5:1 on well) · accent 6.0:1 · warn 7.0:1 · info 5.8:1.
+ * Dark theme: fg 17.4:1 · fg-muted 7.5:1 · fg-subtle 5.8:1 · accent 14.6:1.
  */
 @theme {
-  --color-ink: #0b0b0c;
-  --color-graphite: #141416;
-  --color-graphite-2: #1c1c20;
-  --color-line: #222226;
-  --color-line-strong: #34343a;
-  --color-fog: #8e8e89;
-  --color-ash: #a3a39e;
-  --color-mist: #c9c9c4;
-  --color-paper: #ededea;
+  --color-canvas: #f5f5f2;
+  --color-surface: #ffffff;
+  --color-well: #ecece8;
+  --color-fg: #101010;
+  --color-fg-muted: #5c5c58;
+  --color-fg-subtle: #6b6b66;
+  --color-line: #e0e0db;
+  --color-line-strong: #c4c4be;
+  --color-accent: #4e6600;
+  --color-warn: #8a3d00;
+  --color-info: #1f5fad;
+
+  /* Brand constants: identical in both themes. */
   --color-signal: #c8f135;
   --color-signal-strong: #b4dc22;
-  --color-amber: #f2a65a;
-  --color-sky: #7ab8ff;
+  --color-on-signal: #101010;
+  --color-night: #101010;
 
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, "SFMono-Regular", monospace;
+  --font-display: var(--font-archivo), var(--font-geist-sans), ui-sans-serif, sans-serif;
 
   --radius-input: 4px;
-  --radius-card: 6px;
+  --radius-card: 4px;
 
   --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
-  --duration-fast: 150ms;
-  --duration-reveal: 400ms;
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --duration-fast: 180ms;
+  --duration-ui: 280ms;
+  --duration-reveal: 640ms;
+}
+
+/* A dark section. Same tokens, different values. */
+.theme-dark {
+  --color-canvas: #101010;
+  --color-surface: #1a1a1a;
+  --color-well: #161616;
+  --color-fg: #f5f5f2;
+  --color-fg-muted: #a3a39e;
+  --color-fg-subtle: #8e8e89;
+  --color-line: #262626;
+  --color-line-strong: #3a3a3a;
+  --color-accent: #c8f135;
+  --color-warn: #f2a65a;
+  --color-info: #7ab8ff;
+  color-scheme: dark;
+  background-color: var(--color-canvas);
+  color: var(--color-fg);
 }
 
 @layer base {
   html {
-    color-scheme: dark;
+    color-scheme: light;
     -webkit-text-size-adjust: 100%;
+    scroll-padding-top: 5rem;
   }
   body {
-    background: var(--color-ink);
-    color: var(--color-paper);
+    background: var(--color-canvas);
+    color: var(--color-fg);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
   }
   ::selection {
     background: var(--color-signal);
-    color: var(--color-ink);
+    color: var(--color-on-signal);
   }
   :focus-visible {
-    outline: 2px solid var(--color-signal);
-    outline-offset: 2px;
+    outline: 2px solid var(--color-fg);
+    outline-offset: 3px;
+  }
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
   }
 }
+
+/* --- Type ------------------------------------------------------------------ */
 
 @utility label-mono {
   font-family: var(--font-mono);
   font-size: 11px;
-  letter-spacing: 0.04em;
+  line-height: 1.4;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
 }
+
+/* Display type: Archivo, slightly expanded, tight tracking. */
+@utility font-display {
+  font-family: var(--font-display);
+  font-stretch: 112%;
+  font-weight: 500;
+  font-optical-sizing: auto;
+}
+@utility text-display-xl {
+  font-family: var(--font-display);
+  font-stretch: 106%;
+  font-weight: 500;
+  font-size: clamp(2.75rem, 1rem + 5.6vw, 6.5rem);
+  line-height: 0.92;
+  letter-spacing: -0.045em;
+}
+@utility text-display-l {
+  font-family: var(--font-display);
+  font-stretch: 110%;
+  font-weight: 500;
+  font-size: clamp(2.25rem, 1.4rem + 3.6vw, 5rem);
+  line-height: 0.96;
+  letter-spacing: -0.04em;
+}
+@utility text-display-m {
+  font-family: var(--font-display);
+  font-stretch: 108%;
+  font-weight: 500;
+  font-size: clamp(1.75rem, 1.25rem + 1.9vw, 3rem);
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+}
+
+/* --- Layout ---------------------------------------------------------------- */
 
 @utility container-site {
   margin-inline: auto;
   width: 100%;
-  max-width: 1320px;
+  max-width: 1440px;
   padding-inline: 16px;
   @media (width >= 48rem) {
-    padding-inline: 24px;
+    padding-inline: 32px;
   }
+  @media (width >= 90rem) {
+    padding-inline: 48px;
+  }
+}
+
+/* A hairline with a small tick at the start: the NEXORA section rule. */
+@utility rule-tick {
+  position: relative;
+  border-top: 1px solid var(--color-line);
+  &::before {
+    content: "";
+    position: absolute;
+    top: -3px;
+    left: 0;
+    width: 5px;
+    height: 5px;
+    background: var(--color-fg);
+  }
+}
+
+/* --- Motion ---------------------------------------------------------------- */
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+/* Line mask: the text slides up from behind its own baseline. */
+@keyframes line-up {
+  from {
+    transform: translateY(105%);
+  }
+  to {
+    transform: none;
+  }
+}
+@keyframes clip-up {
+  from {
+    clip-path: inset(100% 0 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+@keyframes clip-right {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.25;
+  }
+}
+
+@utility animate-rise {
+  animation: rise var(--duration-reveal) var(--ease-out-expo) both;
+}
+@utility animate-fade {
+  animation: fade var(--duration-reveal) var(--ease-out-quint) both;
+}
+@utility animate-clip-up {
+  animation: clip-up 900ms var(--ease-out-expo) both;
+}
+@utility animate-line {
+  display: block;
+  animation: line-up 820ms var(--ease-out-expo) both;
+}
+/* Wrapper that hides a line while it slides up. */
+@utility line-mask {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.06em;
+  margin-bottom: -0.06em;
+}
+@utility animate-blink {
+  animation: blink 2.4s var(--ease-in-out) infinite;
+}
+
+/*
+ * Scroll reveals. Hidden only once JavaScript has marked the document (`.js` on <html>),
+ * so the page is complete without scripts; <RevealObserver> animates each element in
+ * with the Web Animations API (fill: both), which takes over from these styles.
+ */
+.js [data-reveal] {
+  opacity: 0;
+}
+/* "clip" reveals lift a canvas-coloured curtain (a pseudo-element) instead of clipping the
+   element itself: a clipped element never intersects the viewport, so neither the observer
+   nor lazy image loading would ever fire for it. Needs a positioned element. */
+.js [data-reveal="clip"] {
+  opacity: 1;
+}
+.js [data-reveal="clip"]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: var(--color-canvas);
+  transform-origin: top;
+  pointer-events: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -74,24 +274,16 @@
   *::before,
   *::after {
     animation-duration: 1ms !important;
+    animation-delay: 0ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 1ms !important;
+    transition-delay: 0ms !important;
     scroll-behavior: auto !important;
   }
-}
-
-/* Entrance animation: CSS only, so content is visible without JavaScript and
-   the reduced-motion rule above shortens it to nothing. */
-@keyframes rise {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
+  .js [data-reveal] {
     opacity: 1;
-    transform: none;
   }
-}
-@utility animate-rise {
-  animation: rise var(--duration-reveal) var(--ease-out-quint) both;
+  .js [data-reveal="clip"]::after {
+    display: none;
+  }
 }

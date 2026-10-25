@@ -67,7 +67,7 @@ export function MobileNav({ categories }: { categories: { slug: string; name: st
                 role="dialog"
                 aria-modal="true"
                 aria-label="Menu"
-                className="fixed inset-0 z-50 flex flex-col bg-ink"
+                className="fixed inset-0 z-50 flex flex-col bg-canvas"
                 initial={reduce ? { opacity: 0 } : { opacity: 0, y: -12 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
@@ -95,7 +95,7 @@ export function MobileNav({ categories }: { categories: { slug: string; name: st
                       {c.name}
                     </Link>
                   ))}
-                  <div className="mt-8 flex flex-col gap-4 text-ash">
+                  <div className="mt-8 flex flex-col gap-4 text-fg-muted">
                     <Link href="/search">Search</Link>
                     <Link href="/account">Account</Link>
                     <Link href="/cart">Cart</Link>

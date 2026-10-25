@@ -27,7 +27,7 @@ export function Gallery({
   };
 
   if (!current) {
-    return <div className="aspect-square rounded-card border border-line bg-graphite" />;
+    return <div className="aspect-square rounded-card border border-line bg-surface" />;
   }
 
   return (
@@ -45,8 +45,8 @@ export function Gallery({
             aria-label={`Show image ${i + 1} of ${images.length}: ${img.alt}`}
             aria-pressed={i === index}
             className={cn(
-              "relative size-16 overflow-hidden rounded-input border bg-graphite md:size-20",
-              i === index ? "border-paper" : "border-line hover:border-line-strong",
+              "relative size-16 overflow-hidden rounded-input border bg-surface md:size-20",
+              i === index ? "border-fg" : "border-line hover:border-line-strong",
             )}
           >
             <Image src={img.url} alt="" fill sizes="80px" className="object-cover" />
@@ -54,7 +54,7 @@ export function Gallery({
         ))}
       </div>
       <div
-        className="relative aspect-square overflow-hidden rounded-card border border-line bg-graphite"
+        className="relative aspect-square overflow-hidden rounded-card border border-line bg-surface"
         tabIndex={images.length > 1 ? 0 : -1}
         onKeyDown={onKeyDown}
         aria-roledescription="image viewer"
@@ -73,11 +73,11 @@ export function Gallery({
           type="button"
           onClick={() => dialogRef.current?.showModal()}
           aria-label="Enlarge image"
-          className="absolute top-4 right-4 flex size-11 items-center justify-center rounded-full border border-line-strong bg-ink/80 hover:border-paper"
+          className="absolute top-4 right-4 flex size-11 items-center justify-center rounded-full border border-line-strong bg-canvas/80 hover:border-fg"
         >
           <Maximize2 className="size-[18px]" strokeWidth={1.6} aria-hidden="true" />
         </button>
-        <span className="label-mono absolute bottom-4 left-4 text-fog" aria-hidden="true">
+        <span className="label-mono absolute bottom-4 left-4 text-fg-subtle" aria-hidden="true">
           {index + 1} / {images.length}
         </span>
       </div>
@@ -85,7 +85,7 @@ export function Gallery({
       <dialog
         ref={dialogRef}
         aria-label={`${productName}, enlarged image`}
-        className="m-auto max-h-none max-w-none bg-transparent p-0 backdrop:bg-ink/95"
+        className="m-auto max-h-none max-w-none bg-transparent p-0 backdrop:bg-canvas/95"
         onClick={(e) => e.target === dialogRef.current && dialogRef.current?.close()}
       >
         <div className="relative h-[min(92vh,92vw)] w-[min(92vh,92vw)]">
@@ -94,7 +94,7 @@ export function Gallery({
             type="button"
             onClick={() => dialogRef.current?.close()}
             aria-label="Close enlarged image"
-            className="absolute top-3 right-3 flex size-11 items-center justify-center rounded-full border border-line-strong bg-ink text-paper"
+            className="absolute top-3 right-3 flex size-11 items-center justify-center rounded-full border border-line-strong bg-canvas text-fg"
           >
             <X className="size-5" aria-hidden="true" />
           </button>

@@ -8,7 +8,7 @@ import { buttonClasses } from "@/components/ui/button";
 function Status({ state, success }: { state: FormState; success: string }) {
   if (!state) return null;
   return (
-    <p role="status" className={state.ok ? "text-[13px] text-signal" : "text-[13px] text-amber"}>
+    <p role="status" className={state.ok ? "text-[13px] text-accent" : "text-[13px] text-warn"}>
       {state.ok ? success : state.fieldErrors ? "" : state.message}
     </p>
   );

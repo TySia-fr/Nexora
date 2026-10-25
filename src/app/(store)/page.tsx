@@ -23,7 +23,7 @@ export default function HomePage() {
           title="The core collection"
           id="featured-title"
           action={
-            <Link href="/products" className="text-sm text-ash hover:text-signal">
+            <Link href="/products" className="text-sm text-fg-muted hover:text-accent">
               View all products →
             </Link>
           }
@@ -35,7 +35,7 @@ export default function HomePage() {
 
       <section aria-labelledby="categories-title" className="container-site pb-28">
         <SectionHeading index="02" label="Categories" title="Shop by category" id="categories-title" />
-        <Suspense fallback={<div className="h-[440px] rounded-card bg-graphite" />}>
+        <Suspense fallback={<div className="h-[440px] rounded-card bg-surface" />}>
           <Categories />
         </Suspense>
       </section>
@@ -53,7 +53,7 @@ export default function HomePage() {
       <Engineering />
 
       <section aria-labelledby="campaign-title" className="container-site py-28">
-        <Suspense fallback={<div className="h-[480px] rounded-card bg-graphite" />}>
+        <Suspense fallback={<div className="h-[480px] rounded-card bg-surface" />}>
           <Campaign />
         </Suspense>
       </section>
@@ -66,7 +66,7 @@ export default function HomePage() {
             <h2 id="newsletter-title" className="text-3xl font-semibold tracking-[-0.02em] md:text-4xl">
               Product drops, not spam.
             </h2>
-            <p className="text-[15px] text-ash">One email per launch. Unsubscribe in one click.</p>
+            <p className="text-[15px] text-fg-muted">One email per launch. Unsubscribe in one click.</p>
           </div>
           <NewsletterForm />
         </div>
@@ -82,7 +82,7 @@ function Hero() {
       className="container-site grid items-center gap-12 pt-12 pb-24 md:grid-cols-2 md:pt-18"
     >
       <div className="flex flex-col gap-7">
-        <span className="label-mono text-signal">New · Halo One</span>
+        <span className="label-mono text-accent">New · Halo One</span>
         <h1
           id="hero-title"
           className="text-[clamp(3rem,7vw,6rem)] leading-[0.95] font-semibold tracking-[-0.035em]"
@@ -91,7 +91,7 @@ function Hero() {
           <br />
           engineered.
         </h1>
-        <p className="max-w-md text-lg leading-relaxed text-ash">
+        <p className="max-w-md text-lg leading-relaxed text-fg-muted">
           Over-ear headphones with adaptive noise cancelling, a machined aluminium frame and 40 hours on a
           single charge.
         </p>
@@ -109,7 +109,7 @@ function Hero() {
           </ButtonLink>
         </div>
       </div>
-      <figure className="relative aspect-square overflow-hidden rounded-card border border-line bg-graphite">
+      <figure className="relative aspect-square overflow-hidden rounded-card border border-line bg-surface">
         <Image
           src="/products/halo-one-front.webp"
           alt="Halo One headphones in graphite"
@@ -118,9 +118,11 @@ function Hero() {
           sizes="(min-width: 768px) 50vw, 100vw"
           className="object-cover"
         />
-        <figcaption className="label-mono absolute top-5 left-5 text-fog">Fig. 01 — Graphite</figcaption>
-        <span className="label-mono absolute bottom-5 left-5 text-fog">ANC · 6-mic array</span>
-        <span className="label-mono absolute right-5 bottom-5 text-fog">40 h battery</span>
+        <figcaption className="label-mono absolute top-5 left-5 text-fg-subtle">
+          Fig. 01 — Graphite
+        </figcaption>
+        <span className="label-mono absolute bottom-5 left-5 text-fg-subtle">ANC · 6-mic array</span>
+        <span className="label-mono absolute right-5 bottom-5 text-fg-subtle">40 h battery</span>
       </figure>
     </section>
   );
@@ -152,7 +154,7 @@ async function Categories() {
     <div className="grid gap-4 md:grid-cols-3">
       <Link
         href={`/categories/${lead.slug}`}
-        className="flex min-h-[440px] flex-col justify-between rounded-card bg-signal p-8 text-ink md:row-span-2"
+        className="flex min-h-[440px] flex-col justify-between rounded-card bg-signal p-8 text-on-signal md:row-span-2"
       >
         <span className="label-mono">
           {lead.name} · {lead.productCount} products
@@ -169,10 +171,10 @@ async function Categories() {
         <Link
           key={c.slug}
           href={`/categories/${c.slug}`}
-          className="flex min-h-[200px] items-end justify-between rounded-card border border-line bg-graphite p-6 hover:border-line-strong"
+          className="flex min-h-[200px] items-end justify-between rounded-card border border-line bg-surface p-6 hover:border-line-strong"
         >
           <span className="text-2xl font-medium">{c.name}</span>
-          <span className="label-mono text-fog">{c.productCount} →</span>
+          <span className="label-mono text-fg-subtle">{c.productCount} →</span>
         </Link>
       ))}
     </div>
@@ -188,11 +190,11 @@ async function NewArrivals() {
         <li key={p.id}>
           <Link
             href={`/products/${p.slug}`}
-            className="grid grid-cols-[48px_minmax(0,1fr)_auto] items-center gap-4 border-b border-line py-5 hover:text-signal md:grid-cols-[64px_minmax(0,1fr)_auto_auto] md:gap-6"
+            className="grid grid-cols-[48px_minmax(0,1fr)_auto] items-center gap-4 border-b border-line py-5 hover:text-accent md:grid-cols-[64px_minmax(0,1fr)_auto_auto] md:gap-6"
           >
-            <span className="label-mono text-fog">{String(i + 1).padStart(3, "0")}</span>
+            <span className="label-mono text-fg-subtle">{String(i + 1).padStart(3, "0")}</span>
             <span className="truncate text-xl font-medium tracking-[-0.01em] md:text-3xl">{p.name}</span>
-            <span className="hidden text-sm text-fog md:inline">{p.categoryName}</span>
+            <span className="hidden text-sm text-fg-subtle md:inline">{p.categoryName}</span>
             <Price cents={p.priceFromCents} from={p.hasPriceRange} className="text-sm" />
           </Link>
         </li>
@@ -209,10 +211,10 @@ function Engineering() {
     ["Fast charge", "10 min = 5 h"],
   ];
   return (
-    <section aria-labelledby="engineering-title" className="border-y border-line bg-[#111113]">
+    <section aria-labelledby="engineering-title" className="theme-dark border-y border-line">
       <div className="container-site grid gap-16 py-28 md:grid-cols-2">
         <div className="flex flex-col gap-5">
-          <span className="label-mono text-signal">04 / Engineering</span>
+          <span className="label-mono text-accent">04 / Engineering</span>
           <h2
             id="engineering-title"
             className="text-4xl leading-[1.05] font-semibold tracking-[-0.03em] md:text-5xl"
@@ -221,7 +223,7 @@ function Engineering() {
             <br />
             One quiet room.
           </h2>
-          <p className="max-w-md text-[17px] leading-relaxed text-ash">
+          <p className="max-w-md text-[17px] leading-relaxed text-fg-muted">
             Halo One listens to the world around you and to the seal around each ear, then adjusts
             cancellation continuously. No presets to choose, nothing to tune.
           </p>
@@ -229,7 +231,7 @@ function Engineering() {
         <dl className="grid grid-cols-2 border-t border-line-strong">
           {specs.map(([k, v]) => (
             <div key={k} className="flex flex-col gap-1.5 border-b border-line-strong py-6">
-              <dt className="label-mono text-fog">{k}</dt>
+              <dt className="label-mono text-fg-subtle">{k}</dt>
               <dd className="text-2xl font-medium md:text-3xl">{v}</dd>
             </div>
           ))}
@@ -247,26 +249,26 @@ async function Campaign() {
   const image = bone?.images[0] ?? product.images[0];
   return (
     <div className="grid overflow-hidden rounded-card border border-line md:grid-cols-2">
-      <div className="relative min-h-[420px] bg-graphite">
+      <div className="relative min-h-[420px] bg-surface">
         {image && (
           <Image
             src={image.url}
             alt={image.alt}
             fill
             sizes="(min-width: 768px) 50vw, 100vw"
-            className="object-cover"
+            className="object-contain p-8"
           />
         )}
       </div>
-      <div className="flex flex-col justify-center gap-5 bg-graphite p-8 md:p-14">
-        <span className="label-mono text-fog">05 / Campaign — {product.name}</span>
+      <div className="flex flex-col justify-center gap-5 bg-surface p-8 md:p-14">
+        <span className="label-mono text-fg-subtle">05 / Campaign — {product.name}</span>
         <h2
           id="campaign-title"
           className="text-3xl leading-[1.05] font-semibold tracking-[-0.03em] md:text-[44px]"
         >
           A speaker that stands still so the room doesn&apos;t have to.
         </h2>
-        <p className="leading-relaxed text-ash">{product.description}</p>
+        <p className="leading-relaxed text-fg-muted">{product.description}</p>
         {bone && (
           <ButtonLink href={`/products/${product.slug}`} variant="secondary" className="self-start">
             Discover {product.name} — <Price cents={bone.priceCents} />
@@ -290,7 +292,7 @@ function Trust() {
         {items.map(([k, v]) => (
           <li key={k} className="flex flex-col gap-1.5 py-7 pr-6">
             <span className="text-[15px] font-medium">{k}</span>
-            <span className="text-[13px] leading-relaxed text-fog">{v}</span>
+            <span className="text-[13px] leading-relaxed text-fg-subtle">{v}</span>
           </li>
         ))}
       </ul>
@@ -302,7 +304,7 @@ function GridSkeleton() {
   return (
     <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-4" aria-hidden="true">
       {Array.from({ length: 4 }, (_, i) => (
-        <div key={i} className="aspect-[4/5] animate-pulse rounded-card bg-graphite" />
+        <div key={i} className="aspect-[4/5] animate-pulse rounded-card bg-surface" />
       ))}
     </div>
   );

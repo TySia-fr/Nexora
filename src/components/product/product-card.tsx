@@ -9,7 +9,7 @@ export function ProductCard({ product, priority = false }: { product: ProductCar
       href={`/products/${product.slug}`}
       className="group flex flex-col gap-3.5 rounded-card focus-visible:outline-offset-4"
     >
-      <div className="relative aspect-[4/5] overflow-hidden rounded-card border border-line bg-graphite">
+      <div className="relative aspect-[4/5] overflow-hidden rounded-card border border-line bg-surface">
         {product.image && (
           <Image
             src={product.image.url}
@@ -30,15 +30,15 @@ export function ProductCard({ product, priority = false }: { product: ProductCar
           />
         )}
         {!product.inStock && (
-          <span className="label-mono absolute top-3.5 left-3.5 rounded-full border border-line-strong bg-ink/80 px-2 py-1 text-ash">
+          <span className="label-mono absolute top-3.5 left-3.5 rounded-full border border-line-strong bg-canvas/80 px-2 py-1 text-fg-muted">
             Out of stock
           </span>
         )}
       </div>
       <div className="flex justify-between gap-3">
         <div className="flex min-w-0 flex-col gap-1">
-          <span className="truncate text-base font-medium group-hover:text-signal">{product.name}</span>
-          <span className="text-[13px] text-fog">
+          <span className="truncate text-base font-medium group-hover:text-accent">{product.name}</span>
+          <span className="text-[13px] text-fg-subtle">
             {product.tagline}
             {product.colors.length > 1 && ` · ${product.colors.length} options`}
           </span>

@@ -56,7 +56,7 @@ export function CheckoutForm({
     <form action={action} noValidate className="flex flex-wrap gap-14">
       <div className="flex min-w-0 flex-[999_1_520px] flex-col gap-10">
         {state && !state.ok && (
-          <div role="alert" className="rounded-card border border-amber/60 p-4 text-sm text-amber">
+          <div role="alert" className="rounded-card border border-warn/60 p-4 text-sm text-warn">
             {formError ?? state.message}{" "}
             {(state.code === "CART_CHANGED" ||
               state.code === "OUT_OF_STOCK" ||
@@ -69,12 +69,12 @@ export function CheckoutForm({
         )}
 
         <fieldset className="flex flex-col gap-4">
-          <legend className="label-mono mb-4 text-fog">Contact</legend>
+          <legend className="label-mono mb-4 text-fg-subtle">Contact</legend>
           {field("email", "Email", { type: "email", autoComplete: "email", required: true })}
         </fieldset>
 
         <fieldset className="grid gap-4 sm:grid-cols-2">
-          <legend className="label-mono mb-4 text-fog">Shipping address · France</legend>
+          <legend className="label-mono mb-4 text-fg-subtle">Shipping address · France</legend>
           <div className="sm:col-span-2">
             {field("fullName", "Full name", { autoComplete: "name", required: true })}
           </div>
@@ -97,7 +97,7 @@ export function CheckoutForm({
         </fieldset>
 
         <fieldset className="flex flex-col gap-2.5">
-          <legend className="label-mono mb-4 text-fog">Delivery</legend>
+          <legend className="label-mono mb-4 text-fg-subtle">Delivery</legend>
           {(
             [
               ["STANDARD", "Standard", "2–4 business days"],
@@ -108,7 +108,7 @@ export function CheckoutForm({
               key={value}
               className={cn(
                 "flex cursor-pointer items-center justify-between gap-3 rounded-card border p-4",
-                method === value ? "border-paper" : "border-line-strong",
+                method === value ? "border-fg" : "border-line-strong",
               )}
             >
               <span className="flex items-center gap-3">
@@ -118,11 +118,11 @@ export function CheckoutForm({
                   value={value}
                   checked={method === value}
                   onChange={() => setMethod(value)}
-                  className="size-4.5 accent-signal"
+                  className="size-4.5 accent-accent"
                 />
                 <span className="flex flex-col">
                   <span className="text-[15px]">{label}</span>
-                  <span className="text-[13px] text-fog">{eta}</span>
+                  <span className="text-[13px] text-fg-subtle">{eta}</span>
                 </span>
               </span>
               <span className="font-mono text-sm">
@@ -135,9 +135,9 @@ export function CheckoutForm({
 
       <aside
         aria-label="Order summary"
-        className="flex flex-[1_1_320px] flex-col gap-5 self-start rounded-card border border-line bg-graphite p-7"
+        className="flex flex-[1_1_320px] flex-col gap-5 self-start rounded-card border border-line bg-surface p-7"
       >
-        <h2 className="label-mono text-fog">Order summary</h2>
+        <h2 className="label-mono text-fg-subtle">Order summary</h2>
         <SummaryRows totals={t} />
         {paymentsEnabled ? (
           <button type="submit" disabled={pending} className={buttonClasses("primary", "lg", "w-full")}>
@@ -148,13 +148,13 @@ export function CheckoutForm({
             <button type="submit" disabled className={buttonClasses("primary", "lg", "w-full")}>
               Payments unavailable
             </button>
-            <p role="note" className="text-[13px] text-amber">
+            <p role="note" className="text-[13px] text-warn">
               Payments aren&apos;t configured on this deployment, so orders can&apos;t be placed. Nothing is
               charged.
             </p>
           </>
         )}
-        <p className="text-xs leading-relaxed text-fog">
+        <p className="text-xs leading-relaxed text-fg-subtle">
           You&apos;ll pay on Stripe&apos;s secure page. Your order is confirmed only once Stripe confirms the
           payment. Items are reserved for 30 minutes.
         </p>
