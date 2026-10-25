@@ -24,7 +24,7 @@ export function OrderActions({ orderId, allowed }: { orderId: string; allowed: s
   // Admins never mark orders paid by hand: only the Stripe webhook does.
   const options = allowed.filter((s) => s !== "PAID");
   if (options.length === 0)
-    return <p className="text-sm text-fog">No further status changes are possible.</p>;
+    return <p className="text-sm text-fg-subtle">No further status changes are possible.</p>;
   return (
     <div className="flex flex-col gap-2">
       <div className="flex flex-wrap gap-2">
@@ -48,7 +48,7 @@ export function OrderActions({ orderId, allowed }: { orderId: string; allowed: s
         ))}
       </div>
       {error && (
-        <p role="alert" className="text-sm text-amber">
+        <p role="alert" className="text-sm text-warn">
           {error}
         </p>
       )}

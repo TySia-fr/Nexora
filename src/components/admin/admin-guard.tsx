@@ -15,7 +15,7 @@ async function Guard({ children }: { children: ReactNode }) {
 
 export function AdminGuard({ children }: { children: ReactNode }) {
   return (
-    <Suspense fallback={<div className="h-96 animate-pulse rounded-card bg-graphite" aria-busy="true" />}>
+    <Suspense fallback={<div className="h-96 animate-pulse rounded-card bg-well" aria-busy="true" />}>
       <Guard>{children}</Guard>
     </Suspense>
   );

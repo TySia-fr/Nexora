@@ -32,10 +32,10 @@ async function AdminDashboardContent() {
       />
       <div className="mb-8 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {kpis.map(([label, value, note]) => (
-          <div key={label} className="flex flex-col gap-2.5 rounded-card border border-line bg-graphite p-5">
-            <span className="label-mono text-fog">{label}</span>
+          <div key={label} className="flex flex-col gap-2.5 rounded-card border border-line bg-surface p-5">
+            <span className="label-mono text-fg-subtle">{label}</span>
             <span className="text-3xl font-semibold tracking-[-0.02em]">{value}</span>
-            <span className="text-xs text-ash">{note}</span>
+            <span className="text-xs text-fg-muted">{note}</span>
           </div>
         ))}
       </div>
@@ -45,7 +45,7 @@ async function AdminDashboardContent() {
             <h2 id="recent" className="font-semibold">
               Recent orders
             </h2>
-            <Link href="/admin/orders" className="text-sm text-ash hover:text-signal">
+            <Link href="/admin/orders" className="text-sm text-fg-muted hover:text-accent">
               All orders →
             </Link>
           </div>
@@ -63,7 +63,7 @@ async function AdminDashboardContent() {
                 {d.recentOrders.map((o) => (
                   <tr key={o.id}>
                     <td className={td}>
-                      <Link href={`/admin/orders/${o.id}`} className="font-mono hover:text-signal">
+                      <Link href={`/admin/orders/${o.id}`} className="font-mono hover:text-accent">
                         {formatOrderNumber(o.number)}
                       </Link>
                     </td>
@@ -80,21 +80,23 @@ async function AdminDashboardContent() {
         </section>
         <section
           aria-labelledby="low"
-          className="flex-[1_1_280px] rounded-card border border-line bg-graphite p-5"
+          className="flex-[1_1_280px] rounded-card border border-line bg-surface p-5"
         >
           <h2 id="low" className="mb-3 font-semibold">
             Low stock (≤ {LOW_STOCK_THRESHOLD})
           </h2>
           {d.lowStock.length === 0 ? (
-            <p className="text-sm text-ash">Everything is well stocked.</p>
+            <p className="text-sm text-fg-muted">Everything is well stocked.</p>
           ) : (
             <ul className="flex flex-col" role="list">
               {d.lowStock.map((v) => (
                 <li key={v.id} className="flex justify-between gap-3 border-t border-line py-2.5 text-sm">
-                  <Link href={`/admin/products/${v.product.id}`} className="hover:text-signal">
+                  <Link href={`/admin/products/${v.product.id}`} className="hover:text-accent">
                     {v.product.name} — {v.name}
                   </Link>
-                  <span className={`font-mono ${v.stock === 0 ? "text-amber" : "text-ash"}`}>{v.stock}</span>
+                  <span className={`font-mono ${v.stock === 0 ? "text-warn" : "text-fg-muted"}`}>
+                    {v.stock}
+                  </span>
                 </li>
               ))}
             </ul>

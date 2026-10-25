@@ -49,7 +49,7 @@ async function CheckoutContent() {
           <li key={l.id} className="flex justify-between gap-4 p-4 text-sm">
             <span>
               {l.productName}{" "}
-              <span className="text-fog">
+              <span className="text-fg-subtle">
                 · {l.variantName} · ×{l.quantity}
               </span>
             </span>
@@ -77,10 +77,8 @@ async function CheckoutContent() {
 export default function CheckoutPage() {
   return (
     <div className="container-site max-w-[1200px] py-12">
-      <h1 className="mb-10 border-b border-line pb-8 text-4xl font-semibold tracking-[-0.03em] md:text-5xl">
-        Checkout
-      </h1>
-      <Suspense fallback={<div className="h-96 animate-pulse rounded-card bg-graphite" aria-busy="true" />}>
+      <h1 className="mb-10 border-b border-line pb-8 text-display-l">Checkout</h1>
+      <Suspense fallback={<div className="h-96 animate-pulse rounded-card bg-well" aria-busy="true" />}>
         <CheckoutContent />
       </Suspense>
     </div>

@@ -6,7 +6,7 @@ export function AdminHeader({ title, meta, action }: { title: string; meta?: str
   return (
     <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
       <div className="flex flex-col gap-1.5">
-        {meta && <span className="label-mono text-fog">{meta}</span>}
+        {meta && <span className="label-mono text-fg-subtle">{meta}</span>}
         <h1 className="text-3xl font-semibold tracking-[-0.02em]">{title}</h1>
       </div>
       {action}
@@ -33,7 +33,7 @@ export function Pager({
       ) : (
         <span />
       )}
-      <span className="label-mono text-fog">
+      <span className="label-mono text-fg-subtle">
         Page {page} of {pageCount}
       </span>
       {page < pageCount ? (
@@ -51,7 +51,7 @@ export function TableBox({ children }: { children: ReactNode }) {
   return <div className="overflow-x-auto rounded-card border border-line">{children}</div>;
 }
 
-export const th = "label-mono p-3.5 text-left font-normal text-fog";
+export const th = "label-mono p-3.5 text-left font-normal text-fg-subtle";
 export const td = "border-t border-line p-3.5 align-top";
 
 export function pageParam(v: unknown): number {

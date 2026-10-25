@@ -11,7 +11,7 @@ export function NewsletterForm() {
   const error = state && !state.ok ? state.message : null;
   return (
     <form action={action} className="flex flex-col gap-2" noValidate>
-      <label htmlFor="newsletter-email" className="label-mono text-fog">
+      <label htmlFor="newsletter-email" className="label-mono text-fg-subtle">
         Email address
       </label>
       <div className="flex flex-wrap gap-2">
@@ -37,7 +37,7 @@ export function NewsletterForm() {
       <p
         id="newsletter-status"
         role="status"
-        className={cn("min-h-5 text-[13px]", error ? "text-amber" : "text-signal")}
+        className={cn("min-h-5 text-[13px]", error ? "text-warn" : "text-accent")}
       >
         {error ?? (state?.ok ? "Thanks — you're on the list for the next launch." : "")}
       </p>

@@ -10,7 +10,7 @@ async function AdminCategoriesContent() {
   return (
     <>
       <AdminHeader title="Categories" meta={`${categories.length} categories`} />
-      <p className="mb-4 text-sm text-ash">A category can only be deleted once it has no products.</p>
+      <p className="mb-4 text-sm text-fg-muted">A category can only be deleted once it has no products.</p>
       {categories.map((c) => (
         <CategoryRow
           key={`${c.id}-${c.updatedAt.toISOString()}`}

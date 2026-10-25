@@ -18,20 +18,20 @@ const nav = [
 
 export default function AdminLayout({ children }: LayoutProps<"/admin">) {
   return (
-    <div className="flex min-h-dvh flex-wrap">
+    <div className="theme-dark flex min-h-dvh flex-wrap">
       <nav aria-label="Admin" className="flex w-full flex-col gap-6 border-line p-6 lg:w-60 lg:border-r">
         <div className="flex items-baseline justify-between lg:flex-col lg:gap-1">
           <Link href="/" className="font-bold tracking-[0.18em]">
             NEXORA
           </Link>
-          <span className="label-mono text-signal">Admin</span>
+          <span className="label-mono text-accent">Admin</span>
         </div>
         <ul className="flex flex-wrap gap-1 text-sm lg:flex-col" role="list">
           {nav.map(([label, href]) => (
             <li key={href}>
               <Link
                 href={href}
-                className="block rounded-input px-3 py-2.5 text-mist hover:bg-graphite hover:text-paper"
+                className="block rounded-input px-3 py-2.5 text-fg-muted hover:bg-surface hover:text-fg"
               >
                 {label}
               </Link>

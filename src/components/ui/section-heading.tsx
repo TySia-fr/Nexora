@@ -16,7 +16,7 @@ export function SectionHeading({
   return (
     <div className="mb-8 flex flex-wrap items-end justify-between gap-4 border-t border-line pt-6">
       <div className="flex flex-col gap-2">
-        <span className="label-mono text-fog">
+        <span className="label-mono text-fg-subtle">
           {index} / {label}
         </span>
         {title && (

@@ -6,7 +6,7 @@ export const metadata: Metadata = { title: "Privacy", alternates: { canonical: "
 export default function PrivacyPage() {
   return (
     <>
-      <h1 className="mb-8 text-5xl font-semibold tracking-[-0.03em]">Privacy</h1>
+      <h1 className="mb-8 text-display-l">Privacy</h1>
       <ReviewNotice />
       <p>This page lists exactly what this application stores, based on its database schema.</p>
       <h2>Accounts</h2>

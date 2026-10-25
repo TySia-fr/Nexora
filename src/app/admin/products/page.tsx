@@ -32,7 +32,7 @@ async function AdminProductsContent({ searchParams }: PageProps<"/admin/products
         }
       />
       {sp.deleted && (
-        <p role="status" className="mb-4 text-sm text-signal">
+        <p role="status" className="mb-4 text-sm text-accent">
           Product deleted.
         </p>
       )}
@@ -89,15 +89,15 @@ async function AdminProductsContent({ searchParams }: PageProps<"/admin/products
               return (
                 <tr key={p.id}>
                   <td className={td}>
-                    <Link href={`/admin/products/${p.id}`} className="font-medium hover:text-signal">
+                    <Link href={`/admin/products/${p.id}`} className="font-medium hover:text-accent">
                       {p.name}
                     </Link>
-                    {p.featured && <span className="label-mono ml-2 text-signal">featured</span>}
+                    {p.featured && <span className="label-mono ml-2 text-accent">featured</span>}
                   </td>
-                  <td className={`${td} text-ash`}>{p.category.name}</td>
-                  <td className={`${td} text-ash`}>{p.status.toLowerCase()}</td>
-                  <td className={`${td} text-ash`}>{active.length}</td>
-                  <td className={`${td} font-mono ${stock === 0 ? "text-amber" : ""}`}>{stock}</td>
+                  <td className={`${td} text-fg-muted`}>{p.category.name}</td>
+                  <td className={`${td} text-fg-muted`}>{p.status.toLowerCase()}</td>
+                  <td className={`${td} text-fg-muted`}>{active.length}</td>
+                  <td className={`${td} font-mono ${stock === 0 ? "text-warn" : ""}`}>{stock}</td>
                   <td className={`${td} text-right font-mono`}>{from === null ? "—" : formatMoney(from)}</td>
                 </tr>
               );

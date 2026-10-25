@@ -11,16 +11,16 @@ async function Content({ searchParams }: { searchParams: PageProps<"/sign-in">["
   return (
     <>
       {sp.reset === "1" && (
-        <p role="status" className="rounded-card border border-line-strong p-3.5 text-sm text-signal">
+        <p role="status" className="rounded-card border border-line-strong p-3.5 text-sm text-accent">
           Password updated. Sign in with your new password.
         </p>
       )}
       <SignInForm next={next} />
-      <p className="text-sm text-ash">
+      <p className="text-sm text-fg-muted">
         New here?{" "}
         <Link
           href={`/sign-up?next=${encodeURIComponent(next)}`}
-          className="text-paper underline underline-offset-4"
+          className="text-fg underline underline-offset-4"
         >
           Create an account
         </Link>
@@ -32,7 +32,7 @@ async function Content({ searchParams }: { searchParams: PageProps<"/sign-in">["
 export default function SignInPage({ searchParams }: PageProps<"/sign-in">) {
   return (
     <>
-      <h1 className="text-4xl font-semibold tracking-[-0.03em]">Sign in</h1>
+      <h1 className="text-display-m">Sign in</h1>
       <Suspense fallback={null}>
         <Content searchParams={searchParams} />
       </Suspense>

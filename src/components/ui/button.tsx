@@ -1,43 +1,79 @@
 import Link from "next/link";
-import type { ComponentProps } from "react";
+import type { ComponentProps, ReactNode } from "react";
+import { ArrowRight } from "lucide-react";
 import { cn } from "@/lib/cn";
 
-type Variant = "primary" | "secondary" | "ghost" | "inverse";
+/**
+ * primary   — solid foreground colour (near-black on light, off-white inside .theme-dark)
+ * secondary — hairline outline
+ * ghost     — text only
+ * inverse   — solid, quieter weight; kept for compact form actions
+ * signal    — the brand accent; one per screen at most
+ */
+type Variant = "primary" | "secondary" | "ghost" | "inverse" | "signal";
 type Size = "md" | "lg" | "sm";
 
 const base =
-  "inline-flex items-center justify-center gap-2 rounded-full font-medium whitespace-nowrap transition-colors duration-150 disabled:cursor-not-allowed disabled:bg-graphite-2 disabled:text-fog disabled:border-transparent";
+  "group/btn relative inline-flex select-none items-center justify-center gap-2 rounded-full font-medium whitespace-nowrap transition-[background-color,border-color,color,opacity,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-quint)] active:scale-[0.98] disabled:pointer-events-none disabled:opacity-45";
 const variants: Record<Variant, string> = {
-  primary: "bg-signal text-ink hover:bg-signal-strong font-semibold",
-  secondary: "border border-line-strong text-paper hover:border-paper",
-  ghost: "text-paper hover:text-signal",
-  inverse: "bg-paper text-ink hover:bg-mist font-semibold",
+  primary: "bg-fg text-canvas hover:bg-fg/85",
+  secondary: "border border-line-strong text-fg hover:border-fg hover:bg-fg/[0.03]",
+  ghost: "text-fg hover:text-fg-muted",
+  inverse: "bg-fg text-canvas hover:bg-fg/85",
+  signal: "bg-signal text-on-signal hover:bg-signal-strong",
 };
 const sizes: Record<Size, string> = {
   sm: "h-11 px-4 text-sm",
   md: "h-12 px-6 text-[15px]",
-  lg: "h-14 px-7 text-base",
+  lg: "h-14 px-7 text-[15px]",
 };
 
 export function buttonClasses(variant: Variant = "primary", size: Size = "md", className?: string) {
   return cn(base, variants[variant], sizes[size], className);
 }
 
+/** Arrow that nudges forward on hover; purely decorative. */
+export function ButtonArrow() {
+  return (
+    <ArrowRight
+      className="size-4 transition-transform duration-[var(--duration-ui)] ease-[var(--ease-out-expo)] group-hover/btn:translate-x-0.5"
+      strokeWidth={1.8}
+      aria-hidden="true"
+    />
+  );
+}
+
+type Extra = { variant?: Variant; size?: Size; arrow?: boolean; children?: ReactNode };
+
 export function Button({
   variant,
   size,
+  arrow,
   className,
+  children,
   type = "button",
   ...props
-}: ComponentProps<"button"> & { variant?: Variant; size?: Size }) {
-  return <button type={type} className={buttonClasses(variant, size, className)} {...props} />;
+}: ComponentProps<"button"> & Extra) {
+  return (
+    <button type={type} className={buttonClasses(variant, size, className)} {...props}>
+      {children}
+      {arrow && <ButtonArrow />}
+    </button>
+  );
 }
 
 export function ButtonLink({
   variant,
   size,
+  arrow,
   className,
+  children,
   ...props
-}: ComponentProps<typeof Link> & { variant?: Variant; size?: Size }) {
-  return <Link className={buttonClasses(variant, size, className)} {...props} />;
+}: ComponentProps<typeof Link> & Extra) {
+  return (
+    <Link className={buttonClasses(variant, size, className)} {...props}>
+      {children}
+      {arrow && <ButtonArrow />}
+    </Link>
+  );
 }

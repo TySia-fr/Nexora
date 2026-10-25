@@ -18,8 +18,8 @@ export default function ProductsPage({ searchParams }: PageProps<"/products">) {
   return (
     <div className="container-site py-12">
       <header className="mb-10 flex flex-col gap-2 border-b border-line pb-8">
-        <span className="label-mono text-fog">Catalog</span>
-        <h1 className="text-4xl font-semibold tracking-[-0.03em] md:text-5xl">All products</h1>
+        <span className="label-mono text-fg-subtle">Catalog</span>
+        <h1 className="text-display-l">All products</h1>
       </header>
       <Suspense fallback={<ListingSkeleton />}>
         <Results searchParams={searchParams} />

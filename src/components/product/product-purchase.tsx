@@ -123,12 +123,12 @@ export function ProductPurchase({
 
       <div className="flex min-w-0 flex-[1_1_360px] flex-col gap-7">
         <div className="flex flex-col gap-2.5">
-          <span className="label-mono text-fog">{product.tagline}</span>
-          <h1 className="text-4xl font-semibold tracking-[-0.03em] md:text-5xl">{product.name}</h1>
+          <span className="label-mono text-fg-subtle">{product.tagline}</span>
+          <h1 className="text-display-l">{product.name}</h1>
           <div className="flex flex-wrap items-center gap-4">
             <Price cents={variant.priceCents} className="text-[22px]" />
             {product.rating && (
-              <a href="#reviews" className="text-[13px] text-ash hover:text-signal">
+              <a href="#reviews" className="text-[13px] text-fg-muted hover:text-accent">
                 {product.rating.average.toFixed(1)} / 5 · {product.rating.count}{" "}
                 {product.rating.count === 1 ? "review" : "reviews"}
               </a>
@@ -138,8 +138,8 @@ export function ProductPurchase({
 
         {product.variants.length > 1 && (
           <fieldset className="flex flex-col gap-3">
-            <legend className="label-mono mb-3 text-fog">
-              Option — <span className="text-paper">{variant.name}</span>
+            <legend className="label-mono mb-3 text-fg-subtle">
+              Option — <span className="text-fg">{variant.name}</span>
             </legend>
             <div className="flex flex-wrap gap-2.5">
               {product.variants.map((v) => {
@@ -153,8 +153,8 @@ export function ProductPurchase({
                     aria-label={`${v.name}${v.stock === 0 ? ", out of stock" : ""}, ${formatMoney(v.priceCents)}`}
                     className={cn(
                       "flex h-11 items-center gap-2 rounded-full border px-3.5 text-sm",
-                      selected ? "border-paper" : "border-line-strong hover:border-ash",
-                      v.stock === 0 && "text-fog line-through decoration-fog",
+                      selected ? "border-fg" : "border-line-strong hover:border-fg-muted",
+                      v.stock === 0 && "text-fg-subtle line-through decoration-fg-subtle",
                     )}
                   >
                     {v.colorHex && (
@@ -171,7 +171,7 @@ export function ProductPurchase({
             </div>
           </fieldset>
         )}
-        <p className={cn("-mt-3 text-[13px]", soldOut ? "text-amber" : "text-ash")}>{stockText}</p>
+        <p className={cn("-mt-3 text-[13px]", soldOut ? "text-warn" : "text-fg-muted")}>{stockText}</p>
 
         <div className="flex flex-col gap-2.5">
           <div className="flex items-center justify-between gap-2.5">
@@ -185,7 +185,7 @@ export function ProductPurchase({
                 onClick={() => setQty((q) => Math.max(1, q - 1))}
                 disabled={soldOut || qty <= 1}
                 aria-label="Decrease quantity"
-                className="flex size-12 items-center justify-center disabled:text-fog"
+                className="flex size-12 items-center justify-center disabled:text-fg-subtle"
               >
                 <Minus className="size-4" aria-hidden="true" />
               </button>
@@ -197,7 +197,7 @@ export function ProductPurchase({
                 onClick={() => setQty((q) => Math.min(maxQty, q + 1))}
                 disabled={soldOut || qty >= maxQty}
                 aria-label="Increase quantity"
-                className="flex size-12 items-center justify-center disabled:text-fog"
+                className="flex size-12 items-center justify-center disabled:text-fg-subtle"
               >
                 <Plus className="size-4" aria-hidden="true" />
               </button>
@@ -208,10 +208,10 @@ export function ProductPurchase({
               disabled={savePending}
               aria-pressed={saved}
               aria-label={saved ? "Remove from wishlist" : "Save to wishlist"}
-              className="flex size-13 items-center justify-center rounded-full border border-line-strong hover:border-paper"
+              className="flex size-13 items-center justify-center rounded-full border border-line-strong hover:border-fg"
             >
               <Heart
-                className={cn("size-[18px]", saved && "fill-signal text-signal")}
+                className={cn("size-[18px]", saved && "fill-accent text-accent")}
                 strokeWidth={1.6}
                 aria-hidden="true"
               />
@@ -233,7 +233,7 @@ export function ProductPurchase({
 
         <p
           role="status"
-          className={cn("-mt-3 min-h-5 text-[13px]", status?.kind === "error" ? "text-amber" : "text-signal")}
+          className={cn("-mt-3 min-h-5 text-[13px]", status?.kind === "error" ? "text-warn" : "text-accent")}
         >
           {status?.text}{" "}
           {status?.link && (
@@ -243,24 +243,24 @@ export function ProductPurchase({
           )}
         </p>
 
-        <dl className="grid grid-cols-[auto_1fr] gap-x-5 gap-y-2.5 border-t border-line pt-5 font-mono text-xs text-fog uppercase">
+        <dl className="grid grid-cols-[auto_1fr] gap-x-5 gap-y-2.5 border-t border-line pt-5 font-mono text-xs text-fg-subtle uppercase">
           <dt>SKU</dt>
-          <dd className="text-paper">{variant.sku}</dd>
+          <dd className="text-fg">{variant.sku}</dd>
           <dt>Delivery</dt>
-          <dd className="text-paper">
+          <dd className="text-fg">
             {variant.priceCents >= 9900
               ? "Free standard · 2–4 business days"
               : "€6.90 standard, free over €99"}
           </dd>
           <dt>Returns</dt>
-          <dd className="text-paper">
-            <Link href="/returns" className="hover:text-signal">
+          <dd className="text-fg">
+            <Link href="/returns" className="hover:text-accent">
               30 days
             </Link>
           </dd>
         </dl>
 
-        <p className="text-[15px] leading-relaxed text-ash">{product.description}</p>
+        <p className="text-[15px] leading-relaxed text-fg-muted">{product.description}</p>
       </div>
     </div>
   );

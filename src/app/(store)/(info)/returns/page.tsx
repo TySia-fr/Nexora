@@ -6,7 +6,7 @@ export const metadata: Metadata = { title: "Returns", alternates: { canonical: "
 export default function ReturnsPage() {
   return (
     <>
-      <h1 className="mb-8 text-5xl font-semibold tracking-[-0.03em]">Returns</h1>
+      <h1 className="mb-8 text-display-l">Returns</h1>
       <ReviewNotice />
       <h2>30-day returns</h2>
       <p>

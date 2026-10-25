@@ -13,7 +13,7 @@ export function CouponToggle({ id, active }: { id: string; active: boolean }) {
       type="button"
       disabled={pending}
       onClick={() => start(async () => void (await setCouponActiveAction(id, !active)))}
-      className="text-xs text-ash underline-offset-4 hover:text-paper hover:underline"
+      className="text-xs text-fg-muted underline-offset-4 hover:text-fg hover:underline"
     >
       {active ? "Disable" : "Enable"}
     </button>
@@ -25,7 +25,7 @@ export function CouponCreateForm({ categories }: { categories: { id: string; nam
   const fe = state && !state.ok ? (state.fieldErrors ?? {}) : {};
   const input = (name: string, label: string, props: Record<string, unknown> = {}) => (
     <div className="flex flex-col gap-1">
-      <label htmlFor={`c-${name}`} className="label-mono text-fog">
+      <label htmlFor={`c-${name}`} className="label-mono text-fg-subtle">
         {label}
       </label>
       <input
@@ -36,7 +36,7 @@ export function CouponCreateForm({ categories }: { categories: { id: string; nam
         className={cn(inputBase, "h-10 w-full")}
         {...props}
       />
-      {fe[name] && <span className="text-xs text-amber">{fe[name]}</span>}
+      {fe[name] && <span className="text-xs text-warn">{fe[name]}</span>}
     </div>
   );
   return (
@@ -47,7 +47,7 @@ export function CouponCreateForm({ categories }: { categories: { id: string; nam
         className: cn(inputBase, "h-10 w-full font-mono uppercase"),
       })}
       <div className="flex flex-col gap-1">
-        <label htmlFor="c-type" className="label-mono text-fog">
+        <label htmlFor="c-type" className="label-mono text-fg-subtle">
           Type
         </label>
         <select
@@ -63,7 +63,7 @@ export function CouponCreateForm({ categories }: { categories: { id: string; nam
       {input("value", "Value (% or €)", { inputMode: "decimal" })}
       {input("minSubtotal", "Minimum order €", { inputMode: "decimal", placeholder: "0" })}
       <div className="flex flex-col gap-1">
-        <label htmlFor="c-category" className="label-mono text-fog">
+        <label htmlFor="c-category" className="label-mono text-fg-subtle">
           Only category
         </label>
         <select
@@ -88,8 +88,8 @@ export function CouponCreateForm({ categories }: { categories: { id: string; nam
           Create coupon
         </button>
         <p role="status" className="text-sm">
-          {state?.ok && <span className="text-signal">Coupon created.</span>}
-          {state && !state.ok && !state.fieldErrors && <span className="text-amber">{state.message}</span>}
+          {state?.ok && <span className="text-accent">Coupon created.</span>}
+          {state && !state.ok && !state.fieldErrors && <span className="text-warn">{state.message}</span>}
         </p>
       </div>
     </form>

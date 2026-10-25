@@ -14,7 +14,7 @@ export function SortSelect({ value, labels }: { value: string; labels: Record<st
 
   return (
     <div className="flex items-center gap-2">
-      <label htmlFor="sort" className="label-mono text-fog">
+      <label htmlFor="sort" className="label-mono text-fg-subtle">
         Sort
       </label>
       <select

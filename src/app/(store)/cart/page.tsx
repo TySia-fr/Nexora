@@ -20,7 +20,7 @@ async function CartContent({ searchParams }: { searchParams: PageProps<"/cart">[
     return (
       <div className="flex flex-col items-start gap-5 rounded-card border border-line p-10">
         <h2 className="text-2xl font-medium">Your cart is empty.</h2>
-        <p className="text-ash">Start with the core collection or browse by category.</p>
+        <p className="text-fg-muted">Start with the core collection or browse by category.</p>
         <ButtonLink href="/products">Browse products</ButtonLink>
       </div>
     );
@@ -30,12 +30,12 @@ async function CartContent({ searchParams }: { searchParams: PageProps<"/cart">[
     <div className="flex flex-wrap gap-14">
       <section aria-label="Items" className="min-w-0 flex-[999_1_560px]">
         {cancelled && (
-          <p role="status" className="mb-6 rounded-card border border-line-strong p-4 text-sm text-mist">
+          <p role="status" className="mb-6 rounded-card border border-line-strong p-4 text-sm text-fg-muted">
             Payment was cancelled. Nothing was charged and your cart is unchanged.
           </p>
         )}
         {cart.hasIssues && (
-          <p role="alert" className="mb-6 rounded-card border border-amber/60 p-4 text-sm text-amber">
+          <p role="alert" className="mb-6 rounded-card border border-warn/60 p-4 text-sm text-warn">
             Some items changed since you added them. Review the highlighted lines before checking out.
           </p>
         )}
@@ -48,15 +48,15 @@ async function CartContent({ searchParams }: { searchParams: PageProps<"/cart">[
 
       <aside
         aria-label="Order summary"
-        className="flex flex-[1_1_320px] flex-col gap-6 self-start rounded-card border border-line bg-graphite p-7"
+        className="flex flex-[1_1_320px] flex-col gap-6 self-start rounded-card border border-line bg-surface p-7"
       >
-        <h2 className="label-mono text-fog">
+        <h2 className="label-mono text-fg-subtle">
           Summary · {cart.itemCount} {cart.itemCount === 1 ? "item" : "items"}
         </h2>
         <CouponForm applied={cart.couponCode} message={cart.couponMessage} />
         <SummaryRows totals={cart.totals} shippingLabel="Standard shipping" />
         {cart.totals.freeShippingRemainingCents > 0 && (
-          <p className="text-[13px] text-ash">
+          <p className="text-[13px] text-fg-muted">
             Add {formatMoney(cart.totals.freeShippingRemainingCents)} more for free standard shipping.
           </p>
         )}
@@ -72,7 +72,7 @@ async function CartContent({ searchParams }: { searchParams: PageProps<"/cart">[
             Checkout
           </ButtonLink>
         )}
-        <p className="text-xs text-fog">
+        <p className="text-xs text-fg-subtle">
           VAT included. Totals are recalculated on our server before payment.
         </p>
       </aside>
@@ -84,12 +84,12 @@ export default function CartPage({ searchParams }: PageProps<"/cart">) {
   return (
     <div className="container-site py-12">
       <div className="mb-10 flex items-end justify-between gap-4 border-b border-line pb-8">
-        <h1 className="text-4xl font-semibold tracking-[-0.03em] md:text-5xl">Cart</h1>
-        <Link href="/products" className="text-sm text-ash hover:text-signal">
+        <h1 className="text-display-l">Cart</h1>
+        <Link href="/products" className="text-sm text-fg-muted hover:text-accent">
           Continue shopping →
         </Link>
       </div>
-      <Suspense fallback={<div className="h-80 animate-pulse rounded-card bg-graphite" aria-busy="true" />}>
+      <Suspense fallback={<div className="h-80 animate-pulse rounded-card bg-well" aria-busy="true" />}>
         <CartContent searchParams={searchParams} />
       </Suspense>
     </div>

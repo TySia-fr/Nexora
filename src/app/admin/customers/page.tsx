@@ -54,15 +54,15 @@ async function AdminCustomersContent({ searchParams }: PageProps<"/admin/custome
               <tr key={c.id}>
                 <td className={td}>
                   {c.name}
-                  {c.role === "ADMIN" && <span className="label-mono ml-2 text-signal">admin</span>}
+                  {c.role === "ADMIN" && <span className="label-mono ml-2 text-accent">admin</span>}
                 </td>
-                <td className={`${td} text-ash`}>{c.email}</td>
-                <td className={`${td} text-ash`}>{c.createdAt.toLocaleDateString("en-GB")}</td>
+                <td className={`${td} text-fg-muted`}>{c.email}</td>
+                <td className={`${td} text-fg-muted`}>{c.createdAt.toLocaleDateString("en-GB")}</td>
                 <td className={td}>
                   {c._count.orders > 0 ? (
                     <Link
                       href={`/admin/orders?q=${encodeURIComponent(c.email)}`}
-                      className="hover:text-signal"
+                      className="hover:text-accent"
                     >
                       {c._count.orders}
                     </Link>

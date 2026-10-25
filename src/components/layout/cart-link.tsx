@@ -7,7 +7,7 @@ export function CartLink({ count }: { count: number | null }) {
     <Link
       href="/cart"
       aria-label={label}
-      className="ml-1 flex h-11 items-center gap-2 rounded-full border border-line-strong px-3 hover:border-paper"
+      className="ml-1 flex h-11 items-center gap-2 rounded-full border border-line-strong px-3 hover:border-fg"
     >
       <ShoppingBag className="size-[18px]" strokeWidth={1.6} aria-hidden="true" />
       <span className="font-mono text-xs tabular-nums" aria-hidden="true">

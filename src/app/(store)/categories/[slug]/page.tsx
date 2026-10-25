@@ -26,9 +26,9 @@ async function CategoryContent({ params, searchParams }: PageProps<"/categories/
   return (
     <>
       <header className="mb-10 flex flex-col gap-3 border-b border-line pb-8">
-        <span className="label-mono text-fog">Category · {category.productCount} products</span>
-        <h1 className="text-4xl font-semibold tracking-[-0.03em] md:text-5xl">{category.name}</h1>
-        <p className="max-w-xl text-ash">{category.description}</p>
+        <span className="label-mono text-fg-subtle">Category · {category.productCount} products</span>
+        <h1 className="text-display-l">{category.name}</h1>
+        <p className="max-w-xl text-fg-muted">{category.description}</p>
       </header>
       <Listing query={query} basePath={`/categories/${category.slug}`} lockedCategory={category.slug} />
     </>

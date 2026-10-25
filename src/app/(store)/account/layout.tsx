@@ -19,7 +19,7 @@ export default function AccountLayout({ children }: LayoutProps<"/account">) {
           <Link
             key={href}
             href={href}
-            className="rounded-input px-3 py-2.5 text-sm text-mist hover:bg-graphite hover:text-paper"
+            className="rounded-input px-3 py-2.5 text-sm text-fg-muted hover:bg-surface hover:text-fg"
           >
             {label}
           </Link>
@@ -27,7 +27,7 @@ export default function AccountLayout({ children }: LayoutProps<"/account">) {
         <form action={signOutAction}>
           <button
             type="submit"
-            className="w-full rounded-input px-3 py-2.5 text-left text-sm text-ash hover:bg-graphite hover:text-paper"
+            className="w-full rounded-input px-3 py-2.5 text-left text-sm text-fg-muted hover:bg-surface hover:text-fg"
           >
             Sign out
           </button>

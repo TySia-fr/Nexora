@@ -22,14 +22,14 @@ async function EditProductContent({ params, searchParams }: PageProps<"/admin/pr
         meta={`Product · ${product.status.toLowerCase()}`}
         action={
           product.status === "ACTIVE" ? (
-            <Link href={`/products/${product.slug}`} className="text-sm text-ash hover:text-signal">
+            <Link href={`/products/${product.slug}`} className="text-sm text-fg-muted hover:text-accent">
               View in store →
             </Link>
           ) : undefined
         }
       />
       {saved && (
-        <p role="status" className="mb-6 text-sm text-signal">
+        <p role="status" className="mb-6 text-sm text-accent">
           Saved. The storefront updates on the next request.
         </p>
       )}
@@ -58,7 +58,7 @@ async function EditProductContent({ params, searchParams }: PageProps<"/admin/pr
           })),
         }}
       />
-      <p className="mt-8 text-xs text-fog">
+      <p className="mt-8 text-xs text-fg-subtle">
         Images are generated from the catalog definition (scripts/render/render-products.ts). Image upload is
         not implemented.
       </p>

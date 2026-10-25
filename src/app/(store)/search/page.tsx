@@ -22,13 +22,13 @@ async function Results({ searchParams }: { searchParams: PageProps<"/search">["s
         <Listing query={query} basePath="/search" />
       ) : (
         <div className="flex flex-col gap-4">
-          <p className="text-ash">Popular right now:</p>
+          <p className="text-fg-muted">Popular right now:</p>
           <ul className="flex flex-wrap gap-2" role="list">
             {["Halo One", "earbuds", "charger", "watch", "speaker"].map((t) => (
               <li key={t}>
                 <Link
                   href={`/search?q=${encodeURIComponent(t)}`}
-                  className="flex h-10 items-center rounded-full border border-line-strong px-4 text-sm hover:border-paper"
+                  className="flex h-10 items-center rounded-full border border-line-strong px-4 text-sm hover:border-fg"
                 >
                   {t}
                 </Link>
@@ -44,7 +44,7 @@ async function Results({ searchParams }: { searchParams: PageProps<"/search">["s
 export default function SearchPage({ searchParams }: PageProps<"/search">) {
   return (
     <div className="container-site py-12">
-      <h1 className="mb-8 text-4xl font-semibold tracking-[-0.03em] md:text-5xl">Search</h1>
+      <h1 className="mb-8 text-display-l">Search</h1>
       <Suspense fallback={<ListingSkeleton />}>
         <Results searchParams={searchParams} />
       </Suspense>

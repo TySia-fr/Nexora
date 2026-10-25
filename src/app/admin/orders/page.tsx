@@ -73,19 +73,19 @@ async function AdminOrdersContent({ searchParams }: PageProps<"/admin/orders">) 
             {orders.map((o) => (
               <tr key={o.id}>
                 <td className={td}>
-                  <Link href={`/admin/orders/${o.id}`} className="font-mono hover:text-signal">
+                  <Link href={`/admin/orders/${o.id}`} className="font-mono hover:text-accent">
                     {formatOrderNumber(o.number)}
                   </Link>
                 </td>
-                <td className={`${td} text-ash`}>
+                <td className={`${td} text-fg-muted`}>
                   {o.createdAt.toLocaleString("en-GB", { dateStyle: "short", timeStyle: "short" })}
                 </td>
                 <td className={td}>
                   {o.shipFullName}
                   <br />
-                  <span className="text-xs text-fog">{o.email}</span>
+                  <span className="text-xs text-fg-subtle">{o.email}</span>
                 </td>
-                <td className={`${td} text-ash`}>{o._count.items}</td>
+                <td className={`${td} text-fg-muted`}>{o._count.items}</td>
                 <td className={td}>
                   <StatusBadge status={o.status} />
                 </td>

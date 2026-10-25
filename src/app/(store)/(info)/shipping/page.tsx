@@ -9,7 +9,7 @@ export const metadata: Metadata = { title: "Shipping", alternates: { canonical: 
 export default function ShippingPage() {
   return (
     <>
-      <h1 className="mb-8 text-5xl font-semibold tracking-[-0.03em]">Shipping</h1>
+      <h1 className="mb-8 text-display-l">Shipping</h1>
       <ReviewNotice />
       <h2>Where we ship</h2>
       <p>Mainland France and Corsica. Overseas departments and other countries are not available.</p>

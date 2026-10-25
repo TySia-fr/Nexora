@@ -6,7 +6,7 @@ export const metadata: Metadata = { title: "Contact", alternates: { canonical: "
 export default function ContactPage() {
   return (
     <>
-      <h1 className="mb-8 text-5xl font-semibold tracking-[-0.03em]">Contact</h1>
+      <h1 className="mb-8 text-display-l">Contact</h1>
       <p>
         NEXORA is a demo store, so there is no customer service team. For questions about the project itself,
         reach the developer through the portfolio site.

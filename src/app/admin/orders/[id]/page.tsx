@@ -28,7 +28,7 @@ async function AdminOrderContent({ params }: PageProps<"/admin/orders/[id]">) {
               <li key={i.id} className="flex flex-wrap justify-between gap-3 p-4 text-sm">
                 <span>
                   {i.productName}{" "}
-                  <span className="text-fog">
+                  <span className="text-fg-subtle">
                     · {i.variantName} · <span className="font-mono">{i.sku}</span> ·{" "}
                     {formatMoney(i.unitPriceCents)} × {i.quantity}
                   </span>
@@ -38,11 +38,11 @@ async function AdminOrderContent({ params }: PageProps<"/admin/orders/[id]">) {
             ))}
           </ul>
           <dl className="grid max-w-sm grid-cols-[1fr_auto] gap-2 text-sm">
-            <dt className="text-ash">Subtotal</dt>
+            <dt className="text-fg-muted">Subtotal</dt>
             <dd className="font-mono">{formatMoney(order.subtotalCents)}</dd>
-            <dt className="text-ash">Discount {order.couponCode && `(${order.couponCode})`}</dt>
+            <dt className="text-fg-muted">Discount {order.couponCode && `(${order.couponCode})`}</dt>
             <dd className="font-mono">−{formatMoney(order.discountCents)}</dd>
-            <dt className="text-ash">Shipping ({order.shippingMethod.toLowerCase()})</dt>
+            <dt className="text-fg-muted">Shipping ({order.shippingMethod.toLowerCase()})</dt>
             <dd className="font-mono">{formatMoney(order.shippingCents)}</dd>
             <dt className="border-t border-line pt-2 font-semibold">Total</dt>
             <dd className="border-t border-line pt-2 font-mono">{formatMoney(order.totalCents)}</dd>
@@ -51,7 +51,7 @@ async function AdminOrderContent({ params }: PageProps<"/admin/orders/[id]">) {
             <h2 id="history" className="font-semibold">
               History
             </h2>
-            <ol className="flex flex-col gap-2 text-sm text-ash">
+            <ol className="flex flex-col gap-2 text-sm text-fg-muted">
               <li>{order.createdAt.toLocaleString("en-GB")} — order created</li>
               {order.paidAt && <li>{order.paidAt.toLocaleString("en-GB")} — payment confirmed by Stripe</li>}
               {history.map((h) => {
@@ -67,24 +67,24 @@ async function AdminOrderContent({ params }: PageProps<"/admin/orders/[id]">) {
           </section>
         </div>
         <aside className="flex flex-col gap-6">
-          <section className="flex flex-col gap-3 rounded-card border border-line bg-graphite p-5">
-            <h2 className="label-mono text-fog">Actions</h2>
+          <section className="flex flex-col gap-3 rounded-card border border-line bg-surface p-5">
+            <h2 className="label-mono text-fg-subtle">Actions</h2>
             <OrderActions orderId={order.id} allowed={[...ORDER_TRANSITIONS[order.status]]} />
           </section>
           <section className="flex flex-col gap-2 rounded-card border border-line p-5 text-sm">
-            <h2 className="label-mono text-fog">Customer</h2>
+            <h2 className="label-mono text-fg-subtle">Customer</h2>
             <p>{order.email}</p>
             {order.user ? (
               <Link
                 href={`/admin/customers?q=${encodeURIComponent(order.user.email)}`}
-                className="text-ash hover:text-signal"
+                className="text-fg-muted hover:text-accent"
               >
                 Account: {order.user.name}
               </Link>
             ) : (
-              <p className="text-fog">Guest checkout</p>
+              <p className="text-fg-subtle">Guest checkout</p>
             )}
-            <address className="mt-2 leading-relaxed not-italic text-mist">
+            <address className="mt-2 leading-relaxed not-italic text-fg-muted">
               {order.shipFullName}
               <br />
               {order.shipLine1}
@@ -105,8 +105,8 @@ async function AdminOrderContent({ params }: PageProps<"/admin/orders/[id]">) {
             </address>
           </section>
           <section className="flex flex-col gap-2 rounded-card border border-line p-5 text-sm">
-            <h2 className="label-mono text-fog">Payments</h2>
-            {order.payments.length === 0 && <p className="text-fog">None recorded.</p>}
+            <h2 className="label-mono text-fg-subtle">Payments</h2>
+            {order.payments.length === 0 && <p className="text-fg-subtle">None recorded.</p>}
             {order.payments.map((p) => (
               <p key={p.id} className="flex justify-between gap-2">
                 <span className="font-mono text-xs">{p.providerSessionId.slice(0, 18)}…</span>

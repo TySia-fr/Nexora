@@ -4,7 +4,7 @@ export default function GlobalError({ reset }: { error: Error & { digest?: strin
   return (
     <html lang="en">
       <body
-        style={{ background: "#0b0b0c", color: "#ededea", fontFamily: "system-ui, sans-serif", padding: 48 }}
+        style={{ background: "#f5f5f2", color: "#101010", fontFamily: "system-ui, sans-serif", padding: 48 }}
       >
         <h1>Something went wrong.</h1>
         <p>Please reload the page.</p>

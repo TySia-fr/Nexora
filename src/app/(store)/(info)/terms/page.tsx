@@ -6,7 +6,7 @@ export const metadata: Metadata = { title: "Terms", alternates: { canonical: "/t
 export default function TermsPage() {
   return (
     <>
-      <h1 className="mb-8 text-5xl font-semibold tracking-[-0.03em]">Terms</h1>
+      <h1 className="mb-8 text-display-l">Terms</h1>
       <ReviewNotice />
       <h2>This is a demonstration</h2>
       <p>

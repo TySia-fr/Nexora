@@ -63,7 +63,7 @@ export async function Listing({
     <div className="flex flex-wrap gap-x-12 gap-y-8">
       <aside className="w-full lg:w-60 lg:shrink-0" aria-label="Filters">
         <details className="group rounded-card border border-line lg:hidden">
-          <summary className="label-mono flex h-12 cursor-pointer items-center justify-between px-4 text-mist">
+          <summary className="label-mono flex h-12 cursor-pointer items-center justify-between px-4 text-fg-muted">
             Filters {chips.length > 0 && `(${chips.length})`}
             <span aria-hidden="true" className="transition-transform group-open:rotate-45">
               +
@@ -76,7 +76,7 @@ export async function Listing({
 
       <section className="min-w-0 flex-[999_1_560px]" aria-labelledby="results-count">
         <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-          <p id="results-count" className="text-sm text-ash" aria-live="polite">
+          <p id="results-count" className="text-sm text-fg-muted" aria-live="polite">
             {result.total} {result.total === 1 ? "product" : "products"}
           </p>
           <SortSelect value={query.sort} labels={SORT_LABELS} />
@@ -88,7 +88,7 @@ export async function Listing({
               <li key={c.label}>
                 <Link
                   href={c.href}
-                  className="flex h-9 items-center gap-1.5 rounded-full border border-line-strong px-3 text-[13px] hover:border-paper"
+                  className="flex h-9 items-center gap-1.5 rounded-full border border-line-strong px-3 text-[13px] hover:border-fg"
                   aria-label={`Remove filter ${c.label}`}
                 >
                   {c.label}
@@ -99,7 +99,7 @@ export async function Listing({
             <li>
               <Link
                 href={lockedCategory ? basePath : "/products"}
-                className="flex h-9 items-center px-2 text-[13px] text-ash underline-offset-4 hover:underline"
+                className="flex h-9 items-center px-2 text-[13px] text-fg-muted underline-offset-4 hover:underline"
               >
                 Clear all
               </Link>
@@ -112,7 +112,7 @@ export async function Listing({
         ) : (
           <div className="flex flex-col items-start gap-4 rounded-card border border-line p-10">
             <h2 className="text-xl font-medium">No products match these filters.</h2>
-            <p className="text-sm text-ash">Try removing a filter or widening the price range.</p>
+            <p className="text-sm text-fg-muted">Try removing a filter or widening the price range.</p>
             <Link href={lockedCategory ? basePath : "/products"} className={buttonClasses("secondary", "sm")}>
               Clear all filters
             </Link>
@@ -135,7 +135,7 @@ export async function Listing({
             ) : (
               <span />
             )}
-            <span className="label-mono text-fog">
+            <span className="label-mono text-fg-subtle">
               Page {Math.min(query.page, result.pageCount)} of {result.pageCount}
             </span>
             {query.page < result.pageCount ? (
@@ -162,7 +162,7 @@ export function ListingSkeleton() {
       <div className="hidden w-60 shrink-0 lg:block" />
       <div className="grid flex-1 grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-4">
         {Array.from({ length: 8 }, (_, i) => (
-          <div key={i} className="aspect-[4/5] animate-pulse rounded-card bg-graphite" />
+          <div key={i} className="aspect-[4/5] animate-pulse rounded-card bg-well" />
         ))}
       </div>
     </div>
@@ -190,14 +190,14 @@ function FiltersForm({
       {query.sort !== "newest" && <input type="hidden" name="sort" value={query.sort} />}
       {!lockedCategory && (
         <fieldset className="flex flex-col gap-2">
-          <legend className="label-mono mb-2 text-fog">Category</legend>
+          <legend className="label-mono mb-2 text-fg-subtle">Category</legend>
           <label className="flex min-h-9 items-center gap-2.5 text-sm">
             <input
               type="radio"
               name="category"
               value=""
               defaultChecked={!query.category}
-              className="size-4 accent-signal"
+              className="size-4 accent-accent"
             />
             All
           </label>
@@ -208,16 +208,16 @@ function FiltersForm({
                 name="category"
                 value={c.slug}
                 defaultChecked={query.category === c.slug}
-                className="size-4 accent-signal"
+                className="size-4 accent-accent"
               />
               {c.name}
-              <span className="ml-auto font-mono text-xs text-fog">{c.productCount}</span>
+              <span className="ml-auto font-mono text-xs text-fg-subtle">{c.productCount}</span>
             </label>
           ))}
         </fieldset>
       )}
       <fieldset className="flex flex-col gap-2">
-        <legend className="label-mono mb-2 text-fog">Price (€)</legend>
+        <legend className="label-mono mb-2 text-fg-subtle">Price (€)</legend>
         <div className="flex items-center gap-2">
           <label className="sr-only" htmlFor={`${idPrefix}-min`}>
             Minimum price in euros
@@ -232,7 +232,7 @@ function FiltersForm({
             defaultValue={query.min}
             className={cn(inputClasses, "h-11")}
           />
-          <span aria-hidden="true" className="text-fog">
+          <span aria-hidden="true" className="text-fg-subtle">
             –
           </span>
           <label className="sr-only" htmlFor={`${idPrefix}-max`}>
@@ -256,7 +256,7 @@ function FiltersForm({
           name="inStock"
           value="1"
           defaultChecked={query.inStock}
-          className="size-4 accent-signal"
+          className="size-4 accent-accent"
         />
         In stock only
       </label>
