@@ -32,9 +32,15 @@ export async function clientIp(): Promise<string> {
   return h.get("x-real-ip") ?? h.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
 }
 
+/**
+ * End-to-end tests drive many sign-ups from one IP; they raise limits with
+ * RATE_LIMIT_MULTIPLIER. Never set it on a public deployment.
+ */
+const multiplier = Math.max(1, Number(process.env.RATE_LIMIT_MULTIPLIER ?? 1) || 1);
+
 export async function enforceRateLimit(action: string, limit: number, windowMs: number): Promise<void> {
   const ip = await clientIp();
-  if (!hit(`${action}:${ip}`, limit, windowMs)) {
+  if (!hit(`${action}:${ip}`, limit * multiplier, windowMs)) {
     throw new AppError("RATE_LIMITED", "Too many attempts. Please wait a minute and try again.");
   }
 }

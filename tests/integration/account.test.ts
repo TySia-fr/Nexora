@@ -4,7 +4,13 @@ import { addToCart } from "@/server/cart";
 import { createOrderFromCart, getOrderForUser, listOrdersForUser } from "@/server/orders";
 import { db, makeCategory, makeProduct, makeUser, resetDatabase, validCheckout } from "./helpers";
 
-const address = { fullName: "A B", line1: "1 rue X", postalCode: "34000", city: "Montpellier", country: "FR" };
+const address = {
+  fullName: "A B",
+  line1: "1 rue X",
+  postalCode: "34000",
+  city: "Montpellier",
+  country: "FR",
+};
 
 describe("account isolation", () => {
   beforeEach(resetDatabase);
@@ -37,6 +43,8 @@ describe("account isolation", () => {
     const list = await listAddresses(u.id);
     expect(list.filter((x) => x.isDefault)).toHaveLength(1);
     expect(list[0]!.line1).toBe("2 rue Y");
-    await expect(addAddress(u.id, { ...address, postalCode: "97100" }, false)).rejects.toMatchObject({ code: "VALIDATION" });
+    await expect(addAddress(u.id, { ...address, postalCode: "97100" }, false)).rejects.toMatchObject({
+      code: "VALIDATION",
+    });
   });
 });

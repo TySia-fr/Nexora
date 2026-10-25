@@ -95,10 +95,14 @@ describe("admin catalog rules", () => {
 
   it("rejects bad input with field errors", async () => {
     await expect(
-      saveProduct(actorId, null, productForm(categoryId, {
-        slug: "Not A Slug",
-        variants: [{ sku: "x", name: "", price: "abc", stock: "-1", isActive: true }],
-      })),
+      saveProduct(
+        actorId,
+        null,
+        productForm(categoryId, {
+          slug: "Not A Slug",
+          variants: [{ sku: "x", name: "", price: "abc", stock: "-1", isActive: true }],
+        }),
+      ),
     ).rejects.toSatisfy((e: unknown) => {
       const f = ((e as AppError).details?.fieldErrors ?? {}) as Record<string, string>;
       return "slug" in f && "variants.0.sku" in f && "variants.0.price" in f && "variants.0.stock" in f;
@@ -107,27 +111,62 @@ describe("admin catalog rules", () => {
 
   it("rejects duplicate slugs and SKUs", async () => {
     await saveProduct(actorId, null, productForm(categoryId));
-    await expect(saveProduct(actorId, null, productForm(categoryId))).rejects.toMatchObject({ code: "CONFLICT" });
+    await expect(saveProduct(actorId, null, productForm(categoryId))).rejects.toMatchObject({
+      code: "CONFLICT",
+    });
   });
 
   it("keeps ordered variants (deactivated) and deletes unordered ones when removed", async () => {
-    const id = await saveProduct(actorId, null, productForm(categoryId, {
-      variants: [
-        { sku: "TP-A", name: "A", price: "10", stock: "1", isActive: true },
-        { sku: "TP-B", name: "B", price: "10", stock: "1", isActive: true },
-      ],
-    }));
+    const id = await saveProduct(
+      actorId,
+      null,
+      productForm(categoryId, {
+        variants: [
+          { sku: "TP-A", name: "A", price: "10", stock: "1", isActive: true },
+          { sku: "TP-B", name: "B", price: "10", stock: "1", isActive: true },
+        ],
+      }),
+    );
     const [a] = await db.productVariant.findMany({ where: { productId: id }, orderBy: { position: "asc" } });
     const order = await db.order.create({
       data: {
-        email: "x@y.z", subtotalCents: 1000, shippingCents: 0, totalCents: 1000, shippingMethod: "STANDARD",
-        shipFullName: "X", shipLine1: "1", shipPostalCode: "34000", shipCity: "M", shipCountry: "FR",
-        items: { create: { variantId: a!.id, productId: id, productSlug: "test-phone", productName: "Test Phone", variantName: "A", sku: "TP-A", unitPriceCents: 1000, quantity: 1, lineTotalCents: 1000 } },
+        email: "x@y.z",
+        subtotalCents: 1000,
+        shippingCents: 0,
+        totalCents: 1000,
+        shippingMethod: "STANDARD",
+        shipFullName: "X",
+        shipLine1: "1",
+        shipPostalCode: "34000",
+        shipCity: "M",
+        shipCountry: "FR",
+        items: {
+          create: {
+            variantId: a!.id,
+            productId: id,
+            productSlug: "test-phone",
+            productName: "Test Phone",
+            variantName: "A",
+            sku: "TP-A",
+            unitPriceCents: 1000,
+            quantity: 1,
+            lineTotalCents: 1000,
+          },
+        },
       },
     });
-    await saveProduct(actorId, id, productForm(categoryId, { variants: [{ sku: "TP-C", name: "C", price: "12", stock: "3", isActive: true }] }));
+    await saveProduct(
+      actorId,
+      id,
+      productForm(categoryId, {
+        variants: [{ sku: "TP-C", name: "C", price: "12", stock: "3", isActive: true }],
+      }),
+    );
     const variants = await db.productVariant.findMany({ where: { productId: id } });
-    expect(variants.map((v) => [v.sku, v.isActive]).sort()).toEqual([["TP-A", false], ["TP-C", true]]);
+    expect(variants.map((v) => [v.sku, v.isActive]).sort()).toEqual([
+      ["TP-A", false],
+      ["TP-C", true],
+    ]);
     expect(await db.orderItem.count({ where: { orderId: order.id } })).toBe(1);
 
     // And a product that was ordered can't be deleted.
@@ -141,11 +180,22 @@ describe("admin catalog rules", () => {
   });
 
   it("validates coupons", async () => {
-    await expect(createCoupon(actorId, { code: "BAD", type: "PERCENT", value: "150" })).rejects.toMatchObject({ code: "VALIDATION" });
+    await expect(createCoupon(actorId, { code: "BAD", type: "PERCENT", value: "150" })).rejects.toMatchObject(
+      { code: "VALIDATION" },
+    );
     await expect(
-      createCoupon(actorId, { code: "DATES", type: "FIXED", value: "10", startsAt: "2026-12-01", endsAt: "2026-11-01" }),
+      createCoupon(actorId, {
+        code: "DATES",
+        type: "FIXED",
+        value: "10",
+        startsAt: "2026-12-01",
+        endsAt: "2026-11-01",
+      }),
     ).rejects.toMatchObject({ code: "VALIDATION" });
     await createCoupon(actorId, { code: "ten-off", type: "FIXED", value: "10,50", minSubtotal: "50" });
-    expect(await db.coupon.findUniqueOrThrow({ where: { code: "TEN-OFF" } })).toMatchObject({ value: 1050, minSubtotalCents: 5000 });
+    expect(await db.coupon.findUniqueOrThrow({ where: { code: "TEN-OFF" } })).toMatchObject({
+      value: 1050,
+      minSubtotalCents: 5000,
+    });
   });
 });

@@ -1,6 +1,9 @@
 import { chromium } from "@playwright/test";
 const dir = process.argv[2];
-const browser = await chromium.launch({ executablePath: "/opt/google/chrome/chrome", args: ["--disable-background-networking", "--no-first-run"] });
+const browser = await chromium.launch({
+  executablePath: "/opt/google/chrome/chrome",
+  args: ["--disable-background-networking", "--no-first-run"],
+});
 const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
 const errors = [];
 page.on("pageerror", (e) => errors.push(String(e)));
@@ -26,7 +29,10 @@ await page.getByText("Saved. The storefront").waitFor();
 await page.screenshot({ path: `${dir}/admin-product.png`, fullPage: true });
 await page.goto("http://localhost:3000/products/halo-one", { waitUntil: "networkidle" });
 out.storeTagline = await page.locator("main span.label-mono").first().innerText();
-out.boneStock = await page.getByText(/In stock/).first().innerText();
+out.boneStock = await page
+  .getByText(/In stock/)
+  .first()
+  .innerText();
 await page.goto("http://localhost:3000/admin/coupons", { waitUntil: "networkidle" });
 await page.getByLabel("Code").fill("QA5");
 await page.getByLabel("Value (% or €)").fill("500");
