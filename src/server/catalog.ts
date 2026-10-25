@@ -387,7 +387,7 @@ export async function getRelatedProducts(productId: string, categorySlug: string
 export async function getProductsByIds(ids: string[]): Promise<ProductCardView[]> {
   if (ids.length === 0) return [];
   const rows = await db.product.findMany({
-    where: { id: { in: ids.slice(0, 12) }, status: "ACTIVE" },
+    where: { id: { in: ids.slice(0, 48) }, status: "ACTIVE" },
     include: cardInclude,
   });
   const byId = new Map(rows.map((r) => [r.id, r]));
