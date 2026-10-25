@@ -79,3 +79,19 @@
     scroll-behavior: auto !important;
   }
 }
+
+/* Entrance animation: CSS only, so content is visible without JavaScript and
+   the reduced-motion rule above shortens it to nothing. */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@utility animate-rise {
+  animation: rise var(--duration-reveal) var(--ease-out-quint) both;
+}

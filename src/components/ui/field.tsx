@@ -1,0 +1,44 @@
+import type { ComponentProps, ReactNode } from "react";
+import { cn } from "@/lib/cn";
+
+export const inputClasses =
+  "h-12 w-full rounded-input border border-line bg-graphite px-3.5 text-[15px] text-paper placeholder:text-fog focus:border-paper focus:outline-none aria-[invalid=true]:border-amber";
+
+export function Field({
+  id,
+  label,
+  error,
+  hint,
+  className,
+  children,
+}: {
+  id: string;
+  label: string;
+  error?: string;
+  hint?: ReactNode;
+  className?: string;
+  children: ReactNode;
+}) {
+  return (
+    <div className={cn("flex flex-col gap-1.5", className)}>
+      <label htmlFor={id} className="text-[13px] text-mist">
+        {label}
+      </label>
+      {children}
+      {hint && !error && (
+        <p id={`${id}-hint`} className="text-xs text-fog">
+          {hint}
+        </p>
+      )}
+      {error && (
+        <p id={`${id}-error`} className="text-xs text-amber">
+          {error}
+        </p>
+      )}
+    </div>
+  );
+}
+
+export function Input({ className, ...props }: ComponentProps<"input">) {
+  return <input className={cn(inputClasses, className)} {...props} />;
+}

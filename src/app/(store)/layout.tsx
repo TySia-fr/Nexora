@@ -1,0 +1,22 @@
+import { SiteHeader } from "@/components/layout/site-header";
+import { SiteFooter } from "@/components/layout/site-footer";
+import { site } from "@/lib/site";
+
+export default function StoreLayout({ children }: LayoutProps<"/">) {
+  return (
+    <>
+      <a
+        href="#main"
+        className="sr-only z-50 rounded-full bg-signal px-4 py-2 font-semibold text-ink focus:not-sr-only focus:fixed focus:top-3 focus:left-3"
+      >
+        Skip to content
+      </a>
+      <p className="label-mono bg-signal px-4 py-2.5 text-center font-medium text-ink">{site.announcement}</p>
+      <SiteHeader />
+      <main id="main" className="flex-1">
+        {children}
+      </main>
+      <SiteFooter />
+    </>
+  );
+}
