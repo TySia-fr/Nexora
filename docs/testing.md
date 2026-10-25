@@ -56,6 +56,16 @@ E2E_BASE_URL=http://localhost:3000 pnpm test:e2e
 
 `RATE_LIMIT_MULTIPLIER` is for tests only; never set it on a public deployment.
 
+### Visual and responsive checks
+
+```bash
+node scripts/dev/qa-shots.mjs /tmp/qa / 320 390 768 1024 1440 1600
+```
+
+Takes full-page screenshots at each width after scrolling through the page (so scroll reveals have run),
+and reports console errors and horizontal overflow. Used for the redesign at 320, 390, 768, 1024, 1440 and
+1600 px; reduced motion and JavaScript-disabled rendering were checked by hand with Playwright.
+
 ## Not covered by automated tests
 
 - A real Stripe Checkout round trip. The webhook handler is tested with correctly signed events, but the

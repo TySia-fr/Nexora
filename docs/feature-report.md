@@ -15,7 +15,8 @@ anything less is marked.
 | Orders persisted correctly                          | Done                | snapshot and concurrency tests; DB CHECK constraints                          |
 | Payment status verified via the payment integration | Done, with a caveat | signed-webhook tests; a real Stripe round trip needs test keys (not run here) |
 | Admin operations work and are protected             | Done                | `admin.test.ts`; e2e admin                                                    |
-| Responsive layouts checked                          | Done                | e2e on a Pixel 7 viewport; screenshots in `docs/screenshots`                  |
+| Responsive layouts checked                          | Done                | e2e on a Pixel 7 viewport; overflow check at 320/390/768/1024/1440/1600 px    |
+| Reduced motion and no-JS rendering                  | Done                | manual check: no intro, reveals shown; static shell complete without JS       |
 | No broken links or dead primary actions             | Done                | every button is wired; payments-off state is explicit, not dead               |
 | Type checking and linting pass                      | Done                | CI `verify` job                                                               |
 | Relevant tests pass                                 | Done                | 79 unit/integration + 20 e2e, green in CI                                     |
@@ -42,7 +43,12 @@ API: `/api/auth/*`, `/api/webhooks/stripe`, `/api/health`, plus `sitemap.xml` an
 ## Known limitations
 
 - **Product imagery is rendered, not photographed.** Procedural 3D models in one studio setup
-  ([ADR-0008](adr/0008-procedural-product-renders.md)). A real launch needs photography of real hardware.
+  ([ADR-0008](adr/0008-procedural-product-renders.md)); labelled as renders on the site. A real launch needs
+  photography of real hardware.
+- **Without JavaScript**, sections that stream catalogue data show their skeletons (Next.js streaming needs
+  JS to swap streamed HTML in). The hero, navigation and static copy are complete.
+- **Callout positions** on the homepage study come from the render (`public/brand/anchors.json`); re-render
+  after changing that model.
 - **Soft 404s on dynamic pages.** Pages stream; when a product or category doesn't exist, the not-found page is
   rendered with `noindex` but the status stays 200. Unmatched paths return a real 404.
 - **Metadata of dynamic pages is streamed** into the body for most user agents (Next.js behaviour), which
@@ -57,7 +63,7 @@ API: `/api/auth/*`, `/api/webhooks/stripe`, `/api/health`, plus `sitemap.xml` an
 ## Production-readiness tasks
 
 1. Email provider + email verification + order confirmation emails.
-2. Real product photography and an upload flow with validation.
+2. Real product photography (replacing the renders) and an upload flow with validation.
 3. Stripe refunds via API from the admin order page.
 4. Shared rate-limit store if more than one app instance runs.
 5. Structured logging and error monitoring.
