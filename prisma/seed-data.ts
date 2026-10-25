@@ -1,7 +1,7 @@
 /**
  * Demo catalog. Every product, name and specification is fictional and
  * written for this project; none describes a real device.
- * Images are generated from these definitions by scripts/generate-product-art.ts.
+ * Images are rendered from these definitions by scripts/render/render-products.ts.
  */
 
 export type ArtShape =
@@ -16,7 +16,13 @@ export type ArtShape =
   | "charger"
   | "cable"
   | "case"
+  | "travel-case"
   | "dock";
+
+/** Stable image file names: re-rendering never needs a database change. */
+export function imageFileName(slug: string, variantSku: string | null, view: "front" | "detail"): string {
+  return `${slug}${variantSku ? `-${variantSku.toLowerCase()}` : ""}-${view}.webp`;
+}
 
 export type SeedVariant = {
   sku: string;
@@ -444,7 +450,7 @@ export const products: SeedProduct[] = [
     tagline: "Hard case for Halo One",
     description: "A hard-shell case with a cable pocket, shaped around Halo One folded flat.",
     category: "accessories",
-    shape: "case",
+    shape: "travel-case",
     unitsSold: 88,
     ageDays: 6,
     specs: [

@@ -1,0 +1,95 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      @font-face {
+        font-family: "Archivo";
+        src: url("/node_modules/@fontsource-variable/archivo/files/archivo-latin-wdth-normal.woff2")
+          format("woff2");
+        font-weight: 100 900;
+        font-stretch: 62% 125%;
+      }
+      html,
+      body {
+        margin: 0;
+        width: 1200px;
+        height: 630px;
+        overflow: hidden;
+      }
+      body {
+        display: grid;
+        grid-template-columns: 560px 640px;
+        background: #f5f5f2;
+        color: #101010;
+        font-family: Archivo, sans-serif;
+      }
+      .copy {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 56px;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        font-weight: 600;
+        font-stretch: 125%;
+        letter-spacing: 0.2em;
+        font-size: 22px;
+      }
+      h1 {
+        margin: 0;
+        font-weight: 500;
+        font-stretch: 106%;
+        font-size: 84px;
+        line-height: 0.92;
+        letter-spacing: -0.045em;
+      }
+      .meta {
+        font:
+          13px ui-monospace,
+          monospace;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: #5c5c58;
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+      .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #c8f135;
+        box-shadow: 0 0 0 1px rgba(16, 16, 16, 0.2);
+      }
+      .img {
+        background: url("/public/brand/hero-halo-one.webp") center 60% / cover;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="copy">
+      <div class="brand">
+        <svg
+          width="30"
+          height="30"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="#101010"
+          stroke-width="2.4"
+          stroke-linecap="square"
+        >
+          <path d="M4.5 19.5V4.5L19.5 19.5V4.5" />
+          <path d="M15 9L9 15" />
+        </svg>
+        NEXORA
+      </div>
+      <h1>Silence,<br />engineered.</h1>
+      <div class="meta"><span class="dot"></span>Precision electronics · Portfolio project</div>
+    </div>
+    <div class="img"></div>
+  </body>
+</html>

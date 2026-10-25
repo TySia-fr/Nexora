@@ -6,8 +6,8 @@ accounts, an admin back office, and a test suite that proves it.
 
 ![NEXORA homepage](docs/screenshots/home.png)
 
-> NEXORA is a portfolio project. Products, names and specifications are fictional, product images are generated
-> from code, payments run in Stripe **test mode**, and nothing ships.
+> NEXORA is a portfolio project. Products, names and specifications are fictional, product images are rendered
+> from procedural 3D models written for this project, payments run in Stripe **test mode**, and nothing ships.
 
 ## What it does
 
@@ -54,6 +54,7 @@ A modular monolith: one deployable, with module boundaries that could become ser
 | [0005](docs/adr/0005-auth-better-auth.md)                        | better-auth with database sessions; role never accepted from input                                                    |
 | [0006](docs/adr/0006-cache-components-and-db-at-runtime.md)      | Cache Components with tagged catalog caching; the build needs no database                                             |
 | [0007](docs/adr/0007-migrations-from-restricted-environments.md) | How migrations were generated where the Prisma engine couldn't be downloaded                                          |
+| [0008](docs/adr/0008-procedural-product-renders.md)              | Product images rendered from procedural 3D models instead of stock or AI images                                       |
 
 ## Tech stack
 
@@ -90,7 +91,7 @@ Demo coupons: `NEXORA10` (10%), `WELCOME15` (15% over €200, 100 uses), `AUDIO2
 | `pnpm test:e2e`                                                 | Playwright on desktop and phone, with axe accessibility checks |
 | `pnpm db:migrate` / `db:deploy` / `db:seed`                     | Migrations and seed                                            |
 | `pnpm admin:create`                                             | Create or promote an admin                                     |
-| `pnpm tsx scripts/generate-product-art.ts`                      | Regenerate product images                                      |
+| `pnpm render:products`                                          | Re-render product images (headless Chromium, three.js)         |
 
 ## Quality
 

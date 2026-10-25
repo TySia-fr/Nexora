@@ -41,8 +41,8 @@ API: `/api/auth/*`, `/api/webhooks/stripe`, `/api/health`, plus `sitemap.xml` an
 
 ## Known limitations
 
-- **Product imagery is generated vector art**, consistent and original but not photography. A premium launch
-  needs real renders or licensed photos; the image pipeline (`next/image`, AVIF/WebP, sizes) is ready for them.
+- **Product imagery is rendered, not photographed.** Procedural 3D models in one studio setup
+  ([ADR-0008](adr/0008-procedural-product-renders.md)). A real launch needs photography of real hardware.
 - **Soft 404s on dynamic pages.** Pages stream; when a product or category doesn't exist, the not-found page is
   rendered with `noindex` but the status stays 200. Unmatched paths return a real 404.
 - **Metadata of dynamic pages is streamed** into the body for most user agents (Next.js behaviour), which

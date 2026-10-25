@@ -59,7 +59,7 @@ async function EditProductContent({ params, searchParams }: PageProps<"/admin/pr
         }}
       />
       <p className="mt-8 text-xs text-fog">
-        Images are generated from the catalog definition (scripts/generate-product-art.ts). Image upload is
+        Images are generated from the catalog definition (scripts/render/render-products.ts). Image upload is
         not implemented.
       </p>
     </>
