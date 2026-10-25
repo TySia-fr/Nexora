@@ -9,8 +9,7 @@ import "dotenv/config";
 import { randomUUID } from "node:crypto";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../src/generated/prisma/client";
-import { categories, coupons, products, reviewers, reviews } from "./seed-data";
-import { imageFileName } from "../scripts/generate-product-art";
+import { categories, coupons, imageFileName, products, reviewers, reviews } from "./seed-data";
 
 if (process.env.NODE_ENV === "production" && process.env.ALLOW_PRODUCTION_SEED !== "yes") {
   console.error(
