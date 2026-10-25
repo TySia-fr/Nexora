@@ -30,7 +30,11 @@ services:
     restart: "no"
 
   app:
-    build: { context: ., target: runtime }
+    build:
+      context: .
+      target: runtime
+      args:
+        APP_URL: ${APP_URL:?set APP_URL in .env}
     restart: unless-stopped
     env_file: .env
     environment:

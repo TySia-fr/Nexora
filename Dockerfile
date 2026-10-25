@@ -15,6 +15,10 @@ COPY prisma.config.ts ./
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile --ignore-scripts
 
 FROM deps AS build
+# next.config.ts decides at build time whether to send HSTS and
+# upgrade-insecure-requests, so the public URL must be known here.
+ARG APP_URL=http://localhost:3000
+ENV APP_URL=$APP_URL
 COPY . .
 # Placeholder values only satisfy env validation at build time; real ones come at runtime.
 RUN DATABASE_URL="postgresql://build:build@localhost:5432/build" \
