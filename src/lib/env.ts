@@ -8,14 +8,18 @@ import { z } from "zod";
  * "disabled" payments mode and checkout says so explicitly instead of faking a
  * successful payment.
  */
+/** Treat an empty string (as in .env.example) the same as "not set". */
+const optional = <T extends z.ZodType>(inner: T) =>
+  z.preprocess((v) => (v === "" ? undefined : v), inner.optional());
+
 const schema = z
   .object({
     NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
     DATABASE_URL: z.url(),
     APP_URL: z.url().default("http://localhost:3000"),
     BETTER_AUTH_SECRET: z.string().min(32, "BETTER_AUTH_SECRET must be at least 32 characters"),
-    STRIPE_SECRET_KEY: z.string().startsWith("sk_").optional(),
-    STRIPE_WEBHOOK_SECRET: z.string().startsWith("whsec_").optional(),
+    STRIPE_SECRET_KEY: optional(z.string().startsWith("sk_")),
+    STRIPE_WEBHOOK_SECRET: optional(z.string().startsWith("whsec_")),
   })
   .refine((e) => Boolean(e.STRIPE_SECRET_KEY) === Boolean(e.STRIPE_WEBHOOK_SECRET), {
     message: "Set both STRIPE_SECRET_KEY and STRIPE_WEBHOOK_SECRET, or neither.",
