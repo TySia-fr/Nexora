@@ -398,3 +398,32 @@
     transform: translateY(-10px);
   }
 }
+
+/* Curtain: an overlay in the canvas colour that lifts off an image. */
+.curtain {
+  position: absolute;
+  inset: 0;
+  background: var(--color-canvas);
+  transform-origin: top;
+  transform: scaleY(0);
+  animation: curtain 1000ms var(--ease-out-expo) both;
+  pointer-events: none;
+}
+@keyframes curtain {
+  from {
+    transform: scaleY(1);
+  }
+  to {
+    transform: scaleY(0);
+  }
+}
+
+/* Diagram curves wipe in with their row (animated by RevealObserver). */
+.js .anc-draw {
+  clip-path: inset(0 100% 0 0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .js .anc-draw {
+    clip-path: none;
+  }
+}

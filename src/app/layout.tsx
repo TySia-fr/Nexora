@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import { GeistSans } from "geist/font/sans";
+import { RevealObserver } from "@/components/motion/reveal-observer";
 import { introScript } from "@/components/brand/brand-intro";
 import "./globals.css";
 
@@ -43,7 +44,9 @@ export const metadata: Metadata = {
     type: "website",
     siteName: "NEXORA",
     locale: "en_IE",
+    images: [{ url: "/brand/og.jpg", width: 1200, height: 630, alt: "NEXORA — Precision electronics" }],
   },
+  twitter: { card: "summary_large_image" },
 };
 
 export const viewport: Viewport = {
@@ -51,8 +54,9 @@ export const viewport: Viewport = {
   colorScheme: "light",
 };
 
-// Marks the document as scripted before first paint (scroll reveals only ever hide content
-// when the script that reveals it is running), then decides whether the first-visit intro plays.
+// Marks the document as scripted before first paint, so scroll-reveal styles only
+// ever hide content when the script that reveals it is running.
+// The second line decides, before paint, whether the first-visit intro plays.
 const headScript = `document.documentElement.classList.add("js");${introScript}`;
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -65,7 +69,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <head>
         <script dangerouslySetInnerHTML={{ __html: headScript }} />
       </head>
-      <body className="flex min-h-dvh flex-col">{children}</body>
+      <body className="flex min-h-dvh flex-col">
+        {children}
+        <RevealObserver />
+      </body>
     </html>
   );
 }
