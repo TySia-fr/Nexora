@@ -45,3 +45,8 @@ next-env.d.ts
 
 # allow the placeholder env file
 !.env.example
+
+# test output
+/test-results
+/playwright-report
+/coverage
