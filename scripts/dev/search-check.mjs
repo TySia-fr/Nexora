@@ -1,0 +1,18 @@
+import { chromium } from "@playwright/test";
+const browser = await chromium.launch({ executablePath: "/opt/google/chrome/chrome", args: ["--disable-background-networking", "--no-first-run"] });
+const page = await browser.newPage();
+const errors = [];
+page.on("pageerror", (e) => errors.push(String(e)));
+await page.goto("http://localhost:3000/search", { waitUntil: "networkidle" });
+await page.getByRole("combobox").fill("pul");
+await page.getByRole("option").first().waitFor();
+const options = await page.getByRole("option").allInnerTexts();
+await page.keyboard.press("ArrowDown");
+const selected = await page.getByRole("option", { selected: true }).innerText();
+await page.keyboard.press("Enter");
+await page.waitForURL(/\/products\//);
+const url1 = page.url();
+await page.goto("http://localhost:3000/search?q=zzzz", { waitUntil: "networkidle" });
+const empty = await page.getByText("No products match").isVisible();
+console.log(JSON.stringify({ options, selected, url1, empty, errors }));
+await browser.close();
