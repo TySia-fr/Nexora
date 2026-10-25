@@ -6,6 +6,7 @@ export default defineConfig({
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),
       // `server-only` throws outside a React Server environment; tests run in Node.
+      "next/cache": fileURLToPath(new URL("./tests/stubs/next-cache.ts", import.meta.url)),
       "server-only": fileURLToPath(new URL("./tests/stubs/server-only.ts", import.meta.url)),
     },
   },
