@@ -170,7 +170,8 @@ async function main() {
     if (colors.size > 1) {
       for (const v of p.variants) {
         await render(imageFileName(p.slug, v.sku, "front"), svg(p.shape, v.colorHex ?? primary, "front"));
-        count++;
+        await render(imageFileName(p.slug, v.sku, "detail"), svg(p.shape, v.colorHex ?? primary, "detail"));
+        count += 2;
       }
     }
   }

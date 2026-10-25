@@ -1,5 +1,5 @@
 import "server-only";
-import { cacheLife, cacheTag } from "next/cache";
+import { cacheLife, cacheTag, revalidateTag } from "next/cache";
 import { Prisma } from "@/generated/prisma/client";
 import { db } from "@/server/db";
 import { PAGE_SIZE, type ListingQuery } from "@/lib/validation/catalog";
@@ -9,6 +9,23 @@ import { PAGE_SIZE, type ListingQuery } from "@/lib/validation/catalog";
  * tagged; admin mutations call `updateTag(CATALOG_TAG)` (see ADR-0006).
  */
 export const CATALOG_TAG = "catalog";
+
+/**
+ * Stock moves on every checkout, so the product page reads it live
+ * (`getLiveStock`) and listings are refreshed in the background after a change.
+ * Only call from server actions and route handlers.
+ */
+export function markStockChanged(): void {
+  revalidateTag(CATALOG_TAG, "max");
+}
+
+export async function getLiveStock(productId: string): Promise<Map<string, number>> {
+  const rows = await db.productVariant.findMany({
+    where: { productId, isActive: true },
+    select: { id: true, stock: true },
+  });
+  return new Map(rows.map((r) => [r.id, r.stock]));
+}
 
 export type ProductImageView = { url: string; alt: string; width: number; height: number };
 

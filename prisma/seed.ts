@@ -101,8 +101,8 @@ async function main() {
           position: 0,
         });
         images.push({
-          url: `/products/${imageFileName(p.slug, null, "detail")}`,
-          alt: alt("detail", p.variants[0]!.name),
+          url: `/products/${imageFileName(p.slug, v.sku, "detail")}`,
+          alt: alt("detail", v.name),
           variantId: v.id,
           position: 1,
         });

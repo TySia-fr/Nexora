@@ -1,6 +1,9 @@
 import { chromium } from "@playwright/test";
-const [,, url, out, width = "1440", full = "1"] = process.argv;
-const browser = await chromium.launch({ executablePath: "/opt/google/chrome/chrome" });
+const [, , url, out, width = "1440", full = "1"] = process.argv;
+const browser = await chromium.launch({
+  executablePath: "/opt/google/chrome/chrome",
+  args: ["--disable-background-networking", "--disable-component-update", "--no-first-run"],
+});
 const page = await browser.newPage({ viewport: { width: Number(width), height: 900 } });
 const errors = [];
 page.on("console", (m) => m.type() === "error" && errors.push(m.text()));

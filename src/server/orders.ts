@@ -2,6 +2,7 @@ import "server-only";
 import { db, type Tx } from "@/server/db";
 import { AppError } from "@/server/errors";
 import { getCart, loadCoupon, type CartOwner } from "@/server/cart";
+import { markStockChanged } from "@/server/catalog";
 import { computeTotals, COUPON_REJECTION_MESSAGES } from "@/lib/pricing";
 import { checkoutSchema, fieldErrors, type CheckoutInput } from "@/lib/validation/checkout";
 import type { OrderStatus } from "@/generated/prisma/client";
@@ -112,7 +113,7 @@ export async function createOrderFromCart(
   // Free up stock held by abandoned checkouts before competing for it.
   await releaseExpiredReservations();
 
-  return db.$transaction(
+  const created = await db.$transaction(
     async (tx) => {
       const cart = await getCart(owner, input.shippingMethod, tx);
       if (!cart.id || cart.lines.length === 0) throw new AppError("CART_EMPTY", "Your cart is empty.");
@@ -223,6 +224,8 @@ export async function createOrderFromCart(
     },
     { isolationLevel: "ReadCommitted", timeout: 15_000 },
   );
+  markStockChanged();
+  return created;
 }
 
 // ---------------------------------------------------------------------------
@@ -310,6 +313,7 @@ export async function cancelPendingOrder(
   if (count === 0) return false;
   await returnStock(tx, orderId);
   await releaseCouponRedemption(tx, order.couponId);
+  markStockChanged();
   if (paymentStatus) {
     await tx.payment.updateMany({ where: { orderId, status: "PENDING" }, data: { status: paymentStatus } });
   }
