@@ -14,7 +14,13 @@ type Suggestion = { slug: string; name: string; category: string };
  * them, Enter opens the highlighted product or runs a full search.
  * Without JavaScript it is a plain GET form to /search.
  */
-export function SearchBox({ initialQuery = "", autoFocus = false }: { initialQuery?: string; autoFocus?: boolean }) {
+export function SearchBox({
+  initialQuery = "",
+  autoFocus = false,
+}: {
+  initialQuery?: string;
+  autoFocus?: boolean;
+}) {
   const router = useRouter();
   const listId = useId();
   const [query, setQuery] = useState(initialQuery);
@@ -57,7 +63,10 @@ export function SearchBox({ initialQuery = "", autoFocus = false }: { initialQue
       <label htmlFor="search-input" className="sr-only">
         Search products
       </label>
-      <Search className="pointer-events-none absolute top-1/2 left-4 size-5 -translate-y-1/2 text-fog" aria-hidden="true" />
+      <Search
+        className="pointer-events-none absolute top-1/2 left-4 size-5 -translate-y-1/2 text-fog"
+        aria-hidden="true"
+      />
       <input
         id="search-input"
         name="q"

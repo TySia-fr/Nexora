@@ -1,5 +1,8 @@
 import { chromium } from "@playwright/test";
-const browser = await chromium.launch({ executablePath: "/opt/google/chrome/chrome", args: ["--disable-background-networking", "--no-first-run"] });
+const browser = await chromium.launch({
+  executablePath: "/opt/google/chrome/chrome",
+  args: ["--disable-background-networking", "--no-first-run"],
+});
 const page = await browser.newPage();
 const errors = [];
 page.on("pageerror", (e) => errors.push(String(e)));

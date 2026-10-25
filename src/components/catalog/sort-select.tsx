@@ -2,7 +2,7 @@
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useTransition } from "react";
-import { inputClasses } from "@/components/ui/field";
+import { inputBase } from "@/components/ui/field";
 import { cn } from "@/lib/cn";
 
 /** Changing the sort updates the URL (and resets to page 1). */
@@ -29,7 +29,7 @@ export function SortSelect({ value, labels }: { value: string; labels: Record<st
           const qs = next.toString();
           startTransition(() => router.push(qs ? `${pathname}?${qs}` : pathname, { scroll: false }));
         }}
-        className={cn(inputClasses, "h-11 w-auto pr-8")}
+        className={cn(inputBase, "h-11 pr-8")}
       >
         {Object.entries(labels).map(([v, label]) => (
           <option key={v} value={v}>

@@ -1,8 +1,10 @@
 import type { ComponentProps, ReactNode } from "react";
 import { cn } from "@/lib/cn";
 
-export const inputClasses =
-  "h-12 w-full rounded-input border border-line bg-graphite px-3.5 text-[15px] text-paper placeholder:text-fog focus:border-paper focus:outline-none aria-[invalid=true]:border-amber";
+/** Input styling without a width, for selects and inline controls. */
+export const inputBase =
+  "h-12 rounded-input border border-line bg-graphite px-3.5 text-[15px] text-paper placeholder:text-fog focus:border-paper focus:outline-none aria-[invalid=true]:border-amber";
+export const inputClasses = `${inputBase} w-full`;
 
 export function Field({
   id,
