@@ -95,7 +95,9 @@ function Hero() {
           Over-ear headphones with adaptive noise cancelling, a machined aluminium frame and 40 hours on a
           single charge.
         </p>
-        <div className="flex flex-wrap gap-3">
+        {/* Stacked on phones so the price streaming into the first button can't
+            re-wrap the row and shift the image below (CLS). */}
+        <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
           <ButtonLink href={`/products/${HERO_PRODUCT}`} size="lg">
             Shop Halo One
             <Suspense fallback={null}>
