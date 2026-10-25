@@ -11,7 +11,8 @@ export default function StoreLayout({ children }: LayoutProps<"/">) {
       >
         Skip to content
       </a>
-      <p className="label-mono bg-signal px-4 py-2.5 text-center font-medium text-on-signal">
+      <p className="theme-dark label-mono flex items-center justify-center gap-2.5 px-4 py-2.5 text-center text-fg-muted">
+        <span className="size-1.5 shrink-0 rounded-full bg-signal" aria-hidden="true" />
         {site.announcement}
       </p>
       <SiteHeader />

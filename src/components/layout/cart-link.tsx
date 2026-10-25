@@ -7,12 +7,13 @@ export function CartLink({ count }: { count: number | null }) {
     <Link
       href="/cart"
       aria-label={label}
-      className="ml-1 flex h-11 items-center gap-2 rounded-full border border-line-strong px-3 hover:border-fg"
+      className="group ml-1 flex h-10 items-center gap-2 rounded-full bg-fg pr-3.5 pl-3 text-canvas transition-opacity duration-150 hover:opacity-85"
     >
-      <ShoppingBag className="size-[18px]" strokeWidth={1.6} aria-hidden="true" />
-      <span className="font-mono text-xs tabular-nums" aria-hidden="true">
+      <ShoppingBag className="size-4" strokeWidth={1.8} aria-hidden="true" />
+      <span className="min-w-[1ch] font-mono text-xs tabular-nums" aria-hidden="true">
         {count ?? "·"}
       </span>
+      {count !== null && count > 0 && <span aria-hidden="true" className="size-1.5 rounded-full bg-signal" />}
     </Link>
   );
 }

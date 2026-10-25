@@ -28,8 +28,21 @@ export async function signUp(page: Page, next = "/account") {
   return { email, password };
 }
 
-/** WCAG 2.1 A/AA checks; fails on serious or critical violations. */
+/**
+ * WCAG 2.1 A/AA checks; fails on serious or critical violations.
+ * Entrance animations are allowed to finish first: axe measures contrast with the
+ * current opacity, so scanning mid-fade would report colours the page never settles on.
+ * Infinite animations (loading skeletons) are not awaited.
+ */
 export async function expectAccessible(page: Page) {
+  await page.evaluate(() =>
+    Promise.all(
+      document
+        .getAnimations()
+        .filter((a) => a.effect?.getComputedTiming().iterations !== Infinity)
+        .map((a) => a.finished.catch(() => undefined)),
+    ),
+  );
   const results = await new AxeBuilder({ page })
     .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])
     .analyze();

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { LogoMark, Wordmark } from "@/components/brand/logo";
 
 export const metadata: Metadata = {
   title: { default: "Admin", template: "%s · Admin · NEXORA" },
@@ -21,8 +22,9 @@ export default function AdminLayout({ children }: LayoutProps<"/admin">) {
     <div className="theme-dark flex min-h-dvh flex-wrap">
       <nav aria-label="Admin" className="flex w-full flex-col gap-6 border-line p-6 lg:w-60 lg:border-r">
         <div className="flex items-baseline justify-between lg:flex-col lg:gap-1">
-          <Link href="/" className="font-bold tracking-[0.18em]">
-            NEXORA
+          <Link href="/" className="flex items-center gap-2.5" aria-label="NEXORA storefront">
+            <LogoMark className="size-5" />
+            <Wordmark />
           </Link>
           <span className="label-mono text-accent">Admin</span>
         </div>
