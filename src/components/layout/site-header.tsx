@@ -7,22 +7,16 @@ import { getCartOwner } from "@/server/session";
 import { getCartItemCount } from "@/server/cart";
 import { MobileNav } from "@/components/layout/mobile-nav";
 import { CartLink } from "@/components/layout/cart-link";
+import { NavLinks } from "@/components/layout/nav-links";
+import { LogoMark, Wordmark } from "@/components/brand/logo";
 
 async function CategoryNav() {
   await connection();
-  const categories = await getCategories();
+  const categories = (await getCategories()).map((c) => ({ slug: c.slug, name: c.name }));
   return (
     <>
-      <ul className="hidden flex-1 flex-wrap gap-7 text-sm text-fg-muted lg:flex" role="list">
-        {categories.map((c) => (
-          <li key={c.slug}>
-            <Link href={`/categories/${c.slug}`} className="py-2 hover:text-fg">
-              {c.name}
-            </Link>
-          </li>
-        ))}
-      </ul>
-      <MobileNav categories={categories.map((c) => ({ slug: c.slug, name: c.name }))} />
+      <NavLinks categories={categories} />
+      <MobileNav categories={categories} />
     </>
   );
 }
@@ -33,30 +27,31 @@ async function CartCount() {
   return <CartLink count={count} />;
 }
 
+const iconLink =
+  "flex size-11 items-center justify-center rounded-full text-fg-muted transition-colors duration-150 hover:bg-well hover:text-fg";
+
 export function SiteHeader() {
   return (
-    <header className="sticky top-0 z-30 border-b border-line bg-canvas/95 backdrop-blur-sm">
-      <nav aria-label="Main" className="container-site flex h-16 items-center gap-6 lg:gap-10">
-        <Link href="/" className="text-lg font-bold tracking-[0.18em] md:text-xl" aria-label="NEXORA home">
-          NEXORA
+    <header className="header-enter sticky top-0 z-30 border-b border-line bg-canvas/85 backdrop-blur-md backdrop-saturate-150">
+      <nav aria-label="Main" className="container-site flex h-16 items-center gap-2 sm:gap-4">
+        <Link
+          href="/"
+          className="logo-link -ml-1 flex h-11 items-center gap-2.5 px-1"
+          aria-label="NEXORA home"
+        >
+          <LogoMark className="size-[22px]" />
+          {/* Below 360 px the mark alone carries the brand; the link keeps its label. */}
+          <Wordmark className="logo-word max-[359px]:hidden" />
         </Link>
         <Suspense fallback={<div className="hidden flex-1 lg:block" />}>
           <CategoryNav />
         </Suspense>
-        <div className="ml-auto flex items-center gap-1 lg:ml-0">
-          <Link
-            href="/search"
-            aria-label="Search"
-            className="flex size-11 items-center justify-center hover:text-accent"
-          >
-            <Search className="size-5" strokeWidth={1.6} aria-hidden="true" />
+        <div className="ml-auto flex items-center gap-0.5 lg:ml-0">
+          <Link href="/search" aria-label="Search" className={iconLink}>
+            <Search className="size-[18px]" strokeWidth={1.6} aria-hidden="true" />
           </Link>
-          <Link
-            href="/account"
-            aria-label="Account"
-            className="hidden size-11 items-center justify-center hover:text-accent sm:flex"
-          >
-            <User className="size-5" strokeWidth={1.6} aria-hidden="true" />
+          <Link href="/account" aria-label="Account" className={`${iconLink} hidden sm:flex`}>
+            <User className="size-[18px]" strokeWidth={1.6} aria-hidden="true" />
           </Link>
           <Suspense fallback={<CartLink count={null} />}>
             <CartCount />

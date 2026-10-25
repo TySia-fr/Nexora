@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import { GeistSans } from "geist/font/sans";
+import { introScript } from "@/components/brand/brand-intro";
 import "./globals.css";
 
 // Fonts are self-hosted (Geist and Archivo, both SIL OFL 1.1): no request to
@@ -50,9 +51,20 @@ export const viewport: Viewport = {
   colorScheme: "light",
 };
 
+// Marks the document as scripted before first paint (scroll reveals only ever hide content
+// when the script that reveals it is running), then decides whether the first-visit intro plays.
+const headScript = `document.documentElement.classList.add("js");${introScript}`;
+
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${GeistSans.variable} ${geistMono.variable} ${archivo.variable}`}>
+    <html
+      lang="en"
+      className={`${GeistSans.variable} ${geistMono.variable} ${archivo.variable}`}
+      suppressHydrationWarning
+    >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: headScript }} />
+      </head>
       <body className="flex min-h-dvh flex-col">{children}</body>
     </html>
   );

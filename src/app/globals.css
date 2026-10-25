@@ -287,3 +287,114 @@
     display: none;
   }
 }
+
+/* --- Brand ----------------------------------------------------------------- */
+
+/* Mark draws its strokes; used by the intro and the header hover. */
+.logo-draw .logo-n,
+.logo-draw .logo-x {
+  stroke-dasharray: 1;
+}
+.intro .logo-draw .logo-n {
+  animation: draw 620ms var(--ease-in-out) 80ms both;
+}
+.intro .logo-draw .logo-x {
+  animation: draw 280ms var(--ease-out-quint) 560ms both;
+}
+@keyframes draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.brand-intro {
+  display: none;
+}
+.intro .brand-intro {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 18px;
+  background: var(--color-canvas);
+  color: var(--color-fg);
+  pointer-events: none;
+  animation: intro-out 360ms var(--ease-in-out) 860ms both;
+}
+.intro .brand-intro-word {
+  animation:
+    clip-right 520ms var(--ease-out-expo) 300ms both,
+    intro-track 760ms var(--ease-out-expo) 300ms both;
+}
+.brand-intro-line {
+  display: block;
+  width: 120px;
+  height: 1px;
+  background: var(--color-fg);
+  transform-origin: left;
+}
+.intro .brand-intro-line {
+  animation: grow 700ms var(--ease-out-expo) 120ms both;
+}
+@keyframes intro-track {
+  from {
+    letter-spacing: 0.42em;
+  }
+  to {
+    letter-spacing: 0.22em;
+  }
+}
+@keyframes grow {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: none;
+  }
+}
+@keyframes intro-out {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+/* Hero sequence waits for the intro when it plays. */
+.intro {
+  --seq: 900ms;
+}
+
+/* Header logo: the wordmark opens up slightly and the X counter-stroke redraws. */
+.logo-link .logo-word {
+  transition: letter-spacing var(--duration-ui) var(--ease-out-expo);
+}
+.logo-link:hover .logo-word,
+.logo-link:focus-visible .logo-word {
+  letter-spacing: 0.26em;
+}
+.logo-link .logo-x {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset var(--duration-ui) var(--ease-out-expo);
+}
+@media (hover: hover) {
+  .logo-link:hover .logo-x {
+    animation: draw 420ms var(--ease-out-expo) both;
+  }
+}
+
+/* Header settles on first load (it persists across client navigations, so this runs once). */
+.header-enter {
+  animation: header-in 520ms var(--ease-out-expo) var(--seq, 0ms) both;
+}
+@keyframes header-in {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}

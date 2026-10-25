@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
+import { BrandIntro } from "@/components/brand/brand-intro";
 import { connection } from "next/server";
 import { ButtonLink } from "@/components/ui/button";
 import { Price } from "@/components/ui/price";
@@ -15,6 +16,7 @@ const CAMPAIGN_PRODUCT = "monolith";
 export default function HomePage() {
   return (
     <>
+      <BrandIntro />
       <Hero />
       <section aria-labelledby="featured-title" className="container-site pb-28">
         <SectionHeading
