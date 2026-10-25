@@ -1,9 +1,10 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, type Page } from "@playwright/test";
 
+/** The admin created with `pnpm admin:create` for this test run. No default password lives in the repo. */
 export const ADMIN = {
-  email: process.env.E2E_ADMIN_EMAIL ?? "admin@nexora.test",
-  password: process.env.E2E_ADMIN_PASSWORD ?? "admin-local-only-123",
+  email: process.env.E2E_ADMIN_EMAIL ?? "",
+  password: process.env.E2E_ADMIN_PASSWORD ?? "",
 };
 
 export async function signIn(page: Page, email: string, password: string, next = "/account") {

@@ -2,6 +2,8 @@ import { expect, test } from "@playwright/test";
 import { ADMIN, signIn, signUp } from "./helpers";
 
 test.describe("admin", () => {
+  test.skip(!ADMIN.email || !ADMIN.password, "set E2E_ADMIN_EMAIL and E2E_ADMIN_PASSWORD");
+
   test("customers are turned away from admin pages", async ({ page }) => {
     await signUp(page, "/account");
     await page.goto("/admin/products");

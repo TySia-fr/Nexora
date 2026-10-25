@@ -30,8 +30,8 @@ await shot("cart", "/cart", desktop, async (page) => {
 });
 await shot("admin", "/admin", desktop, async (page) => {
   await page.goto(base + "/sign-in?next=/admin");
-  await page.getByLabel("Email").fill(process.env.ADMIN_EMAIL ?? "admin@nexora.test");
-  await page.getByLabel("Password").fill(process.env.ADMIN_PASSWORD ?? "admin-local-only-123");
+  await page.getByLabel("Email").fill(process.env.ADMIN_EMAIL);
+  await page.getByLabel("Password").fill(process.env.ADMIN_PASSWORD);
   await page.getByRole("button", { name: "Sign in" }).click();
   await page.waitForURL(base + "/admin");
 });
