@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# prisma client (generated)
+/src/generated
+
+# allow the placeholder env file
+!.env.example
