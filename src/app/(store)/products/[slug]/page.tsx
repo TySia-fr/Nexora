@@ -122,10 +122,13 @@ async function ProductContent({ params, searchParams }: PageProps<"/products/[sl
         />
       </section>
 
-      <section className="border-t border-line" aria-label="Details">
-        <div className="container-site grid gap-14 py-18 md:grid-cols-2">
-          <div className="flex flex-col gap-5">
-            <h2 className="text-2xl font-semibold">Technical specifications</h2>
+      <section className="container-site pb-6" aria-label="Details">
+        <div className="rule-tick grid gap-14 pt-8 md:grid-cols-12 md:gap-8">
+          <div className="flex flex-col gap-6 md:col-span-7" data-reveal>
+            <div className="flex items-baseline justify-between gap-4">
+              <h2 className="text-display-m">Specifications</h2>
+              <span className="label-mono text-fg-subtle">01 / Technical</span>
+            </div>
             <table className="w-full border-collapse text-sm">
               <tbody>
                 {product.specs.map((s) => (
@@ -145,30 +148,40 @@ async function ProductContent({ params, searchParams }: PageProps<"/products/[sl
               NEXORA is a fictional brand; these specifications are illustrative.
             </p>
           </div>
-          <div className="flex flex-col gap-5">
-            <h2 className="text-2xl font-semibold">Features</h2>
-            {product.features.map((f) => (
-              <div
-                key={f.title}
-                className="flex flex-col gap-1.5 rounded-card border border-line bg-surface p-5"
-              >
-                <h3 className="font-medium">{f.title}</h3>
-                <p className="text-sm leading-relaxed text-fg-muted">{f.body}</p>
-              </div>
-            ))}
+          <div className="flex flex-col gap-6 md:col-span-5" data-reveal>
+            <div className="flex items-baseline justify-between gap-4">
+              <h2 className="text-display-m">Features</h2>
+              <span className="label-mono text-fg-subtle">02 / Design</span>
+            </div>
+            <ol className="flex flex-col" role="list">
+              {product.features.map((f, i) => (
+                <li key={f.title} className="grid grid-cols-[32px_1fr] gap-3 border-t border-line py-5">
+                  <span className="label-mono pt-1 text-fg-subtle">{String(i + 1).padStart(2, "0")}</span>
+                  <div className="flex flex-col gap-1.5">
+                    <h3 className="font-medium">{f.title}</h3>
+                    <p className="text-sm leading-relaxed text-fg-muted">{f.body}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
           </div>
         </div>
       </section>
 
-      <section id="reviews" className="scroll-mt-24 border-t border-line" aria-labelledby="reviews-title">
-        <div className="container-site flex flex-wrap gap-14 py-18">
+      <section
+        id="reviews"
+        className="container-site scroll-mt-24 py-20 md:py-28"
+        aria-labelledby="reviews-title"
+      >
+        <div className="rule-tick flex flex-wrap gap-14 pt-8">
           <div className="flex flex-[1_1_240px] flex-col gap-2">
-            <h2 id="reviews-title" className="text-2xl font-semibold">
+            <span className="label-mono text-fg-subtle">03 / Reviews</span>
+            <h2 id="reviews-title" className="text-display-m">
               Reviews
             </h2>
             {product.rating ? (
               <>
-                <span className="text-6xl font-semibold tracking-[-0.03em]">
+                <span className="mt-4 font-display text-7xl font-medium tracking-[-0.04em]">
                   {product.rating.average.toFixed(1)}
                 </span>
                 <span className="text-[13px] text-fg-subtle">
@@ -211,11 +224,14 @@ async function Related({ productId, categorySlug }: { productId: string; categor
   const related = await getRelatedProducts(productId, categorySlug);
   if (related.length === 0) return null;
   return (
-    <section aria-labelledby="related-title" className="border-t border-line">
-      <div className="container-site flex flex-col gap-7 py-18">
-        <h2 id="related-title" className="text-2xl font-semibold">
-          Pairs well with
-        </h2>
+    <section aria-labelledby="related-title" className="container-site pb-24">
+      <div className="rule-tick flex flex-col gap-8 pt-8">
+        <div className="flex items-baseline justify-between gap-4">
+          <h2 id="related-title" className="text-display-m">
+            Pairs well with
+          </h2>
+          <span className="label-mono text-fg-subtle">04 / Related</span>
+        </div>
         <ProductGrid products={related} />
       </div>
     </section>
@@ -227,8 +243,8 @@ export default function ProductPage(props: PageProps<"/products/[slug]">) {
     <Suspense
       fallback={
         <div className="container-site grid gap-12 py-14 md:grid-cols-2" aria-busy="true">
-          <div className="aspect-square animate-pulse rounded-card bg-surface" />
-          <div className="h-96 animate-pulse rounded-card bg-surface" />
+          <div className="aspect-square animate-pulse rounded-card bg-well" />
+          <div className="h-96 animate-pulse rounded-card bg-well" />
         </div>
       }
     >

@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState, useTransition } from "react";
-import { Heart, Minus, Plus } from "lucide-react";
+import { useEffect, useRef, useState, useTransition } from "react";
+import { Check, Heart, Minus, Plus } from "lucide-react";
 import type { ProductDetailView } from "@/server/catalog";
 import { addToCartAction } from "@/server/actions/cart";
 import { toggleWishlistAction } from "@/server/actions/wishlist";
@@ -40,6 +40,40 @@ export function ProductPurchase({
   const [saved, setSaved] = useState(initiallySaved);
   const [pending, startTransition] = useTransition();
   const [savePending, startSave] = useTransition();
+  // Brief confirmation on the button itself after a successful add (the status line below
+  // stays as the accessible, persistent message).
+  const [justAdded, setJustAdded] = useState(false);
+  // Mobile: a compact purchase bar appears once the main button has scrolled out of view.
+  const mainButton = useRef<HTMLButtonElement>(null);
+  const [showBar, setShowBar] = useState(false);
+
+  useEffect(() => {
+    if (!justAdded) return;
+    const t = setTimeout(() => setJustAdded(false), 1800);
+    return () => clearTimeout(t);
+  }, [justAdded]);
+
+  useEffect(() => {
+    // A passive scroll check (one read per frame) rather than IntersectionObserver: a jump
+    // straight past the button (anchor link, restored scroll) never crosses a threshold,
+    // so an observer would miss it.
+    const el = mainButton.current;
+    if (!el) return;
+    let frame = 0;
+    const check = () => {
+      frame = 0;
+      setShowBar(el.getBoundingClientRect().bottom < 0);
+    };
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(check);
+    };
+    frame = requestAnimationFrame(check);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      cancelAnimationFrame(frame);
+    };
+  }, []);
 
   const variant = product.variants.find((v) => v.id === variantId) ?? product.variants[0];
 
@@ -76,6 +110,7 @@ export function ProductPurchase({
     startTransition(async () => {
       const r = await addToCartAction(variant.id, qty);
       if (r.ok) {
+        setJustAdded(true);
         setStatus({
           kind: "success",
           text: `Added to cart — ${product.name}, ${variant.name}. ${r.data.quantityInCart} in cart.`,
@@ -111,7 +146,7 @@ export function ProductPurchase({
       : "In stock";
 
   return (
-    <div className="flex flex-wrap gap-x-14 gap-y-10">
+    <div className="flex flex-wrap items-start gap-x-16 gap-y-10">
       <div className="min-w-0 flex-[999_1_520px]">
         <Gallery
           images={variant.images}
@@ -121,10 +156,19 @@ export function ProductPurchase({
         />
       </div>
 
-      <div className="flex min-w-0 flex-[1_1_360px] flex-col gap-7">
-        <div className="flex flex-col gap-2.5">
-          <span className="label-mono text-fg-subtle">{product.tagline}</span>
-          <h1 className="text-display-l">{product.name}</h1>
+      <div className="flex min-w-0 flex-[1_1_360px] flex-col gap-7 lg:sticky lg:top-24">
+        <div className="flex flex-col gap-3">
+          <span className="label-mono flex items-center gap-2 text-fg-subtle">
+            <span
+              className={cn(
+                "size-1.5 rounded-full",
+                soldOut ? "bg-fg-subtle" : "bg-signal ring-1 ring-fg/20",
+              )}
+              aria-hidden="true"
+            />
+            {product.category.name} · {product.tagline}
+          </span>
+          <h1 className="text-display-m">{product.name}</h1>
           <div className="flex flex-wrap items-center gap-4">
             <Price cents={variant.priceCents} className="text-[22px]" />
             {product.rating && (
@@ -152,15 +196,18 @@ export function ProductPurchase({
                     aria-pressed={selected}
                     aria-label={`${v.name}${v.stock === 0 ? ", out of stock" : ""}, ${formatMoney(v.priceCents)}`}
                     className={cn(
-                      "flex h-11 items-center gap-2 rounded-full border px-3.5 text-sm",
-                      selected ? "border-fg" : "border-line-strong hover:border-fg-muted",
+                      "flex h-11 items-center gap-2 rounded-full border px-3.5 text-sm transition-[border-color,background-color] duration-150",
+                      selected ? "border-fg bg-fg/[0.04]" : "border-line-strong hover:border-fg-muted",
                       v.stock === 0 && "text-fg-subtle line-through decoration-fg-subtle",
                     )}
                   >
                     {v.colorHex && (
                       <span
                         aria-hidden="true"
-                        className="size-4 rounded-full border border-line-strong"
+                        className={cn(
+                          "size-4 rounded-full ring-1 ring-fg/15 transition-[box-shadow]",
+                          selected && "ring-2 ring-fg ring-offset-2 ring-offset-canvas",
+                        )}
                         style={{ backgroundColor: v.colorHex }}
                       />
                     )}
@@ -218,16 +265,23 @@ export function ProductPurchase({
             </button>
           </div>
           <button
+            ref={mainButton}
             type="button"
             onClick={add}
             disabled={soldOut || pending}
             className={buttonClasses("primary", "md", "h-13 w-full")}
           >
-            {soldOut
-              ? "Unavailable in this option"
-              : pending
-                ? "Adding…"
-                : `Add to cart — ${formatMoney(variant.priceCents * qty)}`}
+            {soldOut ? (
+              "Unavailable in this option"
+            ) : pending ? (
+              "Adding…"
+            ) : justAdded ? (
+              <>
+                <Check className="size-4" strokeWidth={2} aria-hidden="true" /> Added
+              </>
+            ) : (
+              `Add to cart — ${formatMoney(variant.priceCents * qty)}`
+            )}
           </button>
         </div>
 
@@ -261,6 +315,30 @@ export function ProductPurchase({
         </dl>
 
         <p className="text-[15px] leading-relaxed text-fg-muted">{product.description}</p>
+      </div>
+
+      {/* Mobile purchase bar. `hidden` removes it from the accessibility tree while the
+          main button is on screen, so there is never a duplicate control to announce. */}
+      <div
+        hidden={!showBar}
+        className="fixed inset-x-0 bottom-0 z-20 border-t border-line bg-canvas/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-md lg:hidden"
+      >
+        <div className="container-site flex h-16 items-center justify-between gap-4">
+          <div className="flex min-w-0 flex-col">
+            <span className="truncate text-sm font-medium">
+              {product.name} · {variant.name}
+            </span>
+            <Price cents={variant.priceCents} className="text-xs text-fg-muted" />
+          </div>
+          <button
+            type="button"
+            onClick={add}
+            disabled={soldOut || pending}
+            className={buttonClasses("primary", "sm", "shrink-0")}
+          >
+            {soldOut ? "Unavailable" : pending ? "Adding…" : justAdded ? "Added" : "Add"}
+          </button>
+        </div>
       </div>
     </div>
   );
