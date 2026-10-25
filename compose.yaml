@@ -1,6 +1,6 @@
 # Production-style stack for a single VPS behind Nginx.
 #   docker compose up -d --build
-# App listens on 127.0.0.1:3001 only; Nginx terminates TLS and proxies to it.
+# App listens on 127.0.0.1:3002 only (override with APP_PORT); Nginx terminates TLS and proxies to it.
 name: nexora
 
 services:
@@ -37,7 +37,8 @@ services:
       DATABASE_URL: postgresql://nexora:${POSTGRES_PASSWORD}@db:5432/nexora
       NODE_ENV: production
     ports:
-      - "127.0.0.1:3001:3000"
+      # 3001 is taken by the portfolio site on the same server.
+      - "127.0.0.1:${APP_PORT:-3002}:3000"
     depends_on:
       db: { condition: service_healthy }
       migrate: { condition: service_completed_successfully }

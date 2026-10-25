@@ -1,7 +1,7 @@
 # Deployment
 
 Target: a single Linux VPS with Docker and Nginx, the store on its own subdomain
-(for example `nexora.siavashizadi.com`). Nginx terminates TLS and proxies to the app on `127.0.0.1:3001`.
+(for example `nexora.siavashizadi.com`). Nginx terminates TLS and proxies to the app on `127.0.0.1:3002`.
 
 ## 1. DNS
 
@@ -32,16 +32,16 @@ Never set `RATE_LIMIT_MULTIPLIER` here.
 ## 3. Start
 
 ```bash
-docker compose up -d --build        # db → migrate (runs and exits) → app
-docker compose ps                   # app should be "healthy"
-curl -s http://127.0.0.1:3001/api/health    # {"status":"ok"}
+sudo docker compose up -d --build        # db → migrate (runs and exits) → app
+sudo docker compose ps                   # app should be "healthy"
+curl -s http://127.0.0.1:3002/api/health    # {"status":"ok"}
 ```
 
 First time only — demo data and the first admin:
 
 ```bash
-docker compose run --rm -e ALLOW_PRODUCTION_SEED=yes migrate pnpm db:seed
-docker compose run --rm migrate pnpm admin:create      # prompts for email and a hidden password
+sudo docker compose run --rm -e ALLOW_PRODUCTION_SEED=yes migrate pnpm db:seed
+sudo docker compose run --rm migrate pnpm admin:create      # prompts for email and a hidden password
 ```
 
 ## 4. Nginx
@@ -70,7 +70,7 @@ server {
     location / {
         # POSTs (server actions, auth, webhooks) get a per-IP burst limit.
         limit_req zone=nexora_post burst=20 nodelay;
-        proxy_pass http://127.0.0.1:3001;
+        proxy_pass http://127.0.0.1:3002;
         proxy_http_version 1.1;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
@@ -94,21 +94,21 @@ In the Stripe dashboard (test mode) → Developers → Webhooks → add endpoint
 `https://nexora.siavashizadi.com/api/webhooks/stripe` with events:
 `checkout.session.completed`, `checkout.session.async_payment_succeeded`,
 `checkout.session.async_payment_failed`, `checkout.session.expired`.
-Put the signing secret in `STRIPE_WEBHOOK_SECRET` and `docker compose up -d` again.
+Put the signing secret in `STRIPE_WEBHOOK_SECRET` and `sudo docker compose up -d` again.
 
 ## 6. Updating
 
 ```bash
 git pull
-docker compose up -d --build        # migrations run before the new app starts
+sudo docker compose up -d --build        # migrations run before the new app starts
 ```
 
 ## 7. Backups
 
 ```bash
-docker compose exec -T db pg_dump -U nexora -Fc nexora > ~/backups/nexora-$(date +%F).dump
+sudo docker compose exec -T db pg_dump -U nexora -Fc nexora > ~/backups/nexora-$(date +%F).dump
 # restore into an empty database:
-docker compose exec -T db pg_restore -U nexora -d nexora --clean < ~/backups/nexora-YYYY-MM-DD.dump
+sudo docker compose exec -T db pg_restore -U nexora -d nexora --clean < ~/backups/nexora-YYYY-MM-DD.dump
 ```
 
 Schedule the dump with cron and copy it off the server. A backup you have never restored is not a backup:
