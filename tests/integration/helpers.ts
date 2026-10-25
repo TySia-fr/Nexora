@@ -6,7 +6,9 @@ export { db };
 export function assertTestDatabase() {
   const url = process.env.DATABASE_URL ?? "";
   if (!/test/i.test(new URL(url).pathname)) {
-    throw new Error(`Integration tests need TEST_DATABASE_URL pointing at a *test* database (got ${new URL(url).pathname}).`);
+    throw new Error(
+      `Integration tests need TEST_DATABASE_URL pointing at a *test* database (got ${new URL(url).pathname}).`,
+    );
   }
 }
 

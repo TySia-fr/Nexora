@@ -1,0 +1,6 @@
+src/generated
+prisma/migrations
+public
+pnpm-lock.yaml
+.next
+next-env.d.ts

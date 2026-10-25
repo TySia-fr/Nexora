@@ -85,7 +85,9 @@ describe("payments", () => {
     const { body } = signedEvent({ id: "evt_1" });
     expect(() => stripeGateway.parseWebhook(body, "t=1,v1=deadbeef")).toThrow();
     const tampered = signedEvent({ id: "evt_2" });
-    expect(() => stripeGateway.parseWebhook(tampered.body.replace("evt_2", "evt_3"), tampered.signature)).toThrow();
+    expect(() =>
+      stripeGateway.parseWebhook(tampered.body.replace("evt_2", "evt_3"), tampered.signature),
+    ).toThrow();
   });
 
   it("a browser reaching the success URL does not mark the order paid", async () => {
@@ -133,7 +135,9 @@ describe("payments", () => {
   it("waits for delayed payment methods", async () => {
     const { order, session } = await checkout();
     const base = { id: session.sessionId, orderId: order.id, cartId: order.cartId, amount: order.totalCents };
-    await deliver(sessionEvent("evt_unpaid", "checkout.session.completed", { ...base, paymentStatus: "unpaid" }));
+    await deliver(
+      sessionEvent("evt_unpaid", "checkout.session.completed", { ...base, paymentStatus: "unpaid" }),
+    );
     expect((await db.order.findUniqueOrThrow({ where: { id: order.id } })).status).toBe("PENDING_PAYMENT");
     await deliver(sessionEvent("evt_async_ok", "checkout.session.async_payment_succeeded", base));
     expect((await db.order.findUniqueOrThrow({ where: { id: order.id } })).status).toBe("PAID");
@@ -181,6 +185,8 @@ describe("payments", () => {
   });
 
   it("ignores unrelated event types", async () => {
-    expect(await deliver({ id: "evt_other", object: "event", type: "customer.created", data: { object: {} } })).toBe("ignored");
+    expect(
+      await deliver({ id: "evt_other", object: "event", type: "customer.created", data: { object: {} } }),
+    ).toBe("ignored");
   });
 });

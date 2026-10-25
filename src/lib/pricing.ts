@@ -34,12 +34,7 @@ export type CouponRule = {
 };
 
 export type CouponRejection =
-  | "inactive"
-  | "not_started"
-  | "expired"
-  | "exhausted"
-  | "below_minimum"
-  | "not_applicable";
+  "inactive" | "not_started" | "expired" | "exhausted" | "below_minimum" | "not_applicable";
 
 export const COUPON_REJECTION_MESSAGES: Record<CouponRejection, string> = {
   inactive: "This code is not valid.",

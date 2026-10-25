@@ -3,8 +3,9 @@
 **Status:** accepted · 2026-10-25
 
 ## Decision
+
 - Checkout uses Stripe-hosted Checkout Sessions. Card data never reaches NEXORA.
-- The success page only *reads* order status. It never marks an order paid.
+- The success page only _reads_ order status. It never marks an order paid.
 - `POST /api/webhooks/stripe` verifies the signature against the raw body,
   records the event id in `ProcessedWebhookEvent` inside the same transaction
   as its effects, and ignores ids it has already seen.

@@ -51,6 +51,7 @@ jobs:
           DATABASE_URL="$TEST_DATABASE_URL" pnpm exec prisma migrate deploy
       - name: Seed runs cleanly
         run: pnpm db:seed
+      - run: pnpm exec prettier --check .
       - run: pnpm lint
       - run: pnpm typecheck
       - run: pnpm test

@@ -95,7 +95,10 @@ const EMPTY_TOTALS: Totals = computeTotals({
   now: new Date(0),
 });
 
-export async function loadCoupon(code: string, tx: Tx | typeof db = db): Promise<(CouponRule & { id: string }) | null> {
+export async function loadCoupon(
+  code: string,
+  tx: Tx | typeof db = db,
+): Promise<(CouponRule & { id: string }) | null> {
   const c = await tx.coupon.findUnique({ where: { code: code.trim().toUpperCase() } });
   return c
     ? {
@@ -128,7 +131,15 @@ export async function getCart(
     include: { items: { orderBy: { createdAt: "asc" }, include: lineInclude } },
   });
   if (!cart) {
-    return { id: null, lines: [], itemCount: 0, couponCode: null, couponMessage: null, totals: EMPTY_TOTALS, hasIssues: false };
+    return {
+      id: null,
+      lines: [],
+      itemCount: 0,
+      couponCode: null,
+      couponMessage: null,
+      totals: EMPTY_TOTALS,
+      hasIssues: false,
+    };
   }
 
   const lines: CartLineView[] = cart.items.map((item) => {
@@ -161,7 +172,11 @@ export async function getCart(
   const purchasable = lines.filter((l) => l.issue === null);
   const coupon = cart.couponCode ? await loadCoupon(cart.couponCode, tx) : null;
   const totals = computeTotals({
-    lines: purchasable.map((l) => ({ unitPriceCents: l.unitPriceCents, quantity: l.quantity, categoryId: l.categoryId })),
+    lines: purchasable.map((l) => ({
+      unitPriceCents: l.unitPriceCents,
+      quantity: l.quantity,
+      categoryId: l.categoryId,
+    })),
     coupon,
     shippingMethod,
     now: new Date(),

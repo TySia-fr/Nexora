@@ -37,7 +37,11 @@ try {
     "migration_name" VARCHAR(255) NOT NULL, "logs" TEXT, "rolled_back_at" TIMESTAMPTZ,
     "started_at" TIMESTAMPTZ NOT NULL DEFAULT now(), "applied_steps_count" INTEGER NOT NULL DEFAULT 0)`);
   const done = new Set(
-    (await client.query<{ migration_name: string }>(`SELECT migration_name FROM "_prisma_migrations" WHERE finished_at IS NOT NULL`)).rows.map((r) => r.migration_name),
+    (
+      await client.query<{ migration_name: string }>(
+        `SELECT migration_name FROM "_prisma_migrations" WHERE finished_at IS NOT NULL`,
+      )
+    ).rows.map((r) => r.migration_name),
   );
   for (const name of migrations) {
     if (done.has(name)) continue;

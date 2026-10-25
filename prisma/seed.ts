@@ -13,7 +13,9 @@ import { categories, coupons, products, reviewers, reviews } from "./seed-data";
 import { imageFileName } from "../scripts/generate-product-art";
 
 if (process.env.NODE_ENV === "production" && process.env.ALLOW_PRODUCTION_SEED !== "yes") {
-  console.error("Refusing to seed a production environment. Set ALLOW_PRODUCTION_SEED=yes for a demo deployment.");
+  console.error(
+    "Refusing to seed a production environment. Set ALLOW_PRODUCTION_SEED=yes for a demo deployment.",
+  );
   process.exit(1);
 }
 
@@ -77,13 +79,33 @@ async function main() {
     const alt = (view: string, variant?: string) =>
       `${p.name}${variant ? ` in ${variant}` : ""}, ${view === "front" ? "front view" : "close-up"}`;
     const images: { url: string; alt: string; variantId: string | null; position: number }[] = [
-      { url: `/products/${imageFileName(p.slug, null, "front")}`, alt: alt("front", p.variants[0]!.name), variantId: null, position: 0 },
-      { url: `/products/${imageFileName(p.slug, null, "detail")}`, alt: alt("detail", p.variants[0]!.name), variantId: null, position: 1 },
+      {
+        url: `/products/${imageFileName(p.slug, null, "front")}`,
+        alt: alt("front", p.variants[0]!.name),
+        variantId: null,
+        position: 0,
+      },
+      {
+        url: `/products/${imageFileName(p.slug, null, "detail")}`,
+        alt: alt("detail", p.variants[0]!.name),
+        variantId: null,
+        position: 1,
+      },
     ];
     if (new Set(p.variants.map((v) => v.colorHex)).size > 1) {
       for (const v of product.variants) {
-        images.push({ url: `/products/${imageFileName(p.slug, v.sku, "front")}`, alt: alt("front", v.name), variantId: v.id, position: 0 });
-        images.push({ url: `/products/${imageFileName(p.slug, null, "detail")}`, alt: alt("detail", p.variants[0]!.name), variantId: v.id, position: 1 });
+        images.push({
+          url: `/products/${imageFileName(p.slug, v.sku, "front")}`,
+          alt: alt("front", v.name),
+          variantId: v.id,
+          position: 0,
+        });
+        images.push({
+          url: `/products/${imageFileName(p.slug, null, "detail")}`,
+          alt: alt("detail", p.variants[0]!.name),
+          variantId: v.id,
+          position: 1,
+        });
       }
     }
     await db.productImage.createMany({

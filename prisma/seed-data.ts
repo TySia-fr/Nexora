@@ -43,11 +43,36 @@ export type SeedProduct = {
 };
 
 export const categories = [
-  { slug: "audio", name: "Audio", description: "Headphones and earbuds tuned for long listening, with noise cancelling that adapts to you.", position: 1 },
-  { slug: "phones", name: "Phones", description: "The Axis line: flat aluminium, a quiet interface and batteries that outlast the day.", position: 2 },
-  { slug: "wearables", name: "Wearables", description: "Watches and trackers that stay out of the way until you need them.", position: 3 },
-  { slug: "speakers", name: "Speakers", description: "Room-filling sound from objects you'd keep on the shelf even when they're off.", position: 4 },
-  { slug: "accessories", name: "Accessories", description: "Chargers, cables, cases and docks designed alongside the devices they serve.", position: 5 },
+  {
+    slug: "audio",
+    name: "Audio",
+    description: "Headphones and earbuds tuned for long listening, with noise cancelling that adapts to you.",
+    position: 1,
+  },
+  {
+    slug: "phones",
+    name: "Phones",
+    description: "The Axis line: flat aluminium, a quiet interface and batteries that outlast the day.",
+    position: 2,
+  },
+  {
+    slug: "wearables",
+    name: "Wearables",
+    description: "Watches and trackers that stay out of the way until you need them.",
+    position: 3,
+  },
+  {
+    slug: "speakers",
+    name: "Speakers",
+    description: "Room-filling sound from objects you'd keep on the shelf even when they're off.",
+    position: 4,
+  },
+  {
+    slug: "accessories",
+    name: "Accessories",
+    description: "Chargers, cables, cases and docks designed alongside the devices they serve.",
+    position: 5,
+  },
 ] as const;
 
 const GRAPHITE = "#2A2A2F";
@@ -146,7 +171,7 @@ export const products: SeedProduct[] = [
     unitsSold: 189,
     ageDays: 75,
     specs: [
-      { label: "Display", value: "6.1\" OLED, 120 Hz, 1400 nits peak" },
+      { label: "Display", value: '6.1" OLED, 120 Hz, 1400 nits peak' },
       { label: "Storage", value: "128 GB or 256 GB" },
       { label: "Battery", value: "4,600 mAh · up to 2 days" },
       { label: "Camera", value: "50 MP main, 12 MP ultra-wide" },
@@ -173,13 +198,15 @@ export const products: SeedProduct[] = [
     unitsSold: 97,
     ageDays: 60,
     specs: [
-      { label: "Display", value: "5.4\" OLED, 120 Hz" },
+      { label: "Display", value: '5.4" OLED, 120 Hz' },
       { label: "Storage", value: "128 GB" },
       { label: "Battery", value: "3,900 mAh · all day" },
       { label: "Weight", value: "144 g" },
     ],
     features: [{ title: "One-handed", body: "Every control is reachable with your thumb." }],
-    variants: [{ sku: "NX-AXIS2M-128-SLT", name: "128 GB · Slate", colorHex: SLATE, priceCents: 64900, stock: 12 }],
+    variants: [
+      { sku: "NX-AXIS2M-128-SLT", name: "128 GB · Slate", colorHex: SLATE, priceCents: 64900, stock: 12 },
+    ],
   },
   {
     slug: "axis-2-pro",
@@ -191,13 +218,23 @@ export const products: SeedProduct[] = [
     unitsSold: 64,
     ageDays: 30,
     specs: [
-      { label: "Display", value: "6.7\" OLED, 1–120 Hz" },
+      { label: "Display", value: '6.7" OLED, 1–120 Hz' },
       { label: "Storage", value: "512 GB" },
       { label: "Camera", value: "50 MP main, 50 MP ultra-wide, 5× telephoto" },
       { label: "Battery", value: "5,200 mAh" },
     ],
-    features: [{ title: "5× telephoto", body: "Optical zoom without a camera bump that wobbles on the table." }],
-    variants: [{ sku: "NX-AXIS2P-512-GRP", name: "512 GB · Graphite", colorHex: GRAPHITE, priceCents: 109900, stock: 0 }],
+    features: [
+      { title: "5× telephoto", body: "Optical zoom without a camera bump that wobbles on the table." },
+    ],
+    variants: [
+      {
+        sku: "NX-AXIS2P-512-GRP",
+        name: "512 GB · Graphite",
+        colorHex: GRAPHITE,
+        priceCents: 109900,
+        stock: 0,
+      },
+    ],
   },
   {
     slug: "orbit-watch",
@@ -276,7 +313,7 @@ export const products: SeedProduct[] = [
     unitsSold: 133,
     ageDays: 10,
     specs: [
-      { label: "Drivers", value: "2 × 4\" woofers, 3 × 0.75\" tweeters" },
+      { label: "Drivers", value: '2 × 4" woofers, 3 × 0.75" tweeters' },
       { label: "Output", value: "360°, room-calibrated" },
       { label: "Connectivity", value: "Wi-Fi 6, Bluetooth 5.3, AirPlay-compatible" },
       { label: "Size", value: "320 × 120 × 120 mm" },
@@ -314,7 +351,8 @@ export const products: SeedProduct[] = [
     slug: "column-studio",
     name: "Column Studio",
     tagline: "Floor-standing speakers, pair",
-    description: "A pair of slim floor-standing speakers with built-in amplification. Connect a turntable, a TV or nothing at all.",
+    description:
+      "A pair of slim floor-standing speakers with built-in amplification. Connect a turntable, a TV or nothing at all.",
     category: "speakers",
     shape: "speaker-column",
     unitsSold: 21,
@@ -331,7 +369,8 @@ export const products: SeedProduct[] = [
     slug: "flux-65w",
     name: "Flux 65W charger",
     tagline: "USB-C charger",
-    description: "A two-port 65 W GaN charger with folding pins. Charges a laptop and a phone at the same time.",
+    description:
+      "A two-port 65 W GaN charger with folding pins. Charges a laptop and a phone at the same time.",
     category: "accessories",
     shape: "charger",
     featured: false,
@@ -349,7 +388,8 @@ export const products: SeedProduct[] = [
     slug: "flux-140w",
     name: "Flux 140W charger",
     tagline: "USB-C charger, three ports",
-    description: "Three ports, 140 W in total: enough for a large laptop, a phone and earbuds from one socket.",
+    description:
+      "Three ports, 140 W in total: enough for a large laptop, a phone and earbuds from one socket.",
     category: "accessories",
     shape: "charger",
     unitsSold: 156,
@@ -447,7 +487,13 @@ export const coupons: SeedCoupon[] = [
   { code: "WELCOME15", type: "PERCENT", value: 15, minSubtotalCents: 20000, maxRedemptions: 100 },
   { code: "AUDIO20", type: "FIXED", value: 2000, minSubtotalCents: 10000, categorySlug: "audio" },
   // Expired on purpose, to demonstrate the rejection message.
-  { code: "SUMMER25", type: "PERCENT", value: 25, minSubtotalCents: 0, endsAt: new Date("2026-09-01T00:00:00Z") },
+  {
+    code: "SUMMER25",
+    type: "PERCENT",
+    value: 25,
+    minSubtotalCents: 0,
+    endsAt: new Date("2026-09-01T00:00:00Z"),
+  },
 ];
 
 /** Fictional reviewers. Reviews are seeded as verified purchases with matching paid orders. */
@@ -460,12 +506,60 @@ export const reviewers = [
 ];
 
 export const reviews: { product: string; reviewer: number; rating: number; title: string; body: string }[] = [
-  { product: "halo-one", reviewer: 0, rating: 5, title: "Quietest pair I have owned", body: "My train commute went from loud to nothing. The clamp is firm for the first week, then settles." },
-  { product: "halo-one", reviewer: 1, rating: 4, title: "Great sound, bulky case", body: "Balanced out of the box, no EQ needed. The case is bigger than I expected." },
-  { product: "halo-one", reviewer: 2, rating: 5, title: "The battery is real", body: "Two weeks of office use between charges." },
-  { product: "pulse-buds", reviewer: 3, rating: 4, title: "Comfortable for hours", body: "They don't stick out, so I can lie on my side with them in. Touch controls take getting used to." },
-  { product: "pulse-buds", reviewer: 4, rating: 5, title: "Replaced my old earbuds", body: "Noise cancelling is better than I expected at this size." },
-  { product: "orbit-watch", reviewer: 0, rating: 4, title: "Finally a week of battery", body: "I charge it on Sundays. Sleep tracking is decent, the app could be faster." },
-  { product: "monolith", reviewer: 1, rating: 5, title: "Fills the living room", body: "Calibration made a real difference in our long room." },
-  { product: "flux-65w", reviewer: 2, rating: 5, title: "Laptop and phone, one plug", body: "Tiny, and the folding pins mean it lives in my bag." },
+  {
+    product: "halo-one",
+    reviewer: 0,
+    rating: 5,
+    title: "Quietest pair I have owned",
+    body: "My train commute went from loud to nothing. The clamp is firm for the first week, then settles.",
+  },
+  {
+    product: "halo-one",
+    reviewer: 1,
+    rating: 4,
+    title: "Great sound, bulky case",
+    body: "Balanced out of the box, no EQ needed. The case is bigger than I expected.",
+  },
+  {
+    product: "halo-one",
+    reviewer: 2,
+    rating: 5,
+    title: "The battery is real",
+    body: "Two weeks of office use between charges.",
+  },
+  {
+    product: "pulse-buds",
+    reviewer: 3,
+    rating: 4,
+    title: "Comfortable for hours",
+    body: "They don't stick out, so I can lie on my side with them in. Touch controls take getting used to.",
+  },
+  {
+    product: "pulse-buds",
+    reviewer: 4,
+    rating: 5,
+    title: "Replaced my old earbuds",
+    body: "Noise cancelling is better than I expected at this size.",
+  },
+  {
+    product: "orbit-watch",
+    reviewer: 0,
+    rating: 4,
+    title: "Finally a week of battery",
+    body: "I charge it on Sundays. Sleep tracking is decent, the app could be faster.",
+  },
+  {
+    product: "monolith",
+    reviewer: 1,
+    rating: 5,
+    title: "Fills the living room",
+    body: "Calibration made a real difference in our long room.",
+  },
+  {
+    product: "flux-65w",
+    reviewer: 2,
+    rating: 5,
+    title: "Laptop and phone, one plug",
+    body: "Tiny, and the folding pins mean it lives in my bag.",
+  },
 ];

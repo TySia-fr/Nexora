@@ -20,7 +20,12 @@ export const postalCodeSchema = z
 export const shippingAddressSchema = z.object({
   fullName: text("Full name", 100),
   line1: text("Address", 120),
-  line2: z.string().trim().max(120).optional().transform((v) => v || undefined),
+  line2: z
+    .string()
+    .trim()
+    .max(120)
+    .optional()
+    .transform((v) => v || undefined),
   postalCode: postalCodeSchema,
   city: text("City", 80),
   country: z.literal("FR", { error: "We currently ship to France only." }),

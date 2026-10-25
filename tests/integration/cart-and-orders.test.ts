@@ -50,7 +50,10 @@ describe("cart", () => {
 
   it("refuses out-of-stock, inactive and draft products", async () => {
     const out = await makeProduct({ categoryId, variants: [{ priceCents: 100, stock: 0 }] });
-    const inactive = await makeProduct({ categoryId, variants: [{ priceCents: 100, stock: 5, isActive: false }] });
+    const inactive = await makeProduct({
+      categoryId,
+      variants: [{ priceCents: 100, stock: 5, isActive: false }],
+    });
     const draft = await makeProduct({ categoryId, status: "DRAFT" });
     await expectAppError(addToCart(guest(), out.variants[0]!.id, 1), "OUT_OF_STOCK");
     await expectAppError(addToCart(guest(), inactive.variants[0]!.id, 1), "UNAVAILABLE");
@@ -97,7 +100,9 @@ describe("cart", () => {
     await expectAppError(applyCoupon(owner, "NEXORA10"), "CART_EMPTY");
     await addToCart(owner, p.variants[0]!.id, 1);
     await db.coupon.create({ data: { code: "BIG", type: "PERCENT", value: 10, minSubtotalCents: 10000 } });
-    await db.coupon.create({ data: { code: "OLD", type: "PERCENT", value: 10, endsAt: new Date("2020-01-01") } });
+    await db.coupon.create({
+      data: { code: "OLD", type: "PERCENT", value: 10, endsAt: new Date("2020-01-01") },
+    });
     await db.coupon.create({ data: { code: "TENOFF", type: "PERCENT", value: 10 } });
     await expectAppError(applyCoupon(owner, "NOPE"), "COUPON_REJECTED");
     await expectAppError(applyCoupon(owner, "BIG"), "COUPON_REJECTED");
@@ -130,7 +135,10 @@ describe("orders", () => {
   });
 
   it("creates an order with server-side totals, snapshots and reserved stock", async () => {
-    const p = await makeProduct({ categoryId, variants: [{ priceCents: 34900, stock: 5, name: "Graphite" }] });
+    const p = await makeProduct({
+      categoryId,
+      variants: [{ priceCents: 34900, stock: 5, name: "Graphite" }],
+    });
     const owner = guest();
     await addToCart(owner, p.variants[0]!.id, 2);
 
@@ -143,8 +151,18 @@ describe("orders", () => {
     expect(order.totalCents).toBe(69800);
 
     const saved = await db.order.findUniqueOrThrow({ where: { id: order.id }, include: { items: true } });
-    expect(saved).toMatchObject({ status: "PENDING_PAYMENT", subtotalCents: 69800, shippingCents: 0, totalCents: 69800 });
-    expect(saved.items[0]).toMatchObject({ unitPriceCents: 34900, quantity: 2, variantName: "Graphite", productName: p.name });
+    expect(saved).toMatchObject({
+      status: "PENDING_PAYMENT",
+      subtotalCents: 69800,
+      shippingCents: 0,
+      totalCents: 69800,
+    });
+    expect(saved.items[0]).toMatchObject({
+      unitPriceCents: 34900,
+      quantity: 2,
+      variantName: "Graphite",
+      productName: p.name,
+    });
     expect(saved.reservedUntil).not.toBeNull();
     expect((await db.productVariant.findUniqueOrThrow({ where: { id: p.variants[0]!.id } })).stock).toBe(3);
 
@@ -166,7 +184,13 @@ describe("orders", () => {
     await expect(createOrderFromCart(owner, bad, null)).rejects.toSatisfy((e: unknown) => {
       const err = e as AppError;
       const fields = err.details?.fieldErrors as Record<string, string>;
-      return err.code === "VALIDATION" && "email" in fields && "address.fullName" in fields && "address.postalCode" in fields && "address.country" in fields;
+      return (
+        err.code === "VALIDATION" &&
+        "email" in fields &&
+        "address.fullName" in fields &&
+        "address.postalCode" in fields &&
+        "address.country" in fields
+      );
     });
     expect(await db.order.count()).toBe(0);
   });
@@ -185,13 +209,17 @@ describe("orders", () => {
     const owners = Array.from({ length: 8 }, () => guest());
     for (const o of owners) await addToCart(o, p.variants[0]!.id, 1);
 
-    const results = await Promise.allSettled(owners.map((o) => createOrderFromCart(o, validCheckout(), null)));
+    const results = await Promise.allSettled(
+      owners.map((o) => createOrderFromCart(o, validCheckout(), null)),
+    );
     const ok = results.filter((r) => r.status === "fulfilled");
     const failed = results.filter((r) => r.status === "rejected");
     expect(ok).toHaveLength(3);
     expect(failed).toHaveLength(5);
     for (const f of failed) {
-      expect(["OUT_OF_STOCK", "CART_CHANGED"]).toContain(((f as PromiseRejectedResult).reason as AppError).code);
+      expect(["OUT_OF_STOCK", "CART_CHANGED"]).toContain(
+        ((f as PromiseRejectedResult).reason as AppError).code,
+      );
     }
     expect((await db.productVariant.findUniqueOrThrow({ where: { id: p.variants[0]!.id } })).stock).toBe(0);
   });
@@ -204,7 +232,9 @@ describe("orders", () => {
       await addToCart(o, p.variants[0]!.id, 1);
       await applyCoupon(o, "ONCE");
     }
-    const results = await Promise.allSettled(owners.map((o) => createOrderFromCart(o, validCheckout(), null)));
+    const results = await Promise.allSettled(
+      owners.map((o) => createOrderFromCart(o, validCheckout(), null)),
+    );
     expect(results.filter((r) => r.status === "fulfilled")).toHaveLength(1);
     expect((await db.coupon.findUniqueOrThrow({ where: { code: "ONCE" } })).redemptionCount).toBe(1);
   });

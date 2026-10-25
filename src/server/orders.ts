@@ -52,7 +52,10 @@ async function takeStock(tx: Tx, variantId: string, quantity: number): Promise<b
 }
 
 async function returnStock(tx: Tx, orderId: string): Promise<void> {
-  const items = await tx.orderItem.findMany({ where: { orderId }, select: { variantId: true, quantity: true } });
+  const items = await tx.orderItem.findMany({
+    where: { orderId },
+    select: { variantId: true, quantity: true },
+  });
   for (const item of items) {
     // A variant deleted since the order leaves nothing to restock.
     if (!item.variantId) continue;
@@ -157,7 +160,10 @@ export async function createOrderFromCart(
             AND ("maxRedemptions" IS NULL OR "redemptionCount" < "maxRedemptions")
         `;
         if (claimed !== 1) {
-          throw new AppError("COUPON_REJECTED", `${COUPON_REJECTION_MESSAGES.exhausted} Remove it to continue.`);
+          throw new AppError(
+            "COUPON_REJECTED",
+            `${COUPON_REJECTION_MESSAGES.exhausted} Remove it to continue.`,
+          );
         }
       }
 
@@ -267,10 +273,12 @@ export async function markOrderPaid(
   });
 
   for (const item of order.items) {
-    await tx.product.update({
-      where: { id: item.productId },
-      data: { unitsSold: { increment: item.quantity } },
-    }).catch(() => undefined); // product deleted since: nothing to count
+    await tx.product
+      .update({
+        where: { id: item.productId },
+        data: { unitsSold: { increment: item.quantity } },
+      })
+      .catch(() => undefined); // product deleted since: nothing to count
   }
 
   // Remove what was bought from the cart that started this checkout.
@@ -278,7 +286,10 @@ export async function markOrderPaid(
     const variantIds = order.items.flatMap((i) => (i.variantId ? [i.variantId] : []));
     await tx.cartItem.deleteMany({ where: { cartId, variantId: { in: variantIds } } });
     if (order.couponCode) {
-      await tx.cart.updateMany({ where: { id: cartId, couponCode: order.couponCode }, data: { couponCode: null } });
+      await tx.cart.updateMany({
+        where: { id: cartId, couponCode: order.couponCode },
+        data: { couponCode: null },
+      });
     }
   }
   return true;
@@ -371,20 +382,36 @@ export async function transitionOrder(orderId: string, to: OrderStatus, actorId:
     const order = await tx.order.findUnique({ where: { id: orderId }, select: { status: true } });
     if (!order) throw new AppError("NOT_FOUND", "Order not found.");
     if (!canTransition(order.status, to)) {
-      throw new AppError("INVALID_TRANSITION", `An order that is ${order.status.toLowerCase()} cannot become ${to.toLowerCase()}.`);
+      throw new AppError(
+        "INVALID_TRANSITION",
+        `An order that is ${order.status.toLowerCase()} cannot become ${to.toLowerCase()}.`,
+      );
     }
     if (to === "CANCELLED") {
       // Only PENDING_PAYMENT can reach CANCELLED (see ORDER_TRANSITIONS).
       await cancelPendingOrder(tx, orderId, null);
     } else {
-      const { count } = await tx.order.updateMany({ where: { id: orderId, status: order.status }, data: { status: to } });
-      if (count === 0) throw new AppError("CONFLICT", "The order changed in the meantime. Reload and try again.");
+      const { count } = await tx.order.updateMany({
+        where: { id: orderId, status: order.status },
+        data: { status: to },
+      });
+      if (count === 0)
+        throw new AppError("CONFLICT", "The order changed in the meantime. Reload and try again.");
       if (to === "REFUNDED") {
-        await tx.payment.updateMany({ where: { orderId, status: "SUCCEEDED" }, data: { status: "REFUNDED" } });
+        await tx.payment.updateMany({
+          where: { orderId, status: "SUCCEEDED" },
+          data: { status: "REFUNDED" },
+        });
       }
     }
     await tx.auditLog.create({
-      data: { actorId, action: "order.transition", entity: "Order", entityId: orderId, data: { from: order.status, to } },
+      data: {
+        actorId,
+        action: "order.transition",
+        entity: "Order",
+        entityId: orderId,
+        data: { from: order.status, to },
+      },
     });
   });
 }

@@ -35,24 +35,25 @@ export const stripeGateway: PaymentGateway = {
     const s = stripe();
     // Discounts are applied with a single-use coupon for the exact amount our
     // server computed, so Stripe's total always equals order.totalCents.
-    const discounts = order.discountCents > 0
-      ? [
-          {
-            coupon: (
-              await s.coupons.create(
-                {
-                  amount_off: order.discountCents,
-                  currency: "eur",
-                  duration: "once",
-                  max_redemptions: 1,
-                  name: order.couponCode ?? "Discount",
-                },
-                { idempotencyKey: `coupon-${order.id}` },
-              )
-            ).id,
-          },
-        ]
-      : undefined;
+    const discounts =
+      order.discountCents > 0
+        ? [
+            {
+              coupon: (
+                await s.coupons.create(
+                  {
+                    amount_off: order.discountCents,
+                    currency: "eur",
+                    duration: "once",
+                    max_redemptions: 1,
+                    name: order.couponCode ?? "Discount",
+                  },
+                  { idempotencyKey: `coupon-${order.id}` },
+                )
+              ).id,
+            },
+          ]
+        : undefined;
 
     const session = await s.checkout.sessions.create(
       {
@@ -125,7 +126,10 @@ export async function startPayment(
     console.error(`[nexora] could not start payment for ${formatOrderNumber(order.number)}`, err);
     await db.$transaction((tx) => cancelPendingOrder(tx, order.id, "FAILED"));
     if (err instanceof AppError) throw err;
-    throw new AppError("CONFLICT", "We couldn't reach the payment provider. Your cart is unchanged — please try again.");
+    throw new AppError(
+      "CONFLICT",
+      "We couldn't reach the payment provider. Your cart is unchanged — please try again.",
+    );
   }
 }
 
@@ -174,7 +178,10 @@ export async function handleStripeEvent(event: Stripe.Event): Promise<WebhookOut
           orderId,
           {
             sessionId: session.id,
-            intentId: typeof session.payment_intent === "string" ? session.payment_intent : (session.payment_intent?.id ?? null),
+            intentId:
+              typeof session.payment_intent === "string"
+                ? session.payment_intent
+                : (session.payment_intent?.id ?? null),
             amountCents: session.amount_total ?? -1,
             currency: session.currency ?? "",
           },

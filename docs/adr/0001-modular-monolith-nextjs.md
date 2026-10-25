@@ -3,10 +3,12 @@
 **Status:** accepted · 2026-10-25
 
 ## Context
+
 NEXORA needs a storefront, an account area, an admin area, payment webhooks and
 background-free order logic. One developer maintains it.
 
 ## Decision
+
 One Next.js 16 application. Code is split by responsibility, not by framework
 feature:
 
@@ -18,6 +20,7 @@ feature:
   where interaction needs it.
 
 ## Consequences
+
 - One deploy, one database, no network hops between "services".
 - Domain rules (prices, stock, order transitions) are testable without HTTP.
 - If one area ever needs to scale independently, `src/server/*` modules are the

@@ -13,12 +13,46 @@ describe("catalog listing", () => {
     const audio = await makeCategory("audio");
     const phones = await makeCategory("phones");
     audioSlug = audio.slug;
-    await makeProduct({ categoryId: audio.id, name: "Halo One", unitsSold: 50, createdAt: new Date("2026-10-01"), variants: [{ priceCents: 34900, stock: 0 }, { priceCents: 34900, stock: 3 }] });
-    await makeProduct({ categoryId: audio.id, name: "Pulse Buds", unitsSold: 90, createdAt: new Date("2026-09-01"), variants: [{ priceCents: 17900, stock: 5 }] });
-    await makeProduct({ categoryId: audio.id, name: "Sold Out Buds", unitsSold: 1, createdAt: new Date("2026-08-01"), variants: [{ priceCents: 9900, stock: 0 }] });
-    await makeProduct({ categoryId: phones.id, name: "Axis 2", unitsSold: 10, createdAt: new Date("2026-10-10"), variants: [{ priceCents: 79900, stock: 2 }, { priceCents: 89900, stock: 0 }] });
+    await makeProduct({
+      categoryId: audio.id,
+      name: "Halo One",
+      unitsSold: 50,
+      createdAt: new Date("2026-10-01"),
+      variants: [
+        { priceCents: 34900, stock: 0 },
+        { priceCents: 34900, stock: 3 },
+      ],
+    });
+    await makeProduct({
+      categoryId: audio.id,
+      name: "Pulse Buds",
+      unitsSold: 90,
+      createdAt: new Date("2026-09-01"),
+      variants: [{ priceCents: 17900, stock: 5 }],
+    });
+    await makeProduct({
+      categoryId: audio.id,
+      name: "Sold Out Buds",
+      unitsSold: 1,
+      createdAt: new Date("2026-08-01"),
+      variants: [{ priceCents: 9900, stock: 0 }],
+    });
+    await makeProduct({
+      categoryId: phones.id,
+      name: "Axis 2",
+      unitsSold: 10,
+      createdAt: new Date("2026-10-10"),
+      variants: [
+        { priceCents: 79900, stock: 2 },
+        { priceCents: 89900, stock: 0 },
+      ],
+    });
     await makeProduct({ categoryId: phones.id, name: "Draft Phone", status: "DRAFT" });
-    await makeProduct({ categoryId: phones.id, name: "100% Phone_X", variants: [{ priceCents: 5000, stock: 1, isActive: false }] });
+    await makeProduct({
+      categoryId: phones.id,
+      name: "100% Phone_X",
+      variants: [{ priceCents: 5000, stock: 1, isActive: false }],
+    });
   });
 
   it("lists only active products with at least one active variant, newest first", async () => {

@@ -136,8 +136,7 @@ function shape(kind: ArtShape, c: string): string {
 
 function svg(kind: ArtShape, color: string, view: "front" | "detail"): string {
   // The detail view zooms in and shifts, giving the gallery a second angle.
-  const transform =
-    view === "front" ? "translate(100 100) scale(1)" : "translate(-420 -260) scale(1.75)";
+  const transform = view === "front" ? "translate(100 100) scale(1)" : "translate(-420 -260) scale(1.75)";
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${SIZE}" height="${SIZE}" viewBox="0 0 1200 1200">
     <defs>
       <radialGradient id="light" cx="50%" cy="38%" r="65%">
