@@ -385,6 +385,10 @@ export async function transitionOrder(orderId: string, to: OrderStatus, actorId:
   await db.$transaction(async (tx) => {
     const order = await tx.order.findUnique({ where: { id: orderId }, select: { status: true } });
     if (!order) throw new AppError("NOT_FOUND", "Order not found.");
+    if (to === "PAID") {
+      // Payment state comes only from the verified Stripe webhook (ADR-0004).
+      throw new AppError("INVALID_TRANSITION", "Orders are marked paid by Stripe, not by hand.");
+    }
     if (!canTransition(order.status, to)) {
       throw new AppError(
         "INVALID_TRANSITION",

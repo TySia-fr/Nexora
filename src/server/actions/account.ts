@@ -11,7 +11,7 @@ import { AppError, toActionError, type ActionResult } from "@/server/errors";
 import { passwordSchema } from "@/lib/validation/auth";
 import { fieldErrors } from "@/lib/validation/checkout";
 
-export type FormState = ActionResult | null;
+export type FormState = (ActionResult & { values?: Record<string, string> }) | null;
 
 async function viewerOrThrow() {
   const viewer = await getViewer();
@@ -77,6 +77,9 @@ export async function changePasswordAction(_prev: FormState, form: FormData): Pr
 }
 
 export async function addAddressAction(_prev: FormState, form: FormData): Promise<FormState> {
+  const values = Object.fromEntries(
+    ["fullName", "line1", "line2", "postalCode", "city", "phone"].map((k) => [k, String(form.get(k) ?? "")]),
+  );
   try {
     const viewer = await viewerOrThrow();
     await addAddress(
@@ -95,7 +98,7 @@ export async function addAddressAction(_prev: FormState, form: FormData): Promis
     refresh();
     return { ok: true };
   } catch (e) {
-    return toActionError(e);
+    return { ...toActionError(e), values };
   }
 }
 

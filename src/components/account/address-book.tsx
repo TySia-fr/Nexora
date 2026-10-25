@@ -81,12 +81,7 @@ export function AddressBook({ addresses }: { addresses: Address[] }) {
         <p className="text-sm text-ash">No saved addresses yet. Saved addresses pre-fill checkout.</p>
       )}
 
-      <form
-        action={action}
-        noValidate
-        className="grid gap-4 sm:grid-cols-2"
-        key={state?.ok ? "reset" : "form"}
-      >
+      <form action={action} noValidate className="grid gap-4 sm:grid-cols-2">
         <h2 className="text-xl font-semibold sm:col-span-2">Add an address</h2>
         {state && !state.ok && !state.fieldErrors && (
           <p role="alert" className="text-sm text-amber sm:col-span-2">
@@ -110,7 +105,13 @@ export function AddressBook({ addresses }: { addresses: Address[] }) {
         ).map(([name, label, ac, wide]) => (
           <div key={name} className={wide ? "sm:col-span-2" : undefined}>
             <Field id={`addr-${name}`} label={label} error={err(name)}>
-              <Input id={`addr-${name}`} name={name} autoComplete={ac} aria-invalid={Boolean(err(name))} />
+              <Input
+                id={`addr-${name}`}
+                name={name}
+                autoComplete={ac}
+                defaultValue={state && !state.ok ? state.values?.[name] : undefined}
+                aria-invalid={Boolean(err(name))}
+              />
             </Field>
           </div>
         ))}

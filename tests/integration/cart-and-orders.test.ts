@@ -261,6 +261,7 @@ describe("orders", () => {
     await addToCart(owner, p.variants[0]!.id, 1);
     const order = await createOrderFromCart(owner, validCheckout(), null);
     await expectAppError(transitionOrder(order.id, "SHIPPED", admin.id), "INVALID_TRANSITION");
+    await expectAppError(transitionOrder(order.id, "PAID", admin.id), "INVALID_TRANSITION");
     await transitionOrder(order.id, "CANCELLED", admin.id);
     expect((await db.productVariant.findUniqueOrThrow({ where: { id: p.variants[0]!.id } })).stock).toBe(10);
     expect(await db.auditLog.count({ where: { entityId: order.id } })).toBe(1);
