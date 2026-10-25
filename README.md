@@ -44,6 +44,20 @@ Browser ──► Next.js 16 (App Router, React 19, Server Components, Server Ac
 A modular monolith: one deployable, with module boundaries that could become services later
 ([ADR-0001](docs/adr/0001-modular-monolith-nextjs.md)).
 
+### Design system and imagery
+
+- **Monochrome, semantic tokens.** `canvas`, `surface`, `fg`, `line`… defined once; `.theme-dark` re-maps
+  them, so the engineering story, campaign, footer and admin are dark without a second set of classes.
+  Every colour pair is checked for WCAG AA ([ADR-0009](docs/adr/0009-design-system-and-motion.md)).
+- **Type:** Archivo (variable width, subset to 32 KB) for display, Geist for text, Geist Mono for labels.
+- **Brand:** an original N/X monogram drawn on a 24-unit grid, a live-text wordmark, a first-visit intro
+  that plays once per session and never with reduced motion.
+- **Motion:** CSS for the hero and intro, one `RevealObserver` (Web Animations API) for scroll reveals, a
+  conceptual noise-cancelling diagram labelled as such. No animation library added.
+- **Product images** are rendered with three.js from procedural models built to the catalogue's specs, in
+  one shared studio setup ([ADR-0008](docs/adr/0008-procedural-product-renders.md)). Not stock photos: those
+  would show other companies' products under NEXORA names.
+
 ### Decisions worth reading
 
 | ADR                                                              | Decision                                                                                                              |
@@ -55,11 +69,12 @@ A modular monolith: one deployable, with module boundaries that could become ser
 | [0006](docs/adr/0006-cache-components-and-db-at-runtime.md)      | Cache Components with tagged catalog caching; the build needs no database                                             |
 | [0007](docs/adr/0007-migrations-from-restricted-environments.md) | How migrations were generated where the Prisma engine couldn't be downloaded                                          |
 | [0008](docs/adr/0008-procedural-product-renders.md)              | Product images rendered from procedural 3D models instead of stock or AI images                                       |
+| [0009](docs/adr/0009-design-system-and-motion.md)                | Semantic tokens with scoped dark sections; CSS-first, reduced-motion-aware animation                                  |
 
 ## Tech stack
 
 Next.js 16 · React 19 · TypeScript 6 (strict) · Tailwind CSS 4 · Motion · Lucide · PostgreSQL 16 · Prisma 7 ·
-better-auth · Stripe · Zod 4 · Vitest · Playwright + axe-core · Docker
+better-auth · Stripe · Zod 4 · Vitest · Playwright + axe-core · Docker · three.js (offline renders only)
 
 ## Quick start
 
@@ -91,23 +106,27 @@ Demo coupons: `NEXORA10` (10%), `WELCOME15` (15% over €200, 100 uses), `AUDIO2
 | `pnpm test:e2e`                                                 | Playwright on desktop and phone, with axe accessibility checks |
 | `pnpm db:migrate` / `db:deploy` / `db:seed`                     | Migrations and seed                                            |
 | `pnpm admin:create`                                             | Create or promote an admin                                     |
-| `pnpm render:products`                                          | Re-render product images (headless Chromium, three.js)         |
+| `pnpm render:products`                                          | Re-render product and homepage images (headless Chromium)      |
 
 ## Quality
 
-Measured, not assumed. All numbers below come from runs on 2026-10-25.
+Measured, not assumed. All numbers below come from runs on 2026-10-25, after the redesign.
 
 - **Unit + integration:** 79 tests across pricing, coupons, catalog queries, cart, orders, concurrency,
   webhooks, admin rules and authorization, account isolation ([docs/testing.md](docs/testing.md)).
 - **End-to-end:** 20 Playwright tests against the production build, including keyboard-only purchase,
   open-redirect and IDOR checks, and axe WCAG 2.1 AA scans with zero serious/critical violations.
-- **Lighthouse** (mobile emulation, local production build):
+- **Lighthouse** (mobile emulation, local production build, warm caches; range over repeated runs):
 
-  | Page                 | Perf | A11y | Best practices | SEO | LCP   | CLS   |
-  | -------------------- | ---- | ---- | -------------- | --- | ----- | ----- |
-  | `/`                  | 95   | 100  | 100            | 100 | 2.9 s | 0.002 |
-  | `/products`          | 90   | 100  | 100            | 100 | 3.3 s | 0.002 |
-  | `/products/halo-one` | 89   | 100  | 100            | 92¹ | 2.4 s | 0.002 |
+  | Page                 | Perf  | A11y | Best practices | SEO | LCP       | CLS |
+  | -------------------- | ----- | ---- | -------------- | --- | --------- | --- |
+  | `/`                  | 90–92 | 100  | 100            | 100 | 3.2–3.4 s | 0   |
+  | `/products`          | 89–90 | 100  | 100            | 100 | 3.6–3.7 s | 0   |
+  | `/products/halo-one` | 81–87 | 100  | 100            | 92¹ | 4.0 s     | 0   |
+
+  The first release scored 95 / 90 / 89; the redesign trades a few points on `/` and the product page for a
+  larger hero, a display face and a full gallery. The first run after a server start is slower (cold image
+  and data caches) and is not included.
 
   ¹ Metadata of streamed dynamic pages is emitted in the body; see [limitations](docs/feature-report.md#known-limitations).
 
