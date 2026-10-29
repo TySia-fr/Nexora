@@ -73,6 +73,19 @@ test.describe("storefront", () => {
     await page.getByRole("button", { name: "Open menu" }).click();
     const dialog = page.getByRole("dialog", { name: "Menu" });
     await expect(dialog).toBeVisible();
+    // The menu must cover the whole viewport, not render inside the header box
+    // (a backdrop-filter on an ancestor turns position: fixed into position: absolute).
+    // Measured once the entrance animation has settled.
+    const viewport = page.viewportSize()!;
+    await expect(async () => {
+      const box = (await dialog.boundingBox())!;
+      expect([box.x, box.y, Math.round(box.width), Math.round(box.height)]).toEqual([
+        0,
+        0,
+        viewport.width,
+        viewport.height,
+      ]);
+    }).toPass({ timeout: 2000 });
     await expect(page.getByRole("button", { name: "Close menu" })).toBeFocused();
     await page.keyboard.press("Escape");
     await expect(dialog).toBeHidden();
