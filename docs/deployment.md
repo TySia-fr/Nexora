@@ -98,10 +98,25 @@ Put the signing secret in `STRIPE_WEBHOOK_SECRET` and `sudo docker compose up -d
 
 ## 6. Updating
 
+Manually:
+
 ```bash
 git pull
 sudo docker compose up -d --build        # migrations run before the new app starts
 ```
+
+Automatically (recommended): a systemd timer checks `origin/main` every two minutes and redeploys when it
+moved. The server only pulls from the public repository, so there are no deploy keys or GitHub secrets.
+
+```bash
+cd ~/apps/nexora && git pull && sudo bash scripts/deploy/install-autodeploy.sh
+journalctl -u nexora-autodeploy -f       # follow deploys
+sudo systemctl stop nexora-autodeploy.timer    # pause
+```
+
+It fast-forwards only (local edits on the server stop it with a clear log line), never runs two builds at
+once, and checks `/api/health` after each deploy. Anyone who can push to `main` can deploy, so protect the
+branch on GitHub once more people have write access.
 
 ## 7. Backups
 
