@@ -106,15 +106,7 @@ export function Hero() {
             style={at(900)}
           >
             <span className="label-mono">Fig. 01 — Halo One, Graphite</span>
-            <span className="label-mono hidden sm:inline">Render · not a photograph</span>
           </figcaption>
-          <span
-            className="label-mono pointer-events-none absolute bottom-4 left-4 flex animate-fade items-center gap-2 text-fg md:bottom-5 md:left-5"
-            style={at(980)}
-          >
-            <span className="h-px w-8 bg-fg/40" aria-hidden="true" />
-            40 mm beryllium-coated drivers
-          </span>
         </figure>
       </div>
     </section>

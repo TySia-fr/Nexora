@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { CSSProperties } from "react";
 import { connection } from "next/server";
+import { cn } from "@/lib/cn";
 import { ButtonLink } from "@/components/ui/button";
 import { Price } from "@/components/ui/price";
 import { ArrowLink, SectionHeading } from "@/components/ui/section-heading";
@@ -69,7 +70,6 @@ export async function HaloStudy() {
         </div>
         <figcaption className="label-mono mt-3 flex justify-between text-fg-subtle">
           <span>Fig. 02 — Halo One, Bone</span>
-          <span>Studio render</span>
         </figcaption>
       </figure>
       <div className="flex flex-col justify-between gap-10 lg:col-span-4">
@@ -135,11 +135,11 @@ export async function CoreCollection() {
       role="list"
     >
       <li className="col-span-2 lg:row-span-2" data-reveal>
-        <ProductCard product={lead} index={1} feature sizes="(min-width: 1024px) 50vw, 100vw" />
+        <ProductCard product={lead} feature sizes="(min-width: 1024px) 50vw, 100vw" />
       </li>
       {rest.slice(0, 4).map((p, i) => (
         <li key={p.id} data-reveal style={delay(80 + i * 70)}>
-          <ProductCard product={p} index={i + 2} />
+          <ProductCard product={p} />
         </li>
       ))}
     </ul>
@@ -174,7 +174,14 @@ export async function Categories() {
             href={`/categories/${c.slug}`}
             className="group flex h-full flex-col gap-3 rounded-card focus-visible:outline-offset-4"
           >
-            <div className="relative aspect-[3/4] overflow-hidden rounded-card bg-well transition-colors duration-300 group-hover:bg-line">
+            <div
+              className={cn(
+                "relative overflow-hidden rounded-card bg-well transition-colors duration-300 group-hover:bg-line",
+                i === categories.length - 1 && categories.length % 2
+                  ? "aspect-[2/1] md:aspect-[3/4]"
+                  : "aspect-[3/4]",
+              )}
+            >
               {categoryArt[c.slug] && (
                 <Image
                   src={categoryArt[c.slug]!}
@@ -184,9 +191,6 @@ export async function Categories() {
                   className="object-cover transition-transform duration-700 ease-[var(--ease-out-expo)] group-hover:scale-[1.05]"
                 />
               )}
-              <span className="label-mono absolute top-3.5 left-3.5 text-fg-subtle">
-                {String(i + 1).padStart(2, "0")}
-              </span>
             </div>
             <div className="flex items-baseline justify-between gap-2">
               <span className="font-display text-xl font-medium tracking-[-0.02em]">{c.name}</span>
@@ -250,10 +254,7 @@ export function Engineering() {
               data-reveal
               style={delay(i * 90)}
             >
-              <dt className="label-mono flex justify-between text-fg-subtle">
-                <span>{k}</span>
-                <span>0{i + 1}</span>
-              </dt>
+              <dt className="label-mono text-fg-subtle">{k}</dt>
               <dd className="flex flex-col gap-1.5">
                 <span className="font-display text-4xl font-medium tracking-[-0.03em] md:text-5xl">{v}</span>
                 <span className="text-[13px] text-fg-subtle">{note}</span>
@@ -389,7 +390,6 @@ export function Policies() {
             data-reveal
             style={delay(i * 70)}
           >
-            <span className="label-mono text-fg-subtle">0{i + 1}</span>
             <span className="text-[15px] font-medium">{k}</span>
             <span className="text-[13px] leading-relaxed text-fg-subtle">{v}</span>
           </li>

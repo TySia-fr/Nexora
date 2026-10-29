@@ -12,7 +12,7 @@ test.describe("storefront", () => {
   test("filters and sorting are driven by the URL", async ({ page }) => {
     await page.goto("/products?category=audio&inStock=1");
     await expect(page.getByText(/products?$/).first()).toBeVisible();
-    const names = await page.locator("main ul[role=list] li a span.truncate").allInnerTexts();
+    const names = await page.locator("main ul[role=list] li a [data-product-name]").allInnerTexts();
     expect(names.length).toBeGreaterThan(0);
     await page.getByLabel("Sort").selectOption("price_asc");
     await expect(page).toHaveURL(/sort=price_asc/);

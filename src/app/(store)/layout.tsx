@@ -13,7 +13,8 @@ export default function StoreLayout({ children }: LayoutProps<"/">) {
       </a>
       <p className="theme-dark label-mono flex items-center justify-center gap-2.5 px-4 py-2.5 text-center text-fg-muted">
         <span className="size-1.5 shrink-0 rounded-full bg-signal" aria-hidden="true" />
-        {site.announcement}
+        <span className="sm:hidden">{site.announcementShort}</span>
+        <span className="max-sm:hidden">{site.announcement}</span>
       </p>
       <SiteHeader />
       <main id="main" className="flex-1">

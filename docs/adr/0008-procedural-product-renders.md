@@ -30,7 +30,7 @@ and export the projected position of named points, which the homepage uses to pl
 ## Consequences
 
 - No third-party assets and no licence questions; images can be regenerated after a spec change.
-- Images are labelled as renders on the site ("Render · not a photograph").
+- The site discloses that product images are 3D renders (footer note on every page).
 - They are renders: materials are good, not photoreal. A real launch would replace them with photography of
   real hardware; the pipeline (`next/image`, responsive sizes) is unchanged by that.
 - Rendering all 77 images takes about 40 minutes on a CPU-only machine. It is not part of CI; the output is

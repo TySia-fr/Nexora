@@ -108,10 +108,10 @@ export function MobileNav({ categories }: { categories: { slug: string; name: st
                           aria-current={active ? "page" : undefined}
                           className="flex items-center justify-between border-b border-line py-4 font-display text-[28px] font-medium tracking-[-0.02em]"
                         >
-                          <span className="flex items-baseline gap-4">
-                            <span className="label-mono text-fg-subtle">
-                              {String(i + 1).padStart(2, "0")}
-                            </span>
+                          <span className="flex items-center gap-3">
+                            {active && (
+                              <span className="size-1.5 rounded-full bg-signal" aria-hidden="true" />
+                            )}
                             {c.name}
                           </span>
                           <ArrowUpRight

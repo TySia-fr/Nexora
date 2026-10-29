@@ -43,7 +43,7 @@ API: `/api/auth/*`, `/api/webhooks/stripe`, `/api/health`, plus `sitemap.xml` an
 ## Known limitations
 
 - **Product imagery is rendered, not photographed.** Procedural 3D models in one studio setup
-  ([ADR-0008](adr/0008-procedural-product-renders.md)); labelled as renders on the site. A real launch needs
+  ([ADR-0008](adr/0008-procedural-product-renders.md)); disclosed in the footer on every page. A real launch needs
   photography of real hardware.
 - **Without JavaScript**, sections that stream catalogue data show their skeletons (Next.js streaming needs
   JS to swap streamed HTML in). The hero, navigation and static copy are complete.

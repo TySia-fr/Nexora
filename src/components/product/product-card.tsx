@@ -7,14 +7,11 @@ import { cn } from "@/lib/cn";
 export function ProductCard({
   product,
   priority = false,
-  index,
   feature = false,
   sizes = "(min-width: 1280px) 320px, (min-width: 768px) 33vw, 50vw",
 }: {
   product: ProductCardView;
   priority?: boolean;
-  /** Catalogue index shown as a small technical label. */
-  index?: number;
   /** Larger editorial tile. */
   feature?: boolean;
   sizes?: string;
@@ -54,16 +51,11 @@ export function ProductCard({
             className="scale-[1.06] object-cover opacity-0 transition-[opacity,transform] duration-500 ease-[var(--ease-out-expo)] group-hover:scale-100 group-hover:opacity-100"
           />
         )}
-        <div className="label-mono pointer-events-none absolute inset-x-3.5 top-3.5 flex items-start justify-between text-fg-subtle">
-          {index !== undefined ? <span>N°{String(index).padStart(2, "0")}</span> : <span />}
-          {!product.inStock ? (
-            <span className="rounded-full border border-line-strong bg-canvas/85 px-2 py-1 text-fg-muted">
-              Out of stock
-            </span>
-          ) : (
-            <span>{product.categoryName}</span>
-          )}
-        </div>
+        {!product.inStock && (
+          <span className="label-mono absolute top-3 left-3 rounded-full bg-canvas/90 px-2.5 py-1 text-fg-muted">
+            Out of stock
+          </span>
+        )}
         <span
           aria-hidden="true"
           className="absolute right-3.5 bottom-3.5 flex size-9 translate-y-1 items-center justify-center rounded-full bg-fg text-canvas opacity-0 transition-[opacity,transform] duration-300 ease-[var(--ease-out-expo)] group-hover:translate-y-0 group-hover:opacity-100 group-focus-visible:translate-y-0 group-focus-visible:opacity-100"
@@ -73,14 +65,19 @@ export function ProductCard({
           </svg>
         </span>
       </div>
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex min-w-0 flex-col gap-1">
-          <span className={cn("truncate font-medium", feature ? "text-lg md:text-xl" : "text-[15px]")}>
-            {product.name}
-          </span>
-          <span className="text-[13px] text-fg-subtle">{product.tagline}</span>
+      {/* Name, then price: on a two-column phone grid a price beside the name truncated it. */}
+      <div className="flex min-w-0 flex-col gap-1">
+        <span
+          data-product-name
+          className={cn("font-medium text-balance", feature ? "text-lg md:text-xl" : "text-[15px]")}
+        >
+          {product.name}
+        </span>
+        <span className="text-[13px] text-fg-subtle">{product.tagline}</span>
+        <div className="mt-1 flex items-center justify-between gap-3">
+          <Price cents={product.priceFromCents} from={product.hasPriceRange} className="text-[13px]" />
           {product.colors.length > 1 && (
-            <span className="mt-1.5 flex items-center gap-1.5">
+            <span className="flex items-center gap-1" aria-label={`${product.colors.length} finishes`}>
               {product.colors.map((c) => (
                 <span
                   key={c.name}
@@ -89,15 +86,9 @@ export function ProductCard({
                   style={{ backgroundColor: c.hex }}
                 />
               ))}
-              <span className="label-mono ml-1 text-fg-subtle">{product.colors.length} finishes</span>
             </span>
           )}
         </div>
-        <Price
-          cents={product.priceFromCents}
-          from={product.hasPriceRange}
-          className="shrink-0 font-mono text-[13px]"
-        />
       </div>
     </Link>
   );
