@@ -11,6 +11,8 @@ const nav = [
   ["Dashboard", "/admin"],
   ["Orders", "/admin/orders"],
   ["Products", "/admin/products"],
+  ["Inventory", "/admin/inventory"],
+  ["Stock counts", "/admin/inventory/counts"],
   ["Categories", "/admin/categories"],
   ["Coupons", "/admin/coupons"],
   ["Reviews", "/admin/reviews"],
