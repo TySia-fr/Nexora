@@ -10,7 +10,7 @@ import { ProductPurchase, type LivePurchaseData } from "@/components/product/pro
 import { ProductGrid } from "@/components/product/product-card";
 import { RecentlyViewed } from "@/components/product/recently-viewed";
 import { env } from "@/lib/env";
-import { breadcrumbLd, offerPolicies } from "@/lib/seo";
+import { breadcrumbLd, offerPolicies, pageMetadata } from "@/lib/seo";
 import { JsonLd } from "@/components/seo/json-ld";
 import { BUILD_PLACEHOLDER } from "@/lib/static-params";
 
@@ -34,18 +34,13 @@ export async function generateMetadata({ params }: PageProps<"/products/[slug]">
   const product = await loadProduct(params);
   if (!product) return { title: "Product not found", robots: { index: false } };
   const image = product.images[0];
-  return {
+  return pageMetadata({
     // "Halo One — Over-ear headphones · NEXORA": the product type is what people search for.
     title: `${product.name} — ${product.tagline}`,
-    description: `${product.tagline}. ${product.description}`.slice(0, 160),
-    alternates: { canonical: `/products/${product.slug}` },
-    openGraph: {
-      title: `${product.name} · NEXORA`,
-      description: product.tagline,
-      url: `/products/${product.slug}`,
-      images: image ? [{ url: image.url, width: image.width, height: image.height, alt: image.alt }] : [],
-    },
-  };
+    description: `${product.tagline}. ${product.description}`,
+    path: `/products/${product.slug}`,
+    image: image && { url: image.url, width: image.width, height: image.height, alt: image.alt },
+  });
 }
 
 /** schema.org data built only from stored facts: real stock, real reviews. */

@@ -1,14 +1,19 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import { Suspense } from "react";
 import { Listing, ListingSkeleton } from "@/components/catalog/listing";
 import { parseListingQuery } from "@/lib/validation/catalog";
 
 // Static on purpose, so it is sent in <head>. Canonical and noindex for filtered or
 // paginated URLs come from src/proxy.ts as HTTP headers.
-export const metadata: Metadata = {
+// Canonical comes from src/proxy.ts: it depends on the page and filters.
+export const metadata: Metadata = pageMetadata({
   title: "All products",
-  description: "Headphones, phones, wearables, speakers and accessories from NEXORA.",
-};
+  description:
+    "Every NEXORA product: over-ear headphones, earbuds, phones, smartwatches, speakers and accessories, with live stock and prices in euros.",
+  path: "/products",
+  canonical: false,
+});
 
 async function Results({ searchParams }: { searchParams: PageProps<"/products">["searchParams"] }) {
   const query = parseListingQuery(await searchParams);

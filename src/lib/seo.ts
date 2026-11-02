@@ -2,6 +2,7 @@
  * Search-engine helpers: indexing rules for listing URLs and schema.org builders.
  * Pure functions (no I/O), so the rules are unit-tested in seo.test.ts.
  */
+import type { Metadata } from "next";
 import { FREE_SHIPPING_THRESHOLD, SHIPPING_RATES } from "@/lib/pricing";
 import type { ListingQuery } from "@/lib/validation/catalog";
 
@@ -9,6 +10,69 @@ export const SITE_NAME = "NEXORA";
 
 /** Returns window in days, as stated on /returns. */
 export const RETURN_DAYS = 30;
+
+/** Shared card for pages without an image of their own (1200×630 JPEG). */
+export const DEFAULT_OG_IMAGE = {
+  url: "/brand/og.jpg",
+  width: 1200,
+  height: 630,
+  alt: "NEXORA — Precision electronics",
+};
+
+/** Google shows about 155–160 characters of a description. */
+export const DESCRIPTION_MAX = 160;
+
+/** Shortens text to `max` characters on a word boundary, with an ellipsis. */
+export function clampDescription(text: string, max = DESCRIPTION_MAX): string {
+  const clean = text.replace(/\s+/g, " ").trim();
+  if (clean.length <= max) return clean;
+  const cut = clean.slice(0, max - 1);
+  const space = cut.lastIndexOf(" ");
+  return `${(space > max * 0.6 ? cut.slice(0, space) : cut).replace(/[\s.,;:–—-]+$/, "")}…`;
+}
+
+type OgImage = { url: string; width?: number; height?: number; alt?: string };
+
+/**
+ * The metadata of every public page, built in one place.
+ *
+ * Next.js merges metadata shallowly: a page that sets `openGraph` replaces the root
+ * layout's object entirely, so its site name, locale and image silently disappear.
+ * Building the whole object here means every page ships the same complete set:
+ * title, description, Open Graph (url, type, site name, locale, image) and Twitter.
+ *
+ * `canonical: false` is for listings, whose canonical depends on the query string and
+ * is sent as a header by src/proxy.ts instead.
+ */
+export function pageMetadata(opts: {
+  title: string;
+  /** Use the title as is, without the "· NEXORA" template. */
+  absoluteTitle?: boolean;
+  description: string;
+  path: string;
+  canonical?: boolean;
+  image?: OgImage;
+  type?: "website" | "article";
+}): Metadata {
+  const description = clampDescription(opts.description);
+  const socialTitle = opts.absoluteTitle ? opts.title : `${opts.title} · ${SITE_NAME}`;
+  const image = opts.image ?? DEFAULT_OG_IMAGE;
+  return {
+    title: opts.absoluteTitle ? { absolute: opts.title } : opts.title,
+    description,
+    ...(opts.canonical === false ? {} : { alternates: { canonical: opts.path } }),
+    openGraph: {
+      type: opts.type ?? "website",
+      siteName: SITE_NAME,
+      locale: "en_IE",
+      url: opts.path,
+      title: socialTitle,
+      description,
+      images: [image],
+    },
+    twitter: { card: "summary_large_image", title: socialTitle, description, images: [image.url] },
+  };
+}
 
 export function absoluteUrl(base: string, path: string): string {
   return new URL(path, base).toString();

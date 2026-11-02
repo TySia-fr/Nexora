@@ -4,7 +4,7 @@ import { Suspense, type CSSProperties } from "react";
 import { BrandIntro } from "@/components/brand/brand-intro";
 import { JsonLd } from "@/components/seo/json-ld";
 import { env } from "@/lib/env";
-import { organizationLd, websiteLd } from "@/lib/seo";
+import { organizationLd, pageMetadata, websiteLd } from "@/lib/seo";
 import { Hero } from "@/components/home/hero";
 import { NewsletterForm } from "@/components/home/newsletter-form";
 import {
@@ -19,12 +19,13 @@ import {
   SectionHeading,
 } from "@/components/home/sections";
 
-export const metadata: Metadata = {
-  title: { absolute: "NEXORA — Precision headphones, phones, wearables and speakers" },
+export const metadata: Metadata = pageMetadata({
+  title: "NEXORA — Precision headphones, phones, wearables and speakers",
+  absoluteTitle: true,
   description:
     "Over-ear headphones, earbuds, phones, smartwatches and speakers, engineered with restraint. Free shipping over €99 in mainland France, 30-day returns.",
-  alternates: { canonical: "/" },
-};
+  path: "/",
+});
 
 export default function HomePage() {
   return (

@@ -5,7 +5,7 @@ import { Listing, ListingSkeleton } from "@/components/catalog/listing";
 import { parseListingQuery } from "@/lib/validation/catalog";
 import { getCategory } from "@/server/catalog";
 import { env } from "@/lib/env";
-import { breadcrumbLd } from "@/lib/seo";
+import { breadcrumbLd, pageMetadata } from "@/lib/seo";
 import { BUILD_PLACEHOLDER } from "@/lib/static-params";
 import { JsonLd } from "@/components/seo/json-ld";
 
@@ -28,15 +28,12 @@ async function loadCategory(params: PageProps<"/categories/[slug]">["params"]) {
 export async function generateMetadata({ params }: PageProps<"/categories/[slug]">): Promise<Metadata> {
   const category = await loadCategory(params);
   if (!category) return { title: "Category not found", robots: { index: false } };
-  return {
+  return pageMetadata({
     title: category.name,
     description: category.description,
-    openGraph: {
-      title: `${category.name} · NEXORA`,
-      description: category.description,
-      url: `/categories/${category.slug}`,
-    },
-  };
+    path: `/categories/${category.slug}`,
+    canonical: false,
+  });
 }
 
 async function Results({
