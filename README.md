@@ -11,14 +11,16 @@ accounts, an admin back office, and a test suite that proves it.
 
 ## What it does
 
-| Area         | Highlights                                                                                                                                                                            |
-| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Storefront   | Homepage driven by catalog data, URL-based filters (category, price, stock), sorting, pagination, search with keyboard-navigable suggestions                                          |
-| Product page | Variant picker synced to `?variant=`, live stock, keyboard gallery with enlarged view, specs, verified reviews, related and recently viewed products, schema.org data from real stock |
-| Cart         | Guest or account cart in Postgres, quantity limits by stock, coupons validated on the server, free-shipping progress                                                                  |
-| Checkout     | Address validation, delivery choice, stock reserved for 30 minutes, Stripe Checkout redirect, webhook-only payment confirmation                                                       |
-| Accounts     | Sign-up/sign-in, password reset, profile, saved addresses, order history and detail, wishlist; guest cart merged on sign-in                                                           |
-| Admin        | Dashboard, orders with a status state machine, products and variants, atomic stock adjustments, categories, coupons, review moderation, customer lookup, audit log                    |
+| Area         | Highlights                                                                                                                                                                                                       |
+| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Storefront   | Homepage driven by catalog data, URL-based filters (category, price, stock), sorting, pagination, search with keyboard-navigable suggestions                                                                     |
+| Product page | Variant picker synced to `?variant=`, live stock, keyboard gallery with enlarged view, specs, verified reviews, related and recently viewed products, schema.org data from real stock                            |
+| Cart         | Guest or account cart in Postgres, quantity limits by stock, coupons validated on the server, free-shipping progress                                                                                             |
+| Checkout     | Address validation, delivery choice, stock reserved for 30 minutes, Stripe Checkout redirect, webhook-only payment confirmation                                                                                  |
+| Accounts     | Sign-up/sign-in, password reset, profile, saved addresses, order history and detail, wishlist; guest cart merged on sign-in                                                                                      |
+| Admin        | Dashboard, orders with a status state machine, products and variants, categories, coupons, review moderation, customer lookup, audit log                                                                         |
+| Inventory    | Stock ledger (every unit traceable to an order, a count or an admin), available vs held vs on hand, reorder points, unit costs, stock counts with variance and recount flags, CSV export                         |
+| Analytics    | Revenue, orders, average order, units, net sales ex. VAT, gross margin from costs at time of sale, refunds, period comparison, daily chart, per-product and per-category performance, stock value and dead stock |
 
 |                                               |                                                |
 | --------------------------------------------- | ---------------------------------------------- |
@@ -33,7 +35,7 @@ Browser ──► Next.js 16 (App Router, React 19, Server Components, Server Ac
               ├─ src/app/           routes only: read params, call a service, render
               ├─ src/components/    UI; client components only where interaction needs them
               ├─ src/server/        domain services — the only code that touches the database
-              │    catalog · cart · orders · payments · admin · account · auth · session
+              │    catalog · cart · orders · payments · inventory · stock-counts · analytics · admin · auth
               ├─ src/lib/           pure logic with no I/O: money, pricing, validation (zod)
               └─ prisma/            schema, migrations (incl. hand-written CHECK constraints), seed
               │
@@ -70,6 +72,7 @@ A modular monolith: one deployable, with module boundaries that could become ser
 | [0007](docs/adr/0007-migrations-from-restricted-environments.md) | How migrations were generated where the Prisma engine couldn't be downloaded                                          |
 | [0008](docs/adr/0008-procedural-product-renders.md)              | Product images rendered from procedural 3D models instead of stock or AI images                                       |
 | [0009](docs/adr/0009-design-system-and-motion.md)                | Semantic tokens with scoped dark sections; CSS-first, reduced-motion-aware animation                                  |
+| [0010](docs/adr/0010-inventory-ledger.md)                        | Stock as an append-only ledger; counts against "on hand", not "available"; costs snapshotted on orders                |
 
 ## Tech stack
 
@@ -112,9 +115,10 @@ Demo coupons: `NEXORA10` (10%), `WELCOME15` (15% over €200, 100 uses), `AUDIO2
 
 Measured, not assumed. All numbers below come from runs on 2026-10-25, after the redesign.
 
-- **Unit + integration:** 79 tests across pricing, coupons, catalog queries, cart, orders, concurrency,
-  webhooks, admin rules and authorization, account isolation ([docs/testing.md](docs/testing.md)).
-- **End-to-end:** 20 Playwright tests against the production build, including keyboard-only purchase,
+- **Unit + integration:** 119 tests across pricing, coupons, catalog queries, cart, orders, concurrency,
+  webhooks, admin rules and authorization, account isolation, the stock ledger, stock counts, analytics
+  (checked against hand-computed figures) and SEO rules ([docs/testing.md](docs/testing.md)).
+- **End-to-end:** 21 Playwright tests against the production build, including keyboard-only purchase,
   open-redirect and IDOR checks, and axe WCAG 2.1 AA scans with zero serious/critical violations.
 - **Lighthouse** (mobile emulation, local production build, warm caches; range over repeated runs):
 
@@ -122,13 +126,14 @@ Measured, not assumed. All numbers below come from runs on 2026-10-25, after the
   | -------------------- | ----- | ---- | -------------- | --- | --------- | --- |
   | `/`                  | 90–92 | 100  | 100            | 100 | 3.2–3.4 s | 0   |
   | `/products`          | 89–90 | 100  | 100            | 100 | 3.6–3.7 s | 0   |
-  | `/products/halo-one` | 81–87 | 100  | 100            | 92¹ | 4.0 s     | 0   |
+  | `/products/halo-one` | 80–86 | 100  | 100            | 100 | 2.0–3.9 s | 0   |
 
   The first release scored 95 / 90 / 89; the redesign trades a few points on `/` and the product page for a
   larger hero, a display face and a full gallery. The first run after a server start is slower (cold image
   and data caches) and is not included.
 
-  ¹ Metadata of streamed dynamic pages is emitted in the body; see [limitations](docs/feature-report.md#known-limitations).
+  Product and category pages are cached after their first visit (ISR), so the title and description are in
+  `<head>` and the server responds in about 60 ms; the SEO score went from 92 to 100.
 
 - **CI** runs format, lint, typecheck, migrations + drift check, seed, all tests, the e2e suite and a Docker
   build that must start without a database.

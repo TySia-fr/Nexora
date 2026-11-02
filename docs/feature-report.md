@@ -22,6 +22,8 @@ anything less is marked.
 | Relevant tests pass                                 | Done                | 79 unit/integration + 20 e2e, green in CI                                     |
 | Setup and deployment documentation                  | Done                | README, `docs/deployment.md`, `docs/testing.md`                               |
 | External dependencies and limitations documented    | Done                | this file, `docs/security.md`                                                 |
+| Inventory ledger, stock counts, analytics           | Done                | `inventory.test.ts`, `analytics.test.ts`; e2e admin inventory                 |
+| Search-engine metadata in `<head>`, structured data | Done                | ISR on product/category pages; `seo.test.ts`; Lighthouse SEO 100              |
 
 ## Routes
 
@@ -49,10 +51,10 @@ API: `/api/auth/*`, `/api/webhooks/stripe`, `/api/health`, plus `sitemap.xml` an
   JS to swap streamed HTML in). The hero, navigation and static copy are complete.
 - **Callout positions** on the homepage study come from the render (`public/brand/anchors.json`); re-render
   after changing that model.
-- **Soft 404s on dynamic pages.** Pages stream; when a product or category doesn't exist, the not-found page is
-  rendered with `noindex` but the status stays 200. Unmatched paths return a real 404.
-- **Metadata of dynamic pages is streamed** into the body for most user agents (Next.js behaviour), which
-  Lighthouse flags on product pages (SEO 92). Crawlers that need it in `<head>` get it there.
+- **Soft 404 on the first visit only.** An unknown product or category slug gets a `noindex` not-found page
+  with status 200 on its first request, and a real 404 from then on (cached).
+- **The first visit to a product or category page** after a deploy renders on demand (metadata streams);
+  every later visit is served from cache with metadata in `<head>`.
 - **Variant picker is a single list** of combined options ("256 GB · Bone"), not separate colour and storage
   selectors.
 - **No image upload in admin**, no email verification, no 2FA, no order emails.

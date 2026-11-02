@@ -24,6 +24,8 @@ not the same as being production-secure; the gaps at the end are real.
 | Information leakage         | Unknown errors logged server-side, users see a generic message and a digest                                                                | `errors.ts`, `error.tsx`                                       |
 | Secrets                     | Validated at startup, never printed; `.env*` ignored; live Stripe keys refused                                                             | `env.ts`, `.gitignore`                                         |
 | Container                   | Non-root user, read-only root filesystem, `no-new-privileges`, app bound to 127.0.0.1                                                      | `Dockerfile`, `compose.yaml`                                   |
+| CSV / formula injection     | Exported cells starting with `= + - @` are prefixed with `'`; quotes escaped; export is admin-only (checked in the route handler)          | `src/lib/inventory.ts`, `inventory/export/route.ts`            |
+| Inventory tampering         | Stock changes only through `moveStock` (conditional UPDATE + ledger row, one transaction); counts commit once; reasons are an enum         | `inventory.ts`, `stock-counts.ts`                              |
 | Supply chain                | Lockfile, CI actions pinned by commit SHA                                                                                                  | `.github/workflows`                                            |
 
 ## Known gaps before a real launch

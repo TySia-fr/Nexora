@@ -34,13 +34,30 @@ redelivery, amount mismatch rejected, delayed payment methods, failed/expired se
 validation, duplicate slug/SKU, ordered variants deactivated rather than deleted, ordered products can't be
 deleted, stock can't go negative, coupon validation.
 
+**Inventory** — every stock change has a ledger row linked to its order or count and the ledger always sums
+to the stock; unit costs are snapshotted on order lines; manual movements validated (signs, required note);
+8 concurrent write-offs for 3 units → exactly 3; available/reserved/to-ship/on-hand, levels and days of cover.
+
+**Stock counts** — expected = available + held by unshipped orders; a sale during a count is not a
+difference; commit applies variances once (concurrent commits), skips uncounted lines; one open count at a
+time; lines of another count can't be written; shipments and receipts after freezing flag a line and a
+refresh re-freezes it; a correction that would take available stock below zero rolls the whole commit back.
+
+**Analytics** — exact period totals against hand-computed figures (discount allocation, VAT, margin with an
+unknown cost, refunds excluded), per-product attribution, Europe/Paris day buckets with zero-filled gaps,
+stock value and dead stock.
+
+**SEO** — indexing rules for filtered, sorted and paginated listings; breadcrumbs; offer shipping and return
+details built from checkout constants.
+
 **Accounts** — users can't read others' orders or modify others' addresses, single default address,
 open-redirect guard, sign-up schema ignores `role`.
 
 **End-to-end** — homepage, filters and sorting via URL, not-found handling, variant selection, keyboard-only
 purchase journey, search suggestions with arrow keys, mobile menu focus and Escape, cart totals and coupons on
 desktop and phone, checkout honesty when payments are off, unsigned webhook rejected, sign-up/sign-in/sign-out,
-generic login errors, open redirect blocked, IDOR on order pages, admin access control and editing. Key pages
+generic login errors, open redirect blocked, IDOR on order pages, admin access control and editing, receiving
+stock, a full stock count and the admin-only CSV export. Key pages
 are scanned with axe for WCAG 2.1 A/AA.
 
 ## Running
