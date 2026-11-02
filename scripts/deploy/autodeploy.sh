@@ -42,6 +42,8 @@ fi
 cd "$APP_DIR"
 docker compose up -d --build --remove-orphans
 docker image prune -f >/dev/null
+# Every deploy leaves build cache behind; without this the disk fills up over weeks.
+docker builder prune -af --filter until=48h >/dev/null
 
 PORT=$(grep -E '^APP_PORT=' .env 2>/dev/null | cut -d= -f2 | tr -d '"' || true)
 PORT=${PORT:-3002}
