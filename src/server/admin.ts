@@ -3,6 +3,7 @@ import { Prisma } from "@/generated/prisma/client";
 import type { OrderStatus, ProductStatus } from "@/generated/prisma/enums";
 import { db, type Tx } from "@/server/db";
 import { AppError } from "@/server/errors";
+import { recordOpeningBalance } from "@/server/inventory";
 import { categorySchema, couponSchema, productSchema, type ProductInput } from "@/lib/validation/admin";
 import { fieldErrors } from "@/lib/validation/checkout";
 
@@ -249,7 +250,8 @@ export async function saveProduct(actorId: string, productId: string | null, raw
           const { stock: _ignored, ...withoutStock } = fields;
           await tx.productVariant.update({ where: { id: v.id }, data: withoutStock });
         } else {
-          await tx.productVariant.create({ data: { ...fields, productId: id } });
+          const created = await tx.productVariant.create({ data: { ...fields, productId: id } });
+          await recordOpeningBalance(tx, created.id, created.stock, actorId);
         }
       }
 
@@ -280,21 +282,7 @@ export async function deleteProduct(actorId: string, productId: string): Promise
   });
 }
 
-export async function adjustStock(actorId: string, variantId: string, delta: number): Promise<number> {
-  if (!Number.isInteger(delta) || delta === 0 || Math.abs(delta) > 10_000) {
-    throw new AppError("VALIDATION", "Enter a non-zero whole number.");
-  }
-  return db.$transaction(async (tx) => {
-    const updated = await tx.$queryRaw<{ stock: number }[]>`
-      UPDATE "ProductVariant" SET "stock" = "stock" + ${delta}, "updatedAt" = now()
-      WHERE "id" = ${variantId} AND "stock" + ${delta} >= 0
-      RETURNING "stock"
-    `;
-    if (updated.length === 0) throw new AppError("VALIDATION", "Stock can't go below zero.");
-    await audit(tx, actorId, "stock.adjust", "ProductVariant", variantId, { delta });
-    return updated[0]!.stock;
-  });
-}
+// Stock adjustments live in src/server/inventory.ts (ledger, reasons, notes).
 
 // ---------------------------------------------------------------------------
 // Categories

@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { AppError } from "@/server/errors";
-import { adjustStock, createCoupon, deleteProduct, saveProduct } from "@/server/admin";
+import { createCoupon, deleteProduct, saveProduct } from "@/server/admin";
+import { adjustStock } from "@/server/inventory";
 import { db, makeCategory, makeProduct, makeUser, resetDatabase } from "./helpers";
 
 // The signed-in viewer is controlled per test.
@@ -39,12 +40,30 @@ describe("admin authorization", () => {
 
   it("rejects anonymous and customer callers for every privileged action", async () => {
     const actions = await import("@/server/actions/admin");
+    const inventory = await import("@/server/actions/inventory");
     const category = await makeCategory();
     const p = await makeProduct({ categoryId: category.id });
+    const form = (fields: Record<string, string>) => {
+      const fd = new FormData();
+      for (const [k, v] of Object.entries(fields)) fd.set(k, v);
+      return fd;
+    };
     const calls = [
       () => actions.transitionOrderAction("x", "SHIPPED"),
       () => actions.deleteProductAction(p.id),
-      () => actions.adjustStockAction(p.variants[0]!.id, 100),
+      () =>
+        inventory.adjustStockAction(
+          null,
+          form({ variantId: p.variants[0]!.id, reason: "RECEIVED", quantity: "100" }),
+        ),
+      () =>
+        inventory.updateVariantSettingsAction(
+          null,
+          form({ variantId: p.variants[0]!.id, reorderPoint: "1", cost: "" }),
+        ),
+      () => inventory.openCountAction(null, form({})),
+      () => inventory.commitCountAction("x"),
+      () => inventory.cancelCountAction("x"),
       () => actions.setCouponActiveAction("x", true),
       () => actions.moderateReviewAction("x", "APPROVED"),
       () => actions.deleteCategoryAction(category.id),
@@ -53,24 +72,38 @@ describe("admin authorization", () => {
       viewer.current = who;
       for (const call of calls) {
         const r = await call();
-        expect(r.ok).toBe(false);
-        expect(["UNAUTHENTICATED", "FORBIDDEN"]).toContain(!r.ok && r.code);
+        expect(r?.ok).toBe(false);
+        expect(["UNAUTHENTICATED", "FORBIDDEN"]).toContain(r && !r.ok && r.code);
       }
     }
     // Nothing changed.
     expect((await db.productVariant.findUniqueOrThrow({ where: { id: p.variants[0]!.id } })).stock).toBe(10);
     expect(await db.product.count()).toBe(1);
+    expect(await db.stockCount.count()).toBe(0);
+    expect(await db.stockMovement.count({ where: { reason: { not: "OPENING_BALANCE" } } })).toBe(0);
   });
 
   it("lets an admin act, and audits it", async () => {
-    const actions = await import("@/server/actions/admin");
+    const inventory = await import("@/server/actions/inventory");
     const admin = await makeUser("ADMIN");
     viewer.current = { id: admin.id, role: "ADMIN" };
     const category = await makeCategory();
     const p = await makeProduct({ categoryId: category.id });
-    const r = await actions.adjustStockAction(p.variants[0]!.id, 5);
-    expect(r).toEqual({ ok: true, data: { stock: 15 } });
+    const fd = new FormData();
+    fd.set("variantId", p.variants[0]!.id);
+    fd.set("reason", "RECEIVED");
+    fd.set("quantity", "5");
+    fd.set("note", "PO-1042");
+    const r = await inventory.adjustStockAction(null, fd);
+    expect(r).toEqual({ ok: true });
+    expect((await db.productVariant.findUniqueOrThrow({ where: { id: p.variants[0]!.id } })).stock).toBe(15);
     expect(await db.auditLog.count({ where: { actorId: admin.id, action: "stock.adjust" } })).toBe(1);
+    expect(
+      await db.stockMovement.findFirstOrThrow({
+        where: { reason: "RECEIVED" },
+        select: { delta: true, note: true, actorId: true },
+      }),
+    ).toEqual({ delta: 5, note: "PO-1042", actorId: admin.id });
   });
 });
 
@@ -175,8 +208,10 @@ describe("admin catalog rules", () => {
 
   it("never lets stock go below zero", async () => {
     const p = await makeProduct({ categoryId, variants: [{ priceCents: 100, stock: 2 }] });
-    await expect(adjustStock(actorId, p.variants[0]!.id, -3)).rejects.toMatchObject({ code: "VALIDATION" });
-    expect(await adjustStock(actorId, p.variants[0]!.id, -2)).toBe(0);
+    const variantId = p.variants[0]!.id;
+    const correction = (quantity: number) => ({ variantId, reason: "ADJUSTMENT", quantity, note: "test" });
+    await expect(adjustStock(actorId, correction(-3))).rejects.toMatchObject({ code: "VALIDATION" });
+    expect(await adjustStock(actorId, correction(-2))).toBe(0);
   });
 
   it("validates coupons", async () => {

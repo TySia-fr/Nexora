@@ -5,7 +5,6 @@ import { refresh, revalidatePath, updateTag } from "next/cache";
 import { z } from "zod";
 import { requireAdmin } from "@/server/session";
 import {
-  adjustStock,
   createCoupon,
   deleteCategory,
   deleteProduct,
@@ -99,21 +98,6 @@ export async function deleteProductAction(productId: string): Promise<ActionResu
     return toActionError(e);
   }
   redirect("/admin/products?deleted=1");
-}
-
-export async function adjustStockAction(
-  variantId: string,
-  delta: number,
-): Promise<ActionResult<{ stock: number }>> {
-  try {
-    const admin = await requireAdmin();
-    const stock = await adjustStock(admin.id, parseId(variantId), Number(delta));
-    updateTag(CATALOG_TAG);
-    refresh();
-    return { ok: true, data: { stock } };
-  } catch (e) {
-    return toActionError(e);
-  }
 }
 
 export async function saveCategoryAction(_prev: AdminFormState, form: FormData): Promise<AdminFormState> {

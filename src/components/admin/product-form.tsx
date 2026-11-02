@@ -1,13 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import { useActionState, useState, useTransition } from "react";
 import { Plus, Trash2 } from "lucide-react";
-import {
-  adjustStockAction,
-  deleteProductAction,
-  saveProductAction,
-  type AdminFormState,
-} from "@/server/actions/admin";
+import { deleteProductAction, saveProductAction, type AdminFormState } from "@/server/actions/admin";
 import { Field, Input, inputBase, inputClasses } from "@/components/ui/field";
 import { buttonClasses } from "@/components/ui/button";
 import { cn } from "@/lib/cn";
@@ -37,58 +33,26 @@ export type ProductFormValues = {
   variants: Omit<VariantRow, "key">[];
 };
 
-/** Applies a +/- delta atomically on the server instead of overwriting stock. */
-function StockAdjuster({
-  variantId,
-  stock,
-  label,
-  onChange,
-}: {
-  variantId: string;
-  stock: number;
-  label: string;
-  onChange: (n: number) => void;
-}) {
-  const [delta, setDelta] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [pending, start] = useTransition();
+/**
+ * Stock is never edited from this form (a sale between loading and saving would be
+ * overwritten). It links to the variant's stock page, where every change is a
+ * movement with a reason (ADR-0010).
+ */
+function StockLink({ variantId, stock, label }: { variantId: string; stock: number; label: string }) {
   return (
-    <div className="flex items-center gap-1.5">
+    <div className="flex h-10 items-center gap-3">
       <span
         className={cn("w-10 font-mono", stock === 0 && "text-warn")}
         aria-label={`${label} current stock`}
       >
         {stock}
       </span>
-      <input
-        aria-label={`${label} stock change, for example 10 or -2`}
-        value={delta}
-        placeholder="±"
-        onChange={(e) => setDelta(e.target.value)}
-        className={cn(inputBase, "h-10 w-16 font-mono")}
-      />
-      <button
-        type="button"
-        disabled={pending || !delta}
-        onClick={() => {
-          setError(null);
-          start(async () => {
-            const r = await adjustStockAction(variantId, Number(delta));
-            if (r.ok) {
-              onChange(r.data.stock);
-              setDelta("");
-            } else setError(r.message);
-          });
-        }}
-        className="h-10 rounded-input border border-line-strong px-2.5 text-xs hover:border-fg disabled:text-fg-subtle"
+      <Link
+        href={`/admin/inventory/${variantId}`}
+        className="text-xs text-fg-muted underline-offset-4 hover:text-fg hover:underline"
       >
-        Apply
-      </button>
-      {error && (
-        <span role="alert" className="text-xs text-warn">
-          {error}
-        </span>
-      )}
+        Manage stock
+      </Link>
     </div>
   );
 }
@@ -276,12 +240,7 @@ export function ProductForm({
                     {r.id ? (
                       <>
                         <input type="hidden" name="variant.stock" value={r.stock} />
-                        <StockAdjuster
-                          variantId={r.id}
-                          stock={Number(r.stock)}
-                          label={`Variant ${i + 1}`}
-                          onChange={(n) => update(r.key, { stock: String(n) })}
-                        />
+                        <StockLink variantId={r.id} stock={Number(r.stock)} label={`Variant ${i + 1}`} />
                       </>
                     ) : (
                       <input

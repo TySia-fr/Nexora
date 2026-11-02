@@ -3,6 +3,7 @@ import { db, type Tx } from "@/server/db";
 import { AppError } from "@/server/errors";
 import { getCart, loadCoupon, type CartOwner } from "@/server/cart";
 import { markStockChanged } from "@/server/catalog";
+import { moveStock } from "@/server/inventory";
 import { computeTotals, COUPON_REJECTION_MESSAGES } from "@/lib/pricing";
 import { checkoutSchema, fieldErrors, type CheckoutInput } from "@/lib/validation/checkout";
 import type { OrderStatus } from "@/generated/prisma/client";
@@ -40,16 +41,17 @@ export function canTransition(from: OrderStatus, to: OrderStatus): boolean {
 // ---------------------------------------------------------------------------
 
 /**
- * Atomically takes `quantity` units. Returns false when not enough stock is
- * left; the row is only touched when the condition holds (see ADR-0003).
+ * Atomically takes `quantity` units and records the movement (ADR-0003, ADR-0010).
+ * Returns the movement id, or null when not enough stock is left.
  */
-async function takeStock(tx: Tx, variantId: string, quantity: number): Promise<boolean> {
-  const updated = await tx.$executeRaw`
-    UPDATE "ProductVariant"
-    SET "stock" = "stock" - ${quantity}, "updatedAt" = now()
-    WHERE "id" = ${variantId} AND "isActive" AND "stock" >= ${quantity}
-  `;
-  return updated === 1;
+async function takeStock(tx: Tx, variantId: string, quantity: number): Promise<string | null> {
+  const moved = await moveStock(tx, {
+    variantId,
+    delta: -quantity,
+    reason: "ORDER_RESERVED",
+    requireActive: true,
+  });
+  return moved?.movementId ?? null;
 }
 
 async function returnStock(tx: Tx, orderId: string): Promise<void> {
@@ -60,10 +62,12 @@ async function returnStock(tx: Tx, orderId: string): Promise<void> {
   for (const item of items) {
     // A variant deleted since the order leaves nothing to restock.
     if (!item.variantId) continue;
-    await tx.$executeRaw`
-      UPDATE "ProductVariant" SET "stock" = "stock" + ${item.quantity}, "updatedAt" = now()
-      WHERE "id" = ${item.variantId}
-    `;
+    await moveStock(tx, {
+      variantId: item.variantId,
+      delta: item.quantity,
+      reason: "ORDER_RELEASED",
+      orderId,
+    });
   }
 }
 
@@ -146,13 +150,25 @@ export async function createOrderFromCart(
         );
       }
 
+      const movementIds: string[] = [];
       for (const line of cart.lines) {
-        if (!(await takeStock(tx, line.variantId, line.quantity))) {
+        const movementId = await takeStock(tx, line.variantId, line.quantity);
+        if (!movementId) {
           throw new AppError("OUT_OF_STOCK", `${line.productName} (${line.variantName}) just sold out.`, {
             lineId: line.id,
           });
         }
+        movementIds.push(movementId);
       }
+      // Unit costs are snapshotted like prices, so margins stay right if costs change.
+      const costs = new Map(
+        (
+          await tx.productVariant.findMany({
+            where: { id: { in: cart.lines.map((l) => l.variantId) } },
+            select: { id: true, costCents: true },
+          })
+        ).map((v) => [v.id, v.costCents]),
+      );
 
       if (coupon && totals.appliedCoupon) {
         const claimed = await tx.$executeRaw`
@@ -199,11 +215,13 @@ export async function createOrderFromCart(
               unitPriceCents: l.unitPriceCents,
               quantity: l.quantity,
               lineTotalCents: l.lineTotalCents,
+              unitCostCents: costs.get(l.variantId) ?? null,
             })),
           },
         },
         include: { items: true },
       });
+      await tx.stockMovement.updateMany({ where: { id: { in: movementIds } }, data: { orderId: order.id } });
 
       return {
         id: order.id,
