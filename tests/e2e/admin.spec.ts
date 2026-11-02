@@ -20,7 +20,7 @@ test.describe("admin", () => {
     await page.getByRole("button", { name: "Save changes" }).click();
     await expect(page.getByText(/^Saved\./)).toBeVisible();
     await page.goto("/products/trace-tag");
-    await expect(page.getByText(tagline)).toBeVisible();
+    await expect(page.getByRole("main").getByText(tagline)).toBeVisible();
   });
 
   test("admin form validation keeps the editor usable", async ({ page }) => {

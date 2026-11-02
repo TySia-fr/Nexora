@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState, useTransition } from "react";
+import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { Check, Heart, Minus, Plus } from "lucide-react";
 import type { ProductDetailView } from "@/server/catalog";
 import { addToCartAction } from "@/server/actions/cart";
@@ -18,26 +18,49 @@ const RECENT_KEY = "nx:recently-viewed";
 
 type Status = { kind: "success" | "error"; text: string; link?: { href: string; label: string } } | null;
 
+/** Request-time data for the panel: never part of the cached page. */
+export type LivePurchaseData = {
+  /** Live stock by variant id; variants missing here are no longer for sale. */
+  stock: Record<string, number>;
+  signedIn: boolean;
+  saved: boolean;
+  /** From ?variant= in the URL. */
+  initialSku?: string;
+};
+
+/**
+ * The page around this panel is cached (ISR), so `product` may carry stock that is a
+ * few minutes old. The panel renders at once from it, then applies `live` (read at
+ * request time) when it arrives. Nothing is swapped out of the DOM, so the gallery
+ * image isn't repainted (which would reset LCP) and the panel hydrates once.
+ * Add-to-cart is checked against the database on the server either way.
+ */
 export function ProductPurchase({
-  product,
-  initialSku,
-  signedIn,
-  initiallySaved,
+  product: cached,
+  live,
 }: {
   product: ProductDetailView;
-  initialSku?: string;
-  signedIn: boolean;
-  initiallySaved: boolean;
+  live: Promise<LivePurchaseData>;
 }) {
   const router = useRouter();
-  const firstAvailable = product.variants.find((v) => v.stock > 0) ?? product.variants[0];
-  const [variantId, setVariantId] = useState(
-    product.variants.find((v) => v.sku === initialSku)?.id ?? firstAvailable?.id,
-  );
+  const [liveData, setLiveData] = useState<LivePurchaseData | null>(null);
+  const userChoseVariant = useRef(false);
+  const product = useMemo<ProductDetailView>(() => {
+    if (!liveData) return cached;
+    return {
+      ...cached,
+      variants: cached.variants.flatMap((v) =>
+        v.id in liveData.stock ? [{ ...v, stock: liveData.stock[v.id]! }] : [],
+      ),
+    };
+  }, [cached, liveData]);
+  const signedIn = liveData?.signedIn ?? false;
+  const firstAvailable = cached.variants.find((v) => v.stock > 0) ?? cached.variants[0];
+  const [variantId, setVariantId] = useState(firstAvailable?.id);
   const [imageIndex, setImageIndex] = useState(0);
   const [qty, setQty] = useState(1);
   const [status, setStatus] = useState<Status>(null);
-  const [saved, setSaved] = useState(initiallySaved);
+  const [saved, setSaved] = useState(false);
   const [pending, startTransition] = useTransition();
   const [savePending, startSave] = useTransition();
   // Brief confirmation on the button itself after a successful add (the status line below
@@ -46,6 +69,23 @@ export function ProductPurchase({
   // Mobile: a compact purchase bar appears once the main button has scrolled out of view.
   const mainButton = useRef<HTMLButtonElement>(null);
   const [showBar, setShowBar] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    live.then(
+      (data) => {
+        if (!active) return;
+        setLiveData(data);
+        setSaved(data.saved);
+        const fromUrl = cached.variants.find((v) => v.sku === data.initialSku);
+        if (fromUrl && !userChoseVariant.current) setVariantId(fromUrl.id);
+      },
+      () => undefined, // keep the cached view; the server still validates every add
+    );
+    return () => {
+      active = false;
+    };
+  }, [live, cached.variants]);
 
   useEffect(() => {
     if (!justAdded) return;
@@ -91,11 +131,14 @@ export function ProductPurchase({
     }
   }, [product.id]);
 
-  if (!variant) return null;
+  if (!variant) {
+    return <p className="text-fg-muted">This product is currently unavailable.</p>;
+  }
   const soldOut = variant.stock === 0;
   const maxQty = Math.max(1, Math.min(10, variant.stock));
 
   function selectVariant(id: string) {
+    userChoseVariant.current = true;
     setVariantId(id);
     setImageIndex(0);
     setQty(1);

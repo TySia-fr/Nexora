@@ -6,23 +6,43 @@ import { connection } from "next/server";
 import { getLiveStock, getProductBySlug, getRelatedProducts, type ProductDetailView } from "@/server/catalog";
 import { getViewer } from "@/server/session";
 import { isInWishlist } from "@/server/wishlist";
-import { ProductPurchase } from "@/components/product/product-purchase";
+import { ProductPurchase, type LivePurchaseData } from "@/components/product/product-purchase";
 import { ProductGrid } from "@/components/product/product-card";
 import { RecentlyViewed } from "@/components/product/recently-viewed";
 import { env } from "@/lib/env";
+import { breadcrumbLd, offerPolicies } from "@/lib/seo";
+import { JsonLd } from "@/components/seo/json-ld";
+import { BUILD_PLACEHOLDER } from "@/lib/static-params";
+
+/**
+ * Incremental static regeneration: every product page is rendered on its first visit
+ * and cached (title and description in <head>, content, gallery, structured data).
+ * Only the purchase panel's data is request-time: live stock, the visitor's wishlist
+ * and the ?variant= selection, streamed as a promise (see ProductPurchase). The build itself only prerenders a placeholder (no database).
+ */
+export function generateStaticParams() {
+  return [{ slug: BUILD_PLACEHOLDER }];
+}
+
+async function loadProduct(params: PageProps<"/products/[slug]">["params"]) {
+  const { slug } = await params;
+  if (slug === BUILD_PLACEHOLDER) return null;
+  return getProductBySlug(slug);
+}
 
 export async function generateMetadata({ params }: PageProps<"/products/[slug]">): Promise<Metadata> {
-  const { slug } = await params;
-  const product = await getProductBySlug(slug);
+  const product = await loadProduct(params);
   if (!product) return { title: "Product not found", robots: { index: false } };
   const image = product.images[0];
   return {
-    title: product.name,
+    // "Halo One — Over-ear headphones · NEXORA": the product type is what people search for.
+    title: `${product.name} — ${product.tagline}`,
     description: `${product.tagline}. ${product.description}`.slice(0, 160),
     alternates: { canonical: `/products/${product.slug}` },
     openGraph: {
       title: `${product.name} · NEXORA`,
       description: product.tagline,
+      url: `/products/${product.slug}`,
       images: image ? [{ url: image.url, width: image.width, height: image.height, alt: image.alt }] : [],
     },
   };
@@ -38,6 +58,7 @@ function structuredData(p: ProductDetailView) {
     description: p.description,
     image: p.images.map((i) => `${env.APP_URL}${i.url}`),
     brand: { "@type": "Brand", name: "NEXORA" },
+    category: p.category.name,
     url,
     offers: p.variants.map((v) => ({
       "@type": "Offer",
@@ -45,8 +66,11 @@ function structuredData(p: ProductDetailView) {
       name: v.name,
       price: (v.priceCents / 100).toFixed(2),
       priceCurrency: "EUR",
+      itemCondition: "https://schema.org/NewCondition",
       availability: v.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
       url: `${url}?variant=${encodeURIComponent(v.sku)}`,
+      seller: { "@id": `${env.APP_URL}/#organization` },
+      ...offerPolicies(env.APP_URL, v.priceCents),
     })),
     ...(p.rating
       ? {
@@ -67,29 +91,40 @@ function structuredData(p: ProductDetailView) {
   };
 }
 
-async function ProductContent({ params, searchParams }: PageProps<"/products/[slug]">) {
+/**
+ * Request-time data for the purchase panel. Returned as a promise and not awaited here,
+ * so the cached page doesn't wait for it; the client panel applies it on arrival.
+ */
+async function loadLivePurchase(
+  productId: string,
+  searchParams: PageProps<"/products/[slug]">["searchParams"],
+): Promise<LivePurchaseData> {
   await connection();
-  const { slug } = await params;
-  const cached = await getProductBySlug(slug);
-  if (!cached) notFound();
-  // Content comes from the cache; stock is always read live.
-  const stock = await getLiveStock(cached.id);
-  const product: ProductDetailView = {
-    ...cached,
-    variants: cached.variants.flatMap((v) => (stock.has(v.id) ? [{ ...v, stock: stock.get(v.id)! }] : [])),
+  const [stock, viewer, sp] = await Promise.all([getLiveStock(productId), getViewer(), searchParams]);
+  const saved = viewer ? await isInWishlist(viewer.id, productId) : false;
+  return {
+    stock: Object.fromEntries(stock),
+    signedIn: Boolean(viewer),
+    saved,
+    initialSku: typeof sp.variant === "string" ? sp.variant : undefined,
   };
-  if (product.variants.length === 0) notFound();
-  const sp = await searchParams;
-  const initialSku = typeof sp.variant === "string" ? sp.variant : undefined;
-  const viewer = await getViewer();
-  const saved = viewer ? await isInWishlist(viewer.id, product.id) : false;
+}
+
+async function ProductContent({ params, searchParams }: PageProps<"/products/[slug]">) {
+  const product = await loadProduct(params);
+  if (!product) notFound();
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        // JSON.stringify output with "<" escaped cannot break out of the script tag.
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData(product)).replace(/</g, "\\u003c") }}
+      <JsonLd
+        data={[
+          structuredData(product),
+          breadcrumbLd(env.APP_URL, [
+            { name: "Home", path: "/" },
+            { name: product.category.name, path: `/categories/${product.category.slug}` },
+            { name: product.name, path: `/products/${product.slug}` },
+          ]),
+        ]}
       />
       <div className="container-site pt-6">
         <nav aria-label="Breadcrumb" className="label-mono text-fg-subtle">
@@ -114,12 +149,7 @@ async function ProductContent({ params, searchParams }: PageProps<"/products/[sl
       </div>
 
       <section className="container-site pt-8 pb-24">
-        <ProductPurchase
-          product={product}
-          initialSku={initialSku}
-          signedIn={Boolean(viewer)}
-          initiallySaved={saved}
-        />
+        <ProductPurchase product={product} live={loadLivePurchase(product.id, searchParams)} />
       </section>
 
       <section className="container-site pb-6" aria-label="Details">

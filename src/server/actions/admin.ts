@@ -1,7 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { refresh, updateTag } from "next/cache";
+import { refresh, revalidatePath, updateTag } from "next/cache";
 import { z } from "zod";
 import { requireAdmin } from "@/server/session";
 import {
@@ -79,6 +79,11 @@ export async function saveProductAction(_prev: AdminFormState, form: FormData): 
     const existing = form.get("productId");
     savedId = await saveProduct(admin.id, existing ? parseId(existing) : null, productFromForm(form));
     updateTag(CATALOG_TAG);
+    // Product and category pages are cached whole (ISR). Expiring the routes makes the
+    // next visit render fresh instead of serving the old page once; covering every slug
+    // also handles a renamed slug, whose old page would otherwise stay cached.
+    revalidatePath("/products/[slug]", "page");
+    revalidatePath("/categories/[slug]", "page");
   } catch (e) {
     return toActionError(e);
   }
