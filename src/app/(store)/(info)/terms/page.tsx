@@ -1,7 +1,12 @@
 import type { Metadata } from "next";
 import { ReviewNotice } from "@/components/ui/review-notice";
 
-export const metadata: Metadata = { title: "Terms", alternates: { canonical: "/terms" } };
+export const metadata: Metadata = {
+  title: "Terms",
+  description:
+    "Terms of sale for NEXORA, a demonstration store: prices, accounts, orders and payment in Stripe test mode.",
+  alternates: { canonical: "/terms" },
+};
 
 export default function TermsPage() {
   return (

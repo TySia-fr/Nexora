@@ -1,7 +1,12 @@
 import type { Metadata } from "next";
 import { ReviewNotice } from "@/components/ui/review-notice";
 
-export const metadata: Metadata = { title: "Privacy", alternates: { canonical: "/privacy" } };
+export const metadata: Metadata = {
+  title: "Privacy",
+  description:
+    "Exactly what NEXORA stores, taken from its database schema: account data, order details, the two cookies it sets and the newsletter.",
+  alternates: { canonical: "/privacy" },
+};
 
 export default function PrivacyPage() {
   return (

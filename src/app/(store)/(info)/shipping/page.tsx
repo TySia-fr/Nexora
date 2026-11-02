@@ -3,7 +3,12 @@ import { FREE_SHIPPING_THRESHOLD, SHIPPING_RATES } from "@/lib/pricing";
 import { formatMoney } from "@/lib/money";
 import { ReviewNotice } from "@/components/ui/review-notice";
 
-export const metadata: Metadata = { title: "Shipping", alternates: { canonical: "/shipping" } };
+export const metadata: Metadata = {
+  title: "Shipping",
+  description:
+    "NEXORA ships to mainland France and Corsica: standard delivery in 2–4 business days, free over €99, or express.",
+  alternates: { canonical: "/shipping" },
+};
 
 // Rates below are read from the same constants the checkout uses.
 export default function ShippingPage() {

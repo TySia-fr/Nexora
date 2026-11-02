@@ -1,7 +1,12 @@
 import type { Metadata } from "next";
 import { site } from "@/lib/site";
 
-export const metadata: Metadata = { title: "Contact", alternates: { canonical: "/contact" } };
+export const metadata: Metadata = {
+  title: "Contact",
+  description:
+    "How to contact NEXORA about orders, returns and products, and why a demonstration store lists no legal address.",
+  alternates: { canonical: "/contact" },
+};
 
 export default function ContactPage() {
   return (

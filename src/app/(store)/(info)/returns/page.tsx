@@ -1,7 +1,12 @@
 import type { Metadata } from "next";
 import { ReviewNotice } from "@/components/ui/review-notice";
 
-export const metadata: Metadata = { title: "Returns", alternates: { canonical: "/returns" } };
+export const metadata: Metadata = {
+  title: "Returns",
+  description:
+    "Return unused NEXORA products within 30 days. The EU 14-day right of withdrawal and 2-year legal guarantee also apply.",
+  alternates: { canonical: "/returns" },
+};
 
 export default function ReturnsPage() {
   return (

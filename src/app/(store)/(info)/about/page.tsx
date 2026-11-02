@@ -1,6 +1,11 @@
 import type { Metadata } from "next";
 
-export const metadata: Metadata = { title: "About", alternates: { canonical: "/about" } };
+export const metadata: Metadata = {
+  title: "About",
+  description:
+    "Who built NEXORA, what is real in this store and what is not: a portfolio project with a real checkout, inventory and admin.",
+  alternates: { canonical: "/about" },
+};
 
 export default function AboutPage() {
   return (

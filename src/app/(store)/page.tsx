@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense, type CSSProperties } from "react";
 import { BrandIntro } from "@/components/brand/brand-intro";
+import { JsonLd } from "@/components/seo/json-ld";
+import { env } from "@/lib/env";
+import { organizationLd, websiteLd } from "@/lib/seo";
 import { Hero } from "@/components/home/hero";
 import { NewsletterForm } from "@/components/home/newsletter-form";
 import {
@@ -17,12 +20,16 @@ import {
 } from "@/components/home/sections";
 
 export const metadata: Metadata = {
+  title: { absolute: "NEXORA — Precision headphones, phones, wearables and speakers" },
+  description:
+    "Over-ear headphones, earbuds, phones, smartwatches and speakers, engineered with restraint. Free shipping over €99 in mainland France, 30-day returns.",
   alternates: { canonical: "/" },
 };
 
 export default function HomePage() {
   return (
     <>
+      <JsonLd data={[organizationLd(env.APP_URL), websiteLd(env.APP_URL)]} />
       <BrandIntro />
       <Hero />
 
