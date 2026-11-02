@@ -353,6 +353,8 @@ model OrderItem {
   unitPriceCents Int
   quantity       Int
   lineTotalCents Int
+  /// Unit cost (ex. VAT) when sold, so margins stay correct after costs change.
+  unitCostCents  Int?
 
   @@index([orderId])
   @@index([variantId])
