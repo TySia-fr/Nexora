@@ -3,10 +3,11 @@ import { Suspense } from "react";
 import { Listing, ListingSkeleton } from "@/components/catalog/listing";
 import { parseListingQuery } from "@/lib/validation/catalog";
 
+// Static on purpose, so it is sent in <head>. Canonical and noindex for filtered or
+// paginated URLs come from src/proxy.ts as HTTP headers.
 export const metadata: Metadata = {
   title: "All products",
   description: "Headphones, phones, wearables, speakers and accessories from NEXORA.",
-  alternates: { canonical: "/products" },
 };
 
 async function Results({ searchParams }: { searchParams: PageProps<"/products">["searchParams"] }) {
