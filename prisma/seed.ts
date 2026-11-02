@@ -9,7 +9,16 @@ import "dotenv/config";
 import { randomUUID } from "node:crypto";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../src/generated/prisma/client";
-import { categories, coupons, imageFileName, products, reviewers, reviews } from "./seed-data";
+import {
+  categories,
+  coupons,
+  imageFileName,
+  products,
+  reviewers,
+  reviews,
+  seedReorderPoint,
+  seedUnitCostCents,
+} from "./seed-data";
 
 if (process.env.NODE_ENV === "production" && process.env.ALLOW_PRODUCTION_SEED !== "yes") {
   console.error(
@@ -33,6 +42,7 @@ async function main() {
   await db.$transaction([
     db.order.deleteMany({ where: { email: { in: reviewerEmails } } }),
     db.review.deleteMany({}),
+    db.stockCount.deleteMany({}),
     db.cartItem.deleteMany({}),
     db.wishlistItem.deleteMany({}),
     db.productImage.deleteMany({}),
@@ -67,13 +77,32 @@ async function main() {
         featured: p.featured ?? false,
         createdAt,
         variants: {
-          create: p.variants.map((v, position) => ({ ...v, colorHex: v.colorHex ?? null, position })),
+          create: p.variants.map((v, position) => ({
+            ...v,
+            colorHex: v.colorHex ?? null,
+            position,
+            costCents: seedUnitCostCents(p.category, v.priceCents),
+            reorderPoint: seedReorderPoint(p.category),
+          })),
         },
       },
       include: { variants: true },
     });
     productIds.set(p.slug, product.id);
     for (const v of product.variants) variantIds.set(v.sku, v.id);
+    // Seeded stock enters the ledger like any other stock (ADR-0010).
+    await db.stockMovement.createMany({
+      data: product.variants
+        .filter((v) => v.stock > 0)
+        .map((v) => ({
+          variantId: v.id,
+          delta: v.stock,
+          stockAfter: v.stock,
+          reason: "OPENING_BALANCE" as const,
+          note: "Seed",
+          createdAt,
+        })),
+    });
 
     const alt = (view: string, variant?: string) =>
       `${p.name}${variant ? ` in ${variant}` : ""}, ${view === "front" ? "front view" : "close-up"}`;
@@ -166,6 +195,7 @@ async function main() {
             unitPriceCents: variant.priceCents,
             quantity: 1,
             lineTotalCents: variant.priceCents,
+            unitCostCents: seedUnitCostCents(product.category, variant.priceCents),
           },
         },
       },

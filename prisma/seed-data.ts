@@ -24,6 +24,28 @@ export function imageFileName(slug: string, variantSku: string | null, view: "fr
   return `${slug}${variantSku ? `-${variantSku.toLowerCase()}` : ""}-${view}.webp`;
 }
 
+/**
+ * Fictional unit costs (ex. VAT) as a share of the ex-VAT price, by category, so the
+ * admin's margin and valuation figures have something realistic to work with.
+ */
+const COST_SHARE: Record<string, number> = {
+  audio: 0.46,
+  phones: 0.64,
+  wearables: 0.5,
+  speakers: 0.48,
+  accessories: 0.34,
+};
+const VAT_DIVISOR = 1.2;
+
+export function seedUnitCostCents(category: string, priceCents: number): number {
+  return Math.round((priceCents / VAT_DIVISOR) * (COST_SHARE[category] ?? 0.5));
+}
+
+/** Accessories sell in volume, so they are reordered earlier. */
+export function seedReorderPoint(category: string): number {
+  return category === "accessories" ? 20 : 5;
+}
+
 export type SeedVariant = {
   sku: string;
   name: string;

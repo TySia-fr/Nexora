@@ -33,11 +33,11 @@ export async function makeProduct(opts: {
   status?: "ACTIVE" | "DRAFT" | "ARCHIVED";
   createdAt?: Date;
   unitsSold?: number;
-  variants?: { priceCents: number; stock: number; isActive?: boolean; name?: string }[];
+  variants?: { priceCents: number; stock: number; isActive?: boolean; name?: string; costCents?: number }[];
 }) {
   const n = ++counter;
   const name = opts.name ?? `Product ${n}`;
-  return db.product.create({
+  const product = await db.product.create({
     data: {
       slug: `${name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-${n}`,
       name,
@@ -55,11 +55,32 @@ export async function makeProduct(opts: {
           stock: v.stock,
           isActive: v.isActive ?? true,
           position: i,
+          costCents: v.costCents ?? null,
         })),
       },
     },
     include: { variants: { orderBy: { position: "asc" } } },
   });
+  // Starting stock enters the ledger, as in the seed, so SUM(delta) = stock holds.
+  await db.stockMovement.createMany({
+    data: product.variants
+      .filter((v) => v.stock > 0)
+      .map((v) => ({
+        variantId: v.id,
+        delta: v.stock,
+        stockAfter: v.stock,
+        reason: "OPENING_BALANCE" as const,
+      })),
+  });
+  return product;
+}
+
+/** Variants whose stock differs from the sum of their ledger movements (should be none). */
+export async function unreconciled() {
+  return db.$queryRaw<{ sku: string }[]>`
+    SELECT v."sku" FROM "ProductVariant" v LEFT JOIN "StockMovement" m ON m."variantId" = v."id"
+    GROUP BY v."id" HAVING v."stock" <> COALESCE(SUM(m."delta"), 0)
+  `;
 }
 
 export async function makeUser(role: "CUSTOMER" | "ADMIN" = "CUSTOMER") {
