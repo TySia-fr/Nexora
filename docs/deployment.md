@@ -118,6 +118,15 @@ It fast-forwards only (local edits on the server stop it with a clear log line),
 once, and checks `/api/health` after each deploy. Anyone who can push to `main` can deploy, so protect the
 branch on GitHub once more people have write access.
 
+### Demo unit costs (once, for databases seeded before 2026-11-02)
+
+Inventory value and margins need unit costs. A fresh seed sets fictional ones; an older database can get
+the same ones without touching anything else (only empty costs, only demo SKUs):
+
+```bash
+sudo docker compose run --rm migrate pnpm tsx scripts/demo-costs.ts
+```
+
 ## 7. Backups
 
 ```bash
