@@ -13,6 +13,7 @@ const nav = [
   ["Products", "/admin/products"],
   ["Inventory", "/admin/inventory"],
   ["Stock counts", "/admin/inventory/counts"],
+  ["Analytics", "/admin/analytics"],
   ["Categories", "/admin/categories"],
   ["Coupons", "/admin/coupons"],
   ["Reviews", "/admin/reviews"],
