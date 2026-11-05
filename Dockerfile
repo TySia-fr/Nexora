@@ -28,8 +28,12 @@ RUN DATABASE_URL="postgresql://build:build@localhost:5432/build" \
     BETTER_AUTH_SECRET="build-time-placeholder-not-a-secret-000000" \
     pnpm build
 
-# One-shot image for `prisma migrate deploy` and the seed.
-FROM build AS migrate
+# One-shot image for `prisma migrate deploy`, the seed and admin scripts.
+# Built from deps, not build: it needs the source and the Prisma client but not the
+# .next output and build cache, which made it the largest image on the server.
+FROM deps AS migrate
+COPY . .
+RUN DATABASE_URL="postgresql://build:build@localhost:5432/build" pnpm exec prisma generate
 CMD ["pnpm", "exec", "prisma", "migrate", "deploy"]
 
 FROM node:22-bookworm-slim AS runtime

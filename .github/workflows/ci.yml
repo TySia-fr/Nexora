@@ -126,3 +126,21 @@ jobs:
           echo "health without database: $code (expected 503)"
           test "$code" = "503"
           docker exec nexora id -u | grep -qv '^0$' && echo "runs as non-root"
+      - name: Build migrate image
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+        with:
+          context: .
+          target: migrate
+          push: false
+          load: true
+          tags: nexora-migrate:ci
+      - name: Migrate image applies migrations and runs scripts
+        run: |
+          docker run -d --name pg -e POSTGRES_PASSWORD=ci -p 5433:5432 postgres:16-alpine
+          for i in $(seq 1 30); do docker exec pg pg_isready -U postgres && break; sleep 1; done
+          url=postgresql://postgres:ci@127.0.0.1:5433/postgres
+          docker run --rm --network host -e DATABASE_URL=$url nexora-migrate:ci
+          docker run --rm --network host -e DATABASE_URL=$url \
+            -e BETTER_AUTH_SECRET=ci-only-secret-ci-only-secret-ci-only-secret -e APP_URL=http://localhost:3000 \
+            nexora-migrate:ci pnpm exec tsx scripts/demo-costs.ts
+          docker image ls --format '{{.Repository}}:{{.Tag}} {{.Size}}' | grep nexora
