@@ -28,7 +28,10 @@ function studioEnvironment() {
   const panel = (w, h, intensity, position, look, color = 0xffffff) => {
     const m = new THREE.Mesh(
       new THREE.PlaneGeometry(w, h),
-      new THREE.MeshBasicMaterial({ color: new THREE.Color(color).multiplyScalar(intensity), side: THREE.DoubleSide }),
+      new THREE.MeshBasicMaterial({
+        color: new THREE.Color(color).multiplyScalar(intensity),
+        side: THREE.DoubleSide,
+      }),
     );
     m.position.set(...position);
     m.lookAt(...look);
