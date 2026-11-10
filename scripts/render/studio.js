@@ -16,7 +16,41 @@ renderer.shadowMap.type = THREE.VSMShadowMap;
 document.body.appendChild(renderer.domElement);
 
 const pmrem = new THREE.PMREMGenerator(renderer);
-const envMap = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+
+/**
+ * Photo-studio reflections: a dark room lit by a large overhead softbox, two tall strip
+ * boxes either side and a low bounce card. Glossy and metal parts pick up long, clean
+ * highlights along their edges instead of the generic room the stock environment gives.
+ */
+function studioEnvironment() {
+  const room = new THREE.Scene();
+  room.background = new THREE.Color(0x0b0b0c);
+  const panel = (w, h, intensity, position, look, color = 0xffffff) => {
+    const m = new THREE.Mesh(
+      new THREE.PlaneGeometry(w, h),
+      new THREE.MeshBasicMaterial({ color: new THREE.Color(color).multiplyScalar(intensity), side: THREE.DoubleSide }),
+    );
+    m.position.set(...position);
+    m.lookAt(...look);
+    room.add(m);
+  };
+  panel(6, 4, 2.2, [-1.5, 6, 2], [0, 0, 0]); // overhead key softbox, camera-left
+  panel(1.1, 7, 3.0, [-6, 2.5, 0.5], [0, 1, 0]); // strip left
+  panel(1.1, 7, 2.4, [6, 2.5, -1.5], [0, 1, 0], 0xf2f5ff); // strip right, slightly cool
+  panel(8, 1.2, 0.6, [0, -2.5, 5], [0, 0, 0], 0xfff4e6); // low warm bounce card
+  panel(3, 3, 1.2, [3, 4, 6], [0, 0, 0]); // small front fill
+  // Faint room so dark faces never reflect pure black.
+  const shell = new THREE.Mesh(
+    new THREE.SphereGeometry(20, 32, 16),
+    new THREE.MeshBasicMaterial({ color: 0x1c1c1e, side: THREE.BackSide }),
+  );
+  room.add(shell);
+  return pmrem.fromScene(room, 0.02).texture;
+}
+
+const envMap = new URLSearchParams(location.search).has("roomenv")
+  ? pmrem.fromScene(new RoomEnvironment(), 0.04).texture
+  : studioEnvironment();
 
 const deg = THREE.MathUtils.degToRad;
 // Optional horizontal fill limit for wide frames (fraction of half-width).
@@ -88,7 +122,7 @@ function buildScene(spec) {
   renderer.setClearColor(0x000000, 0);
   const scene = new THREE.Scene();
   scene.environment = envMap;
-  scene.environmentIntensity = 0.75;
+  scene.environmentIntensity = 0.9;
 
   const build = builders[spec.shape];
   if (!build) throw new Error(`Unknown shape ${spec.shape}`);
@@ -121,7 +155,7 @@ function buildScene(spec) {
   key.target.position.copy(sphere.center);
   scene.add(key, key.target);
 
-  const rim = new THREE.DirectionalLight(0xffffff, 1.5);
+  const rim = new THREE.DirectionalLight(0xffffff, 2.2);
   rim.position.set(1, 0.8, -1.2).multiplyScalar(sphere.radius * 4);
   scene.add(rim);
   const fill = new THREE.DirectionalLight(0xf3f1ea, 0.5);
