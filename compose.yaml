@@ -45,6 +45,7 @@ services:
     environment:
       DATABASE_URL: postgresql://nexora:${POSTGRES_PASSWORD}@db:5432/nexora
       NODE_ENV: production
+      UPLOAD_DIR: /app/uploads
     ports:
       # 3001 is taken by the portfolio site on the same server.
       - "127.0.0.1:${APP_PORT:-3002}:3000"
@@ -52,6 +53,9 @@ services:
       db: { condition: service_healthy }
       migrate: { condition: service_completed_successfully }
     read_only: true
+    volumes:
+      # Product images uploaded from the admin; the only writable path in the container.
+      - uploads:/app/uploads
     tmpfs:
       - /tmp
       - /app/.next/cache
@@ -60,3 +64,4 @@ services:
 
 volumes:
   pgdata:
+  uploads:

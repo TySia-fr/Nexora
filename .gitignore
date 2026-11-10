@@ -50,3 +50,6 @@ next-env.d.ts
 /test-results
 /playwright-report
 /coverage
+
+# Admin image uploads (local development)
+/uploads/

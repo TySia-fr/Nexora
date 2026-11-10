@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { getProductAdmin, listCategoriesAdmin } from "@/server/admin";
 import { AdminHeader } from "@/components/admin/ui";
 import { ProductForm } from "@/components/admin/product-form";
+import { ImageManager } from "@/components/admin/image-manager";
 import { AdminGuard } from "@/components/admin/admin-guard";
 
 const pairs = (value: unknown, a: string, b: string) =>
@@ -33,6 +34,15 @@ async function EditProductContent({ params, searchParams }: PageProps<"/admin/pr
           Saved. The storefront updates on the next request.
         </p>
       )}
+      <ImageManager
+        productId={product.id}
+        images={product.images.map((i) => ({
+          id: i.id,
+          url: i.url,
+          alt: i.alt,
+          variant: i.variant?.name ?? null,
+        }))}
+      />
       <ProductForm
         key={product.updatedAt.toISOString()}
         categories={categories}

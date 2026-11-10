@@ -44,6 +44,8 @@ WORKDIR /app
 COPY --from=build --chown=nexora:nexora /app/.next/standalone ./
 COPY --from=build --chown=nexora:nexora /app/.next/static ./.next/static
 COPY --from=build --chown=nexora:nexora /app/public ./public
+# Owned by the app user, so the named volume mounted here starts out writable.
+RUN mkdir -p /app/uploads && chown nexora:nexora /app/uploads
 USER nexora
 EXPOSE 3000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \

@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { ADMIN, signIn, signUp } from "./helpers";
+import { ADMIN, expectNotFound, signIn, signUp } from "./helpers";
 
 test.describe("admin", () => {
   test.skip(!ADMIN.email || !ADMIN.password, "set E2E_ADMIN_EMAIL and E2E_ADMIN_PASSWORD");
@@ -21,6 +21,53 @@ test.describe("admin", () => {
     await expect(page.getByText(/^Saved\./)).toBeVisible();
     await page.goto("/products/trace-tag");
     await expect(page.getByRole("main").getByText(tagline)).toBeVisible();
+  });
+
+  test("admin uploads a product image, makes it the cover and removes it", async ({ page }) => {
+    await signIn(page, ADMIN.email, ADMIN.password, "/admin");
+    await expect(
+      page.getByRole("navigation", { name: "Admin" }).getByRole("link", { name: "Products", exact: true }),
+    ).toHaveAttribute("href", "/admin/products");
+    await page.goto("/admin/products?q=Trace");
+    await page.getByRole("link", { name: "Trace Tag", exact: true }).click();
+    const images = page.getByRole("region", { name: "Images" }).getByRole("listitem");
+    await expect(page.getByRole("button", { name: "Upload image" })).toBeVisible();
+    const before = await images.count();
+
+    await page.getByLabel("Image file").setInputFiles("public/brand/logo.png");
+    const alt = `E2E upload ${Date.now()}`;
+    await page.getByLabel("Description (alt text)").fill(alt);
+    await page.getByRole("button", { name: "Upload image" }).click();
+    await expect(page.getByText("Image uploaded.")).toBeVisible();
+    await expect(images).toHaveCount(before + 1);
+    const uploaded = page.getByRole("img", { name: alt });
+    const src = await uploaded.getAttribute("src");
+    expect(decodeURIComponent(src ?? "")).toMatch(/\/media\/[a-f0-9]{24}\.webp/);
+
+    // Move it to the front: it becomes the cover.
+    for (let i = before; i > 0; i--) {
+      await page.getByRole("button", { name: `Move image ${i + 1} earlier` }).click();
+      await expect(images.nth(i - 1).getByRole("img", { name: alt })).toBeVisible();
+    }
+    page.once("dialog", (d) => d.accept());
+    await images.first().getByRole("button", { name: "Remove" }).click();
+    await expect(page.getByText("Image removed.")).toBeVisible();
+    await expect(images).toHaveCount(before);
+  });
+
+  test("bulk status change from the products table", async ({ page }) => {
+    await signIn(page, ADMIN.email, ADMIN.password, "/admin/products?q=Trace");
+    await page.getByRole("checkbox", { name: "Select Trace Tag" }).check();
+    await page.getByLabel("New status").selectOption("DRAFT");
+    await page.getByRole("button", { name: "Apply" }).click();
+    await expect(page.getByText("1 product set to draft.")).toBeVisible();
+    await page.goto("/products/trace-tag");
+    await expectNotFound(page);
+    await page.goto("/admin/products?q=Trace");
+    await page.getByRole("checkbox", { name: "Select Trace Tag" }).check();
+    await page.getByLabel("New status").selectOption("ACTIVE");
+    await page.getByRole("button", { name: "Apply" }).click();
+    await expect(page.getByText("1 product set to active.")).toBeVisible();
   });
 
   test("admin form validation keeps the editor usable", async ({ page }) => {
