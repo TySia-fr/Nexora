@@ -1,5 +1,6 @@
 import "server-only";
 import { Prisma } from "@/generated/prisma/client";
+import { z } from "zod";
 import type { OrderStatus, ProductStatus } from "@/generated/prisma/enums";
 import { db, type Tx } from "@/server/db";
 import { AppError } from "@/server/errors";
@@ -143,7 +144,19 @@ export async function getOrderHistory(id: string) {
 // Products
 // ---------------------------------------------------------------------------
 
-export async function listProductsAdmin(opts: { q?: string; status?: ProductStatus; page: number }) {
+export const PRODUCT_SORTS = {
+  updated: { updatedAt: "desc" },
+  newest: { createdAt: "desc" },
+  name: { name: "asc" },
+} as const satisfies Record<string, Prisma.ProductOrderByWithRelationInput>;
+export type ProductSort = keyof typeof PRODUCT_SORTS;
+
+export async function listProductsAdmin(opts: {
+  q?: string;
+  status?: ProductStatus;
+  sort?: ProductSort;
+  page: number;
+}) {
   const where: Prisma.ProductWhereInput = {
     ...(opts.status ? { status: opts.status } : {}),
     ...(opts.q
@@ -158,11 +171,12 @@ export async function listProductsAdmin(opts: { q?: string; status?: ProductStat
   const [products, total] = await Promise.all([
     db.product.findMany({
       where,
-      orderBy: { updatedAt: "desc" },
+      orderBy: [PRODUCT_SORTS[opts.sort ?? "updated"], { id: "asc" }],
       skip: (opts.page - 1) * ADMIN_PAGE_SIZE,
       take: ADMIN_PAGE_SIZE,
       include: {
         category: { select: { name: true } },
+        images: { orderBy: { position: "asc" }, take: 1, select: { url: true, alt: true } },
         variants: { select: { stock: true, priceCents: true, isActive: true } },
       },
     }),
@@ -171,10 +185,33 @@ export async function listProductsAdmin(opts: { q?: string; status?: ProductStat
   return { products, total, pageCount: Math.max(1, Math.ceil(total / ADMIN_PAGE_SIZE)) };
 }
 
+const bulkStatusSchema = z.object({
+  ids: z.array(z.string().min(1).max(64)).min(1, "Select at least one product.").max(100),
+  status: z.enum(["ACTIVE", "DRAFT", "ARCHIVED"]),
+});
+
+/** Sets the status of several products at once (publish, unpublish, archive). */
+export async function setProductsStatus(actorId: string, raw: unknown): Promise<number> {
+  const parsed = bulkStatusSchema.safeParse(raw);
+  if (!parsed.success) throw new AppError("VALIDATION", parsed.error.issues[0].message);
+  const { ids, status } = parsed.data;
+  return db.$transaction(async (tx) => {
+    const { count } = await tx.product.updateMany({ where: { id: { in: ids } }, data: { status } });
+    await audit(tx, actorId, "product.bulk_status", "Product", ids[0], { ids, status, count });
+    return count;
+  });
+}
+
 export async function getProductAdmin(id: string) {
   return db.product.findUnique({
     where: { id },
-    include: { variants: { orderBy: { position: "asc" } }, images: { orderBy: { position: "asc" } } },
+    include: {
+      variants: { orderBy: { position: "asc" } },
+      images: {
+        orderBy: [{ position: "asc" }, { id: "asc" }],
+        include: { variant: { select: { name: true } } },
+      },
+    },
   });
 }
 

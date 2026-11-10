@@ -12,6 +12,7 @@ import {
   saveCategory,
   saveProduct,
   setCouponActive,
+  setProductsStatus,
 } from "@/server/admin";
 import { transitionOrder } from "@/server/orders";
 import { CATALOG_TAG } from "@/server/catalog";
@@ -87,6 +88,23 @@ export async function saveProductAction(_prev: AdminFormState, form: FormData): 
     return toActionError(e);
   }
   redirect(`/admin/products/${savedId}?saved=1`);
+}
+
+export async function setProductsStatusAction(
+  ids: string[],
+  status: string,
+): Promise<ActionResult<{ count: number }>> {
+  try {
+    const admin = await requireAdmin();
+    const count = await setProductsStatus(admin.id, { ids, status });
+    updateTag(CATALOG_TAG);
+    revalidatePath("/products/[slug]", "page");
+    revalidatePath("/categories/[slug]", "page");
+    refresh();
+    return { ok: true, data: { count } };
+  } catch (e) {
+    return toActionError(e);
+  }
 }
 
 export async function deleteProductAction(productId: string): Promise<ActionResult> {
