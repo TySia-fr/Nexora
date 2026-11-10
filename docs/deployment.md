@@ -137,3 +137,16 @@ sudo docker compose exec -T db pg_restore -U nexora -d nexora --clean < ~/backup
 
 Schedule the dump with cron and copy it off the server. A backup you have never restored is not a backup:
 test the restore once.
+
+### Uploaded images
+
+Images uploaded from the admin live in the `uploads` volume (`/app/uploads` in the
+container), not in the database. Back them up next to the dump:
+
+```bash
+sudo docker compose exec -T app tar -C /app/uploads -czf - . > ~/backups/nexora-uploads-$(date +%F).tgz
+# restore:
+sudo docker compose exec -T app tar -C /app/uploads -xzf - < ~/backups/nexora-uploads-YYYY-MM-DD.tgz
+```
+
+`docker volume prune` or `docker compose down -v` deletes this volume, as it does the database.
